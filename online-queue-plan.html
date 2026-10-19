@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>แผนคิวออนไลน์ HA.OS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: a working plan document. Narrow reading column, wide blocks for the system map and phone mockups. Accent = queue-ticket amber on deep ink. */
+:root{
+  --bg:#f5f6f8; --paper:#ffffff; --ink:#16233a; --fg:#2c3546; --muted:#667085; --line:#dfe3ea; --soft:#eef1f6;
+  --accent:#c77a0a; --accent-soft:#fdf1dc; --ink-soft:#e6ebf4;
+  --ok:#2f8a3e; --ok-soft:#e5f4e7; --warn:#b26a00; --warn-soft:#fff2db; --bad:#c23b32; --bad-soft:#fbe6e4; --info:#2c5fa8; --info-soft:#e4ecf8;
+  --phone:#1b2333; --screen:#f7f9fc;
+  --f-display:"Anuphan","Noto Sans Thai",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Noto Sans Thai",Tahoma,sans-serif;
+  --f-mono:"IBM Plex Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0f141d; --paper:#171e2a; --ink:#e8edf6; --fg:#cdd5e2; --muted:#93a0b4; --line:#2c3647; --soft:#1e2734;
+  --accent:#f0a83a; --accent-soft:#3a2b12; --ink-soft:#223049;
+  --ok:#6cc47a; --ok-soft:#173222; --warn:#f0b14a; --warn-soft:#3a2a10; --bad:#ef7d74; --bad-soft:#3d1c1a; --info:#86b0ee; --info-soft:#1b2a44;
+  --phone:#06090f; --screen:#1d2533; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0f141d; --paper:#171e2a; --ink:#e8edf6; --fg:#cdd5e2; --muted:#93a0b4; --line:#2c3647; --soft:#1e2734;
+  --accent:#f0a83a; --accent-soft:#3a2b12; --ink-soft:#223049;
+  --ok:#6cc47a; --ok-soft:#173222; --warn:#f0b14a; --warn-soft:#3a2a10; --bad:#ef7d74; --bad-soft:#3d1c1a; --info:#86b0ee; --info-soft:#1b2a44;
+  --phone:#06090f; --screen:#1d2533; color-scheme:dark }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:1080px;margin:0 auto;display:grid;gap:56px}
+h1,h2,h3,h4{font-family:var(--f-display);color:var(--ink);text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:clamp(28px,4.4vw,42px);font-weight:700}
+h2{font-size:26px;font-weight:700}
+h3{font-size:20px;font-weight:600}
+h4{font-size:16px;font-weight:600}
+p{margin:0}
+.read{max-width:68ch}
+.eyebrow{font:500 12.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+code,.mono{font-family:var(--f-mono);font-size:.86em;background:var(--soft);border-radius:4px;padding:1px 5px;color:var(--ink)}
+section{display:grid;gap:20px;min-width:0}
+.sec-head{display:grid;gap:6px}
+
+/* header */
+header.top{padding-block:40px 28px;display:grid;gap:16px;border-bottom:1px solid var(--line)}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted)}
+.lead{font-size:18px;max-width:64ch}
+
+/* summary chips */
+.jobs{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.job{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px;align-content:start;text-decoration:none;color:inherit}
+.job:hover{border-color:var(--accent)}
+.job:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.job .no{font:600 13px var(--f-mono);color:var(--accent)}
+.job h3{font-size:17px}
+.job p{font-size:14px;color:var(--muted);line-height:1.6}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12px;border-radius:999px;padding:1px 9px;font-weight:600;white-space:nowrap}
+.tag.pub{background:var(--accent-soft);color:var(--accent)}
+.tag.staff{background:var(--ink-soft);color:var(--info)}
+.tag.new{background:var(--bad-soft);color:var(--bad)}
+.tag.reuse{background:var(--ok-soft);color:var(--ok)}
+.tag.kiosk{background:var(--warn-soft);color:var(--warn)}
+
+/* tables */
+.tw{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:720px}
+th{text-align:left;font:600 13px var(--f-body);color:var(--muted);background:var(--soft);padding:10px 14px;border-bottom:1px solid var(--line)}
+td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td b{color:var(--ink)}
+tr.grp td{background:var(--soft);font:600 13px var(--f-mono);letter-spacing:.04em;color:var(--muted);padding:7px 14px}
+.cnt{font:700 15px var(--f-mono);color:var(--accent);white-space:nowrap}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:720px){.stats{grid-template-columns:minmax(0,1fr)}}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:2px}
+.stat .k{font-size:13.5px;color:var(--muted)}
+.stat .v{font:700 26px var(--f-display);color:var(--ink);font-variant-numeric:tabular-nums}
+.stat .v small{font-size:15px;color:var(--muted);font-weight:500}
+.stat .d{font-size:13px;color:var(--ok);font-weight:600}
+
+/* system map */
+.map{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px;overflow-x:auto}
+.lanes{display:grid;grid-template-columns:1fr 40px 1fr 40px 1.15fr;align-items:stretch;min-width:860px}
+.lane{display:grid;gap:10px;align-content:start}
+.lane-h{font:600 12.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-bottom:4px;border-bottom:2px solid var(--line)}
+.lane.out .lane-h{border-color:var(--accent);color:var(--accent)}
+.lane.in .lane-h{border-color:var(--info);color:var(--info)}
+.node{border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:14px;background:var(--paper);line-height:1.5}
+.node b{color:var(--ink);display:block;font-size:14.5px}
+.node .s{font-size:12.5px;color:var(--muted)}
+.node.pub{background:var(--accent-soft);border-color:transparent}
+.node.gate{background:var(--soft);border-style:dashed}
+.node.stg{background:var(--warn-soft);border-color:transparent}
+.node.core{background:var(--info-soft);border-color:transparent}
+.arrow{display:grid;place-items:center;color:var(--muted);font-size:20px}
+.mapnote{margin-top:14px;font-size:13.5px;color:var(--muted);max-width:90ch}
+
+/* job detail */
+.detail{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:24px;display:grid;gap:20px;scroll-margin-top:16px}
+@media (max-width:520px){.detail{padding:18px 14px}}
+.dh{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.dh .t{display:grid;gap:6px}
+.size{font:600 13px var(--f-mono);color:var(--ink);background:var(--soft);border-radius:6px;padding:4px 10px;white-space:nowrap}
+.cols{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:24px}
+@media (max-width:860px){.cols{grid-template-columns:minmax(0,1fr)}}
+.steps{list-style:none;margin:0;padding:0;display:grid;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:15px}
+.steps li:last-child{border-bottom:0}
+.steps li::before{content:counter(s);width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:600 13px var(--f-mono);background:var(--soft);color:var(--ink)}
+.steps li.who-staff::before{background:var(--info-soft);color:var(--info)}
+.steps li.who-sys::before{background:var(--warn-soft);color:var(--warn)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.box{display:grid;gap:8px;align-content:start;min-width:0}
+.box h4{font-size:14.5px;color:var(--muted);font-weight:600}
+ul.plain{margin:0;padding-left:20px;display:grid;gap:4px;font-size:14.5px}
+.fields{display:flex;flex-wrap:wrap;gap:6px}
+.f{font-size:13px;border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:var(--paper)}
+.f.req{border-color:var(--accent);color:var(--ink)}
+.f.req::after{content:" *";color:var(--accent)}
+.callout{border-radius:8px;padding:12px 14px;font-size:14.5px;display:grid;gap:4px}
+.callout.warn{background:var(--warn-soft)}
+.callout.info{background:var(--info-soft)}
+.callout.bad{background:var(--bad-soft)}
+.callout b{color:var(--ink)}
+.formula{font:500 14px/1.8 var(--f-mono);background:var(--soft);border-radius:8px;padding:12px 14px;color:var(--ink);overflow-x:auto}
+
+/* kiosk tickets */
+.tix{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:720px){.tix{grid-template-columns:minmax(0,1fr)}}
+.tk{border:1.5px dashed var(--line);border-radius:10px;padding:14px;display:grid;gap:6px;align-content:start;background:var(--paper)}
+.tk .L{font:700 34px/1 var(--f-display)}
+.tk .when{font-size:13px;color:var(--muted)}
+.tk .go{font-size:14.5px}
+.tk .go b{color:var(--ink)}
+.tk.A{border-color:var(--ok);background:var(--ok-soft)}.tk.A .L{color:var(--ok)}
+.tk.B{border-color:var(--bad);background:var(--bad-soft)}.tk.B .L{color:var(--bad)}
+.tk.C{border-color:var(--warn);background:var(--warn-soft)}.tk.C .L{color:var(--warn)}
+.matrix{display:grid;grid-template-columns:auto repeat(2,minmax(0,1fr));gap:6px;font-size:14px;max-width:520px}
+.matrix div{padding:8px 10px;border-radius:6px;text-align:center}
+.matrix .h{background:var(--soft);font-weight:600;color:var(--muted)}
+.matrix .a{background:var(--ok-soft);color:var(--ok);font-weight:700}
+.matrix .b{background:var(--bad-soft);color:var(--bad);font-weight:700}
+.matrix .c{background:var(--warn-soft);color:var(--warn);font-weight:700}
+
+/* phones */
+.phones{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+@media (max-width:980px){.phones{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.phones{grid-template-columns:minmax(0,1fr)}}
+.ph{display:grid;gap:8px;justify-items:center;margin:0}
+.ph figcaption{font-size:13.5px;color:var(--muted);text-align:center}
+.phone{width:100%;max-width:236px;background:var(--phone);border-radius:28px;padding:10px}
+.scr{background:var(--screen);border-radius:20px;min-height:430px;overflow:hidden;display:flex;flex-direction:column;font-size:11.5px;line-height:1.45;color:var(--fg)}
+.sb{background:var(--ink);color:var(--paper);padding:12px 12px 10px;display:grid;gap:1px}
+.sb b{font:600 13.5px var(--f-display)}
+.sb span{font-size:10.5px;opacity:.8}
+.sc{padding:10px;display:grid;gap:7px;align-content:start;flex:1}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 9px;display:grid;gap:3px}
+.kv{display:grid;grid-template-columns:52px minmax(0,1fr);gap:4px}
+.kv span:first-child{color:var(--muted)}
+.inp{border:1px solid var(--line);border-radius:6px;padding:4px 7px;background:var(--paper);color:var(--muted);font-size:11px}
+.lbl{font-size:10.5px;color:var(--muted)}
+.btn{border-radius:7px;padding:6px;text-align:center;font-weight:600;font-size:11.5px;background:var(--accent);color:var(--paper)}
+.btn.ghost{background:var(--soft);color:var(--ink)}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);border-radius:999px;padding:1px 7px;font-size:10.5px;background:var(--paper)}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.ticket{border:1.5px dashed var(--info);background:var(--info-soft);border-radius:9px;padding:8px;text-align:center;display:grid;gap:1px}
+.ticket .q{font:700 17px var(--f-mono);color:var(--info)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+
+/* phases */
+.phases{display:grid;gap:12px}
+.phase{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+@media (max-width:640px){.phase{grid-template-columns:minmax(0,1fr);gap:6px}}
+.phase .pn{font:700 15px var(--f-display);color:var(--accent)}
+.phase .pn small{display:block;font:500 12.5px var(--f-body);color:var(--muted)}
+.phase h4{margin-bottom:4px}
+.phase p{font-size:14.5px}
+
+/* questions */
+.qs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.qs{grid-template-columns:minmax(0,1fr)}}
+.q{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:6px;align-content:start}
+.q .who{font:600 12px var(--f-mono);color:var(--info);letter-spacing:.04em}
+.q p{font-size:14.5px}
+.q .def{font-size:13.5px;color:var(--muted)}
+.q .def b{color:var(--ok)}
+
+footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+@media (prefers-reduced-motion:no-preference){.job{transition:border-color .15s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <span class="eyebrow">แผนงาน · คิว Walk-in และบริการออนไลน์</span>
+  <h1>แผนคิวออนไลน์ HA.OS</h1>
+  <p class="lead">หน้าจองคิว Walk-in ใน HA.OS ที่ดูคู่กับ Dashboard นัด/Walk-in รายคลินิก และออกบัตร V/P/N ได้จากหน้าเดียว พร้อมบริการออนไลน์ 3 อย่างให้คนไข้ทำจากมือถือ ได้แก่ ทำบัตร เช็กอิน และขอนัด ข้อมูลที่คนไข้ส่งเข้ามาจะพักไว้ก่อน แล้วให้เจ้าหน้าที่เป็นคนตัดสิน</p>
+  <div class="meta"><span>ฉบับที่ 22 · 19 ต.ค. 2569 (เพิ่มหน้าสรุปจุดบริการ ตั้ง Limit Walk-in ต่อจุด · ตู้ Kiosk เปิดได้เฉพาะนัดหมาย · หน้าตั้ง Limit ยังไม่มี และ Limit นัดซ้อนกับ LimitCase ของตารางแพทย์ · บัตร Walk-in เปลี่ยนจาก A/B/C เป็น V/P/N · บัตรคิว Walk-in กลับเป็นแบบเดิม: ไม่จองเลขคิว ไม่มีกลุ่มคิว · คงเวลาที่ต้องยื่น · แจ้งผลทางหมอพร้อมอย่างเดียว ไม่มี SMS · หน้านัดหมายใช้หน้าเดิมของ HA.OS · เช็กอินแบบพระนั่งเกล้า: อาการปกติ/ผิดปกติ + แพ้ยาใหม่ + BP/PR · ธงที่หน้าคัดกรอง · แจ้งเลื่อนนัด · กลุ่มคิวด่วน · บัตร V จองเลขคิว · ที่ว่าง Walk-in อัปเดตเมื่อเรียกคิวเข้าห้องตรวจ · ทำบัตรมีหน้ากลาง: ลงทะเบียน / ตรวจสอบ HN · ผลคำขอนัดดูในหมอพร้อม · เช็กอินระบุวันเวลาที่วัด · Vital Sign เข้า Visit ตอนเปิด Visit นัด หน้าคัดกรองไม่แก้)</span><span>อ้างอิง: เอกสารดูงานระบบคิว รพ.พระนั่งเกล้า, สเปก Limit ห้องตรวจ (14 ต.ค. 69) และโค้ด HA.OS สาขา develop</span><span>ต้นแบบที่กดได้: online-queue-prototype.html ในโฟลเดอร์เดียวกัน</span></div>
+</header>
+
+<!-- ============ summary ============ -->
+<section>
+  <div class="sec-head"><span class="eyebrow">สรุป</span><h2>4 งานที่ต้องทำ</h2></div>
+  <div class="jobs">
+    <a class="job" href="#j1"><span class="no">งาน 1</span><h3>จองคิว Walk-in</h3><p>หน้าใน HA.OS ที่จุดออกบัตร มี Dashboard นัด/Walk-in เฉพาะคลินิกที่จุดนั้นดูแล และออกบัตร V/P/N คนไข้ถือบัตรไปที่ช่องเวชระเบียน ซึ่งใช้หน้าเดิมทั้งหมด: V เปิด Visit · P เวชระเบียนพิจารณา · N ลงทะเบียน HN ใหม่</p><div class="tags"><span class="tag staff">HA.OS · เวชระเบียน</span><span class="tag reuse">ใช้ Limit นัด/Walk-in</span></div></a>
+    <a class="job" href="#j2"><span class="no">งาน 2</span><h3>ลงทะเบียนทำบัตร (ขอ HN)</h3><p>คนไข้ใหม่กรอกเฉพาะข้อมูลที่บังคับ แล้วเจ้าหน้าที่ห้องบัตรตรวจและกดยืนยันเพื่อออก HN</p><div class="tags"><span class="tag pub">หน้าคนไข้</span><span class="tag staff">รายการรอยืนยัน</span></div></a>
+    <a class="job" href="#j3"><span class="no">งาน 3</span><h3>เช็กอินออนไลน์ (คนไข้นัด)</h3><p>คนไข้กรอกเฉพาะ Vital Sign ไว้ก่อนจากลิงก์ในหมอพร้อม แล้วค่าจะผูกเข้าระบบตอนเปิด Visit นัดเท่านั้น</p><div class="tags"><span class="tag pub">หน้าคนไข้</span><span class="tag new">IT ต่อหมอพร้อม</span></div></a>
+    <a class="job" href="#j4"><span class="no">งาน 4</span><h3>ขอนัดออนไลน์</h3><p>คนไข้ส่งคำขอได้ไม่จำกัด เลือกวันที่มาได้ จ.–อา. และช่วงวันที่ แล้วเจ้าหน้าที่นำไปลงนัดในตารางที่ว่าง</p><div class="tags"><span class="tag pub">หน้าคนไข้</span><span class="tag staff">รายการคำขอ</span></div></a>
+  </div>
+</section>
+
+<!-- ============ decisions ============ -->
+<section>
+  <div class="sec-head"><span class="eyebrow">ตกลงแล้ว</span><h2>สิ่งที่ตัดสินใจแล้ว</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th style="width:30%">เรื่อง</th><th>ตกลงว่า</th></tr></thead>
+    <tbody>
+      <tr><td><b>จองคิว Walk-in</b></td><td>เป็น<b>หน้าใน HA.OS</b> ไม่ใช่หน้าคนไข้ ดูคู่กับ Dashboard ที่บอกว่าแต่ละคลินิกมีนัดและ Walk-in เท่าไร และออกบัตร V/P/N ได้จากหน้าเดียวกัน</td></tr>
+      <tr><td><b>ใครออกบัตร / ใครเปิด Visit</b></td><td><b>คนละคนกัน</b> เจ้าหน้าที่จุดออกบัตรใช้หน้าจองคิว Walk-in แค่ออกบัตร แล้ว<b>คนไข้ถือบัตรไปยื่นที่เคาน์เตอร์เวชระเบียนเอง ไม่มีหน้าเรียกคิว</b> ช่องเวชระเบียน<b>ใช้หน้าเดิมทั้งหมด ไม่ต้องแก้</b> ดูประเภทบัตรแล้วทำตามนี้ V = เปิด Visit · P = เวชระเบียนพิจารณาเปิด Visit หรือทำนัด · N = ลงทะเบียน HN ใหม่</td></tr>
+      <tr><td><b>อ่านบัตรที่จุดออกบัตร</b></td><td><b>เสียบบัตร</b> = ข้อมูลจากชิป (ชื่อ เลขบัตร วันเกิด ที่อยู่) + ตรวจสอบสิทธิได้ · <b>ไม่ได้เสียบบัตร</b> (ค้นด้วย HN/เลขบัตร) = ได้แค่ข้อมูลคนไข้จาก HA.OS ตรวจสิทธิไม่ได้ · ไม่มี HN และไม่ได้เสียบบัตร = ไม่มีชื่อ พิมพ์ได้แค่เลขบัตร</td></tr>
+      <tr><td><b>ชื่อบัตร V / P / N</b></td><td>ตัวอักษรย่อจากสิ่งที่คนไข้ต้องทำต่อ: <b>V = Visit</b> ตรวจวันนี้ ไปเปิด Visit · <b>P = Pending</b> รอเวชระเบียนพิจารณา (คลินิกเต็ม มี HN) · <b>N = Next</b> นัดวันอื่น (คลินิกเต็ม ไม่มี HN ทำบัตรและนัด) · บนบัตรพิมพ์ทั้งตัวอักษรและคำไทย เพราะเครื่องพิมพ์บัตรเป็นขาวดำ · ไม่ใช้ A/R ซึ่งซ้ำกับรหัสในเลขคิวเดิมของ HA.OS</td></tr>
+      <tr><td><b>คิวด่วน / กลุ่มคิว</b></td><td><b>เว้นไว้ก่อน</b> ระบบเดิมมีอยู่แล้ว (ช่อง "ฉุกเฉิน?" ตอนเปิด Visit และบัตรคิวหลัง Visit) ไม่อยู่ในขอบเขตงานนี้</td></tr>
+      <tr><td><b>Dashboard มีคลินิกเยอะ</b></td><td>ตั้งค่าชุดคลินิกที่แต่ละจุดออกบัตรดูแล (ตั้งครั้งเดียวต่อจุด/เครื่อง เหมือนการตั้งค่าตู้ Kiosk <b>ไม่ผูกกับผู้ใช้</b> จึงไม่ต้องทำตารางผูกผู้ใช้กับคลินิก) + ช่องค้นหาที่ค้นได้ทุกคลินิก + ปุ่มกรองใกล้เต็ม/เต็ม + พับคลินิกย่อยใต้คลินิกหลัก เพราะ HA.OS ยังไม่มีการผูกผู้ใช้กับคลินิก</td></tr>
+      <tr><td><b>บัตร V ที่ยังไม่มี HN</b></td><td>ช่องเวชระเบียนลงทะเบียน HN ด้วย<b>หน้าทะเบียนประวัติเดิม</b> ตามปกติ แล้วเปิด Visit ด้วยหน้าเดิม</td></tr>
+      <tr><td><b>บัตร V / P / N</b></td><td>V มี HN = คลินิกว่าง → ไปช่องเวชระเบียนเปิด Visit · V ไม่มี HN = คลินิกว่าง → ไปลงทะเบียน HN ใหม่แล้วเปิด Visit · P = เต็ม + มี HN → ให้เวชระเบียนพิจารณาเปิด Visit หรือทำนัด · N = เต็ม + ไม่มี HN → ไปลงทะเบียน HN ใหม่และทำนัด · <b>ข้อความเหล่านี้พิมพ์อยู่บนบัตร</b></td></tr>
+      <tr><td><b>คลินิกหลัก / คลินิกย่อย</b></td><td>นับแยกรายคลินิกย่อย เพราะตอนนัดก็นัดแยกได้ และดูรวมใต้คลินิกหลักได้ เพราะตอนเปิด Visit เลือกได้แค่คลินิกหลัก</td></tr>
+      <tr><td><b>บัตรคิวเก็บอะไรบ้าง</b></td><td><b>ไม่จับคู่กับ Visit และไม่เก็บประวัติบัตร</b> ระบบแค่ดูเงื่อนไข V/P/N ตอนออกบัตร แล้วพิมพ์บัตร เลขคิวจริงได้ตอนเปิด Visit และพิมพ์บัตรคิวเดิม (QueueCard) ตามปกติ · บัตรพิมพ์เวลาที่ต้องยื่นที่เวชระเบียน (ออกบัตร + 30 นาที ตั้งค่าได้) · ที่ว่าง = Limit Walk-in − Walk-in ที่<b>เรียกเข้าห้องตรวจแล้ว</b>วันนี้ (อัปเดตเมื่อมีการเรียกคิวเข้าห้องตรวจนั้น)</td></tr>
+      <tr><td><b>ตู้ Kiosk</b></td><td>ตู้ Kiosk <b>เปิด Visit ได้เฉพาะนัดหมาย</b> ปิดทาง Walk-in บนตู้ (ประเภทการเข้ารับบริการ Walk-in / เลือกห้องตรวจ) · คนที่ไม่มีนัดวันนี้ ตู้แจ้งให้ไปจุดออกบัตรคิว Walk-in · ทางนัดหมาย (AddVisitFormAppointment) ใช้เหมือนเดิม และไม่เกี่ยวกับเช็กอินออนไลน์ · ส่วนการ<b>ดักคนที่มีนัดวันนี้ไม่ให้เปิด Walk-in</b> ทำที่หน้าจองคิว Walk-in (จุดออกบัตร)</td></tr>
+      <tr><td><b>หน้าตั้ง Limit นัด / Walk-in</b></td><td>ใน HA.OS <b>ยังไม่มี</b> · ต้นแบบมีแล้ว (เคส C8): เมนูใหม่ "สรุปจุดบริการ" ตามสเปก Limit ห้องตรวจ ตั้ง Limit Walk-in ต่อจุด ตั้งครั้งเดียว เตือนไม่ล็อก · <b>มีผลกับ Dashboard จุดออกบัตรทันที</b> เพราะ Limit ระดับคลินิก = ผลรวมของจุดที่มีแพทย์วันนี้ ที่ว่างและการตัดสิน V/P/N จึงเปลี่ยนตาม · ต้องตัดสินใจเรื่อง <b>Limit นัดของห้อง กับ LimitCase ของตารางแพทย์</b> ที่เป็นคนละตัวเลข (ดู Gap G-41) · ข้อเสนอ: Limit นัด = ผลรวม LimitCase ของตารางแพทย์วันนั้น ไม่ต้องตั้งเอง ตั้งเองแค่ Limit Walk-in</td></tr>
+      <tr><td><b>เช็กอินออนไลน์</b></td><td>กรอกเฉพาะ Vital Sign ได้แก่ ความดัน ชีพจร อุณหภูมิ น้ำหนัก และส่วนสูง</td></tr>
+      <tr><td><b>ส่งลิงก์และแจ้งผลผ่านหมอพร้อม</b></td><td>IT ของโรงพยาบาลเป็นคนจัดการ ฝั่ง HA.OS ส่งข้อมูลให้ IT · <b>ไม่มีหน้าตรวจสถานะ</b> ส่งทางหมอพร้อม: 1. ผลทำบัตร: ทำบัตรสำเร็จ (HN) / ใช้ HN เดิม / ปฏิเสธพร้อมเหตุผล 2. เตือนนัด + ลิงก์เช็กอิน · <b>ผลคำขอนัดไม่ต้องส่ง</b> ลงนัดแล้วเป็นนัดปกติ คนไข้ดูนัดในหมอพร้อมเอง (ถ้าปฏิเสธ เจ้าหน้าที่โทรแจ้ง) · <b>ส่งตามเลขบัตรประชาชน</b> (หมอพร้อมผูกกับเลขบัตร) คนไข้จึงไม่ต้องมี URL หรือเปิดหน้าค้างไว้ · <b>ช่องทางเดียวคือหมอพร้อม</b> ถ้าส่งไม่ถึง (เช่น คนไข้ยังไม่เคยใช้หมอพร้อม) หรือระหว่างที่ IT ยังไม่พร้อม เจ้าหน้าที่โทรแจ้งตามเบอร์ที่กรอก</td></tr>
+      <tr><td><b>หน้าหลักของ Mobile คิว</b></td><td><b>ไม่มีหน้าหลัก</b> แต่ละหน้าเข้าจากลิงก์ของตัวเอง: ติดตามคิว = QR บนบัตรคิว (เดิม ไม่แตะ) · เช็กอิน = ลิงก์ในหมอพร้อม · ทำบัตร/ขอนัด = QR หรือลิงก์บนเว็บโรงพยาบาลและโปสเตอร์ (ทำบัตรเข้า<b>หน้ากลาง</b>ก่อน ให้เลือก ลงทะเบียนทำบัตรใหม่ / ตรวจสอบ HN) · ไม่มีหน้าตรวจสถานะ</td></tr>
+      <tr><td><b>ยืนยันตัวคนไข้บนหน้าออนไลน์</b></td><td>ใช้เลขบัตรประชาชน + วันเกิด ส่วน OTP เว้นไว้ก่อน</td></tr>
+      <tr><td><b>คำขอนัดออนไลน์</b></td><td>รับคำขอได้ไม่จำกัด คนไข้เลือกวันในสัปดาห์ที่มาได้ (จ.–อา. เลือกได้หลายวัน) ช่วงวันที่ หรือ "อื่น ๆ" แล้วเจ้าหน้าที่นำไปลงนัดในตารางที่ว่างของระบบนัดเดิม</td></tr>
+      <tr><td><b>ใครอนุมัติคำขอ</b></td><td>เจ้าหน้าที่ที่มีสิทธิ์เข้าเมนูนั้น ใช้ระบบสิทธิ์เมนูเดิม ระบบเก็บชื่อผู้กดและเวลาไว้ทุกครั้ง</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============ page count ============ -->
+<section>
+  <div class="sec-head"><span class="eyebrow">ขอบเขต</span><h2>ต้องทำกี่หน้า</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th style="width:8%">จำนวน</th><th style="width:30%">หน้า</th><th>ทำอะไร</th></tr></thead>
+    <tbody>
+      <tr class="grp"><td colspan="3">หน้าเจ้าหน้าที่ใหม่ · WebClient · เมนูเวชระเบียน</td></tr>
+      <tr><td class="cnt">1</td><td><b>จองคิว Walk-in</b> (จุดออกบัตร)</td><td>เรียงตามลำดับงาน: 1. อ่านบัตร (มี HN → ตรวจสอบสิทธิด้วยฟังก์ชันเดิม) 2. เลือกคลินิกจาก Dashboard นัด/Walk-in เฉพาะชุดคลินิกของจุดนี้ (ค้นหา · ใกล้เต็ม/เต็ม · พับกลุ่ม) 3. ออกบัตร V/P/N ที่ระบบเสนอให้ เจ้าหน้าที่เปลี่ยนได้ · ดักคนที่มีนัดวันนี้</td></tr>
+      <tr><td class="cnt">2</td><td><b>คำขอทำบัตรออนไลน์</b></td><td>ตรวจและแก้ข้อมูล กดยืนยันแล้วระบบเรียก <code>AddPatient</code> เพื่อออก HN</td></tr>
+      <tr><td class="cnt">3</td><td><b>คำขอนัดออนไลน์</b></td><td>ดูอาการ รูป และวันที่คนไข้มาได้ กด "ลงนัด" เพื่อเปิดหน้าจอนัดเดิมพร้อมกรอกค่าไว้ หรือกดปฏิเสธพร้อมเหตุผล</td></tr>
+      <tr class="grp"><td colspan="3">หน้าคนไข้ · เพิ่มในแอป Mobile คิวเดิม · เปิดจากภายนอกผ่าน Proxy · ไม่มีหน้าหลัก แต่ละหน้าเข้าจากลิงก์ของตัวเอง</td></tr>
+      <tr><td class="cnt">1</td><td><b>ทำบัตร (หน้ากลาง)</b></td><td>เข้าจาก QR/ลิงก์บนเว็บโรงพยาบาลหรือโปสเตอร์ · ให้เลือก <b>ลงทะเบียนทำบัตรใหม่</b> หรือ <b>ตรวจสอบ HN</b></td></tr>
+      <tr><td class="cnt">2</td><td><b>ตรวจสอบ HN</b></td><td>กรอกเลขบัตร + วันเกิด (ต้องตรงทั้งคู่) · พบ = แสดง HN และชื่อแบบปิดบางส่วน แล้วไปขอนัดต่อได้ · ไม่พบ = ปุ่มไปลงทะเบียน · จำกัดจำนวนครั้ง</td></tr>
+      <tr><td class="cnt">3</td><td><b>ลงทะเบียนทำบัตร</b></td><td>กรอกเฉพาะช่องบังคับ และติ๊กยินยอม PDPA</td></tr>
+      <tr><td class="cnt">4</td><td><b>เช็กอินออนไลน์</b></td><td>เปิดจากลิงก์ในหมอพร้อม หรือเข้าเองด้วยเลขบัตร + วันเกิด แล้วเลือกอาการปกติ / ผิดปกติ และตอบแบบสอบถามแบบพระนั่งเกล้า · กล่องยืนยันก่อนบันทึก</td></tr>
+      <tr><td class="cnt">6</td><td><b>แจ้งเลื่อนนัด</b></td><td>เข้าจากปุ่มในข้อความเตือนนัด หรือตอบว่าไม่สะดวกเดินทาง · เข้าเมนูคำขอนัดออนไลน์เดิมเป็นประเภท "เลื่อนนัด" · ทำเป็นช่วงหลัง</td></tr>
+      <tr><td class="cnt">5</td><td><b>ขอนัดออนไลน์</b></td><td>เข้าจาก QR/ลิงก์บนเว็บโรงพยาบาล · กรอกอาการ คลินิก วันที่มาได้ (จ.–อา. + ช่วงวันที่ + อื่น ๆ) รูปแนบ และเบอร์โทร · ไม่มีหน้าแจ้งผล ลงนัดแล้วนัดขึ้นในหมอพร้อม</td></tr>
+      <tr class="grp"><td colspan="3">แก้ของเดิม</td></tr>
+      <tr><td class="cnt">แก้</td><td><b>หน้าจอนัดหมาย</b></td><td>รับค่าตั้งต้นจากคำขอนัดออนไลน์ และคืนเลขนัดกลับไปผูก</td></tr>
+      <tr><td class="cnt">เดิม</td><td><b>ทะเบียนประวัติ / เปิด Visit</b></td><td>ช่องเวชระเบียนใช้ตามปกติ ไม่แก้</td></tr>
+      <tr><td class="cnt">แก้ API</td><td><b>เปิด Visit นัด</b> (AddVisitFormAppointment)</td><td>เปิด Visit นัดสำเร็จแล้ว ถ้านัดนั้นมีข้อมูลเช็กอิน ให้บันทึก Vital Sign เข้า Visit ทันที (วิธีเดียวกับ VitalSignsPublicService.AddVitalSigns ที่เครื่องวัดใช้อยู่) · หน้าจอตู้ Kiosk และเคาน์เตอร์ไม่แก้</td></tr>
+      <tr><td class="cnt">แก้</td><td><b>หน้าคิวคัดกรอง</b></td><td><b>แก้เล็กน้อย</b>: ป้ายอาการผิดปกติ / แพ้ยาใหม่ / กลุ่มคิว ในแถวคิว · เรียงกลุ่มด่วนก่อน · กล่องเตือนในหน้าซักประวัติ · Vital Sign และ CC มาจาก Visit แล้ว</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted" style="font-size:14px">รวม: หน้าเจ้าหน้าที่ใหม่ <b>3</b> หน้า · หน้าคนไข้ <b>3</b> หน้า · แก้ของเดิม (หน้าคัดกรอง หน้านัดหมาย API เปิด Visit นัด) · ตู้ Kiosk ปิดทาง Walk-in · ไม่มีหน้าเรียกคิวเวชระเบียน</p>
+</section>
+
+<!-- ============ lessons ============ -->
+<section>
+  <div class="sec-head"><span class="eyebrow">จากการดูงาน</span><h2>สิ่งที่ รพ.พระนั่งเกล้า ทำ และสิ่งที่เราเอามาใช้</h2>
+    <p class="read muted">โรงพยาบาลขนาด 865 เตียง มีผู้รับบริการราว 3,947 รายต่อวันในปี 2569 ปัญหาตั้งต้นเหมือนเรา คือคนแออัด รอนาน และมีข้อร้องเรียน</p></div>
+  <div class="stats">
+    <div class="stat"><span class="k">เวลารอทำบัตรนัดเฉลี่ย</span><span class="v">55 → 8 <small>นาที</small></span><span class="d">ลดลง 47 นาที (มี.ค.–ต.ค. 67)</span></div>
+    <div class="stat"><span class="k">เวลาอยู่ใน รพ. ทั้งหมดเฉลี่ย</span><span class="v">250 → 129 <small>นาที</small></span><span class="d">ลดลง 121 นาที (เม.ย. 67–ก.ย. 68)</span></div>
+    <div class="stat"><span class="k">ความพึงพอใจผู้รับบริการ</span><span class="v">80.59 → 91.86 <small>%</small></span><span class="d">ปี 2020–2026</span></div>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th style="width:24%">สิ่งที่เขาทำ</th><th style="width:40%">รายละเอียด</th><th>ของเรา</th></tr></thead>
+    <tbody>
+      <tr><td><b>กำหนดโควตา Walk-in ล่วงหน้า</b></td><td>ทุกเย็น แต่ละ OPD ส่งยอดรับ Walk-in ของวันถัดไป พยาบาลคัดกรองบันทึกยอดเข้าระบบ แล้วตู้ออกคิวตามยอดนั้น</td><td>งาน 1 ใช้ Limit Walk-in ต่อจุดที่ตั้งครั้งเดียวแล้วใช้ทุกวัน และแสดงบน Dashboard ของหน้าจองคิว</td></tr>
+      <tr><td><b>บัตรคิว A / B / C</b></td><td>A ได้พบแพทย์แน่นอน · B เกินโควตา ให้ติดต่อแผนก · C คนไข้ใหม่ ให้ไปเปิด HN</td><td>งาน 1 แบ่ง 3 แบบเหมือนกัน แต่ใช้<b>ตัวอักษรที่สื่อความหมาย V / P / N</b> และเงื่อนไขไม่เหมือนเขาเป๊ะ: V คือ "ว่าง" ไม่ว่าจะมี HN หรือไม่ ส่วน N คือ "เต็ม + ไม่มี HN" และเจ้าหน้าที่จุดออกบัตรเป็นคนออกบัตร ไม่ใช่ตู้</td></tr>
+      <tr><td><b>สมัครทำบัตรบนเว็บ</b></td><td>ฟอร์มเดียว 3 ส่วน (ข้อมูลผู้ป่วย / ผู้ติดต่อ / ความยินยอม) ได้ HN แล้วแจ้งทางไลน์หมอพร้อม</td><td>งาน 2 ใช้เฉพาะช่องที่จำเป็น และให้เจ้าหน้าที่ยืนยันก่อนออก HN</td></tr>
+      <tr><td><b>เช็กอินออนไลน์ก่อนพบแพทย์</b></td><td>ข้อความเตือนนัดในหมอพร้อมมีปุ่มเช็กอิน คนไข้เลือกอาการปกติหรือผิดปกติ แล้วกรอกอาการ บุหรี่ สุรา แพ้ยา BP และ PR</td><td>งาน 3 ทำตามแบบนี้: อาการปกติ/ผิดปกติ · บังคับเฉพาะอาการ แพ้ยาใหม่ สะดวกเดินทาง BP PR · ที่เหลือไม่บังคับ · เข้า Visit ตอนเปิด Visit นัด</td></tr>
+      <tr><td><b>ขอนัดออนไลน์ + รายการรออนุมัติ</b></td><td>เจ้าหน้าที่กดอนุมัติหรือปฏิเสธที่หน้า "รายการรออนุมัติการทำนัด"</td><td>งาน 4 ใช้รูปแบบเดียวกัน</td></tr>
+      <tr><td><b>ยืนยันตัวตนก่อนนัด 30 นาที</b></td><td>คนไข้นัดไม่ต้องมาแต่เช้า ส่วน Walk-in เปิดบริการ 07:00</td><td>สอดคล้องกับนโยบาย NPH ที่ให้เช็กอินก่อนนัด 30 นาทีอยู่แล้ว</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============ system map ============ -->
+<section>
+  <div class="sec-head"><span class="eyebrow">ภาพรวมระบบ</span><h2>คนไข้แต่ละแบบเข้าระบบทางไหน</h2></div>
+  <div class="map">
+    <div class="lanes">
+      <div class="lane out">
+        <div class="lane-h">คนไข้</div>
+        <div class="node pub"><b>Walk-in มาที่ รพ.</b><span class="s">รับบัตร V/P/N ที่จุดออกบัตร แล้วถือบัตรไปยื่นที่เคาน์เตอร์เวชระเบียน</span></div>
+        <div class="node pub"><b>คนไข้นัดมาที่ รพ.</b><span class="s">เปิด Visit นัดตามเดิม (ตู้ Kiosk / เคาน์เตอร์) ไม่ต้องแก้</span></div>
+        <div class="node pub"><b>แอป Mobile คิว (ของเดิม)</b><span class="s">เพิ่มหน้า (ไม่มีหน้าหลัก ไม่มีหน้าสถานะ): ทำบัตร (หน้ากลาง → ลงทะเบียน / ตรวจสอบ HN) · เช็กอิน · ขอนัด ผ่าน Proxy เดิม</span></div>
+        <div class="node pub"><b>หมอพร้อม (IT ดูแล)</b><span class="s">แจ้งผลทำบัตร · เตือนนัด + ลิงก์เช็กอิน · แสดงนัดที่ลงจากคำขอ</span></div>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="lane">
+        <div class="lane-h">ตัวกลาง</div>
+        <div class="node stg"><b>บัตรคิวเวชระเบียน V/P/N</b><span class="s">ดูเงื่อนไขตอนออกบัตร แล้วพิมพ์บอกปลายทาง · ไม่เก็บประวัติ</span></div>
+        <div class="node"><b>API สาธารณะชุดใหม่</b><span class="s">ไม่ใช้ Login ใช้โทเคนในลิงก์ หรือยืนยันด้วยเลขบัตร + วันเกิด จำกัดจำนวนครั้งที่ลอง</span></div>
+        <div class="node stg"><b>ตารางรอดำเนินการ</b><span class="s">คำขอทำบัตร · คำขอนัด · ข้อมูลเช็กอิน</span></div>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="lane in">
+        <div class="lane-h">ภายใน HA.OS · เจ้าหน้าที่</div>
+        <div class="node core"><b>จองคิว Walk-in (คนที่ 1) → ช่องเวชระเบียน (คนที่ 2, หน้าเดิม)</b><span class="s">V เปิด Visit · P พิจารณา · N ลงทะเบียน HN ใหม่</span></div>
+        <div class="node core"><b>คำขอทำบัตร → AddPatient</b><span class="s">ห้องบัตรยืนยัน แล้วออก HN</span></div>
+        <div class="node core"><b>คำขอนัด → ลงนัดในตารางเดิม</b><span class="s">กลายเป็นนัดจริง แล้วนับเข้า Limit นัด</span></div>
+        <div class="node core"><b>เปิด Visit นัด → บันทึก Vital Sign ที่เช็กอินไว้เข้า Visit</b><span class="s">ใน AddVisitFormAppointment · หน้าคัดกรองเห็นในช่องเดิม</span></div>
+      </div>
+    </div>
+    <p class="mapnote">ไม่มีหน้าใดของคนไข้ที่เขียนลงตารางผู้ป่วย นัด หรือ Visit โดยตรง ทุกอย่างต้องผ่านตารางรอดำเนินการ หรือผ่านมือเจ้าหน้าที่ที่เวชระเบียนก่อน</p>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th style="width:30%">ของเดิมใน HA.OS</th><th>เอามาใช้อย่างไร</th></tr></thead>
+    <tbody>
+      <tr><td><b>Limit นัด/Walk-in ต่อจุด</b> (สเปก 14 ต.ค. 69)</td><td>เป็นตัวเลขของ Dashboard ในหน้าจองคิว Walk-in และเป็นตัวตัดสิน V/P/N ตอนนี้ยังเป็นสเปก ยังไม่ได้เขียนโค้ด</td></tr>
+      <tr><td><b>แอป Mobile คิว</b></td><td>แอปแยกที่ไม่มี Login เข้าด้วย <code>queuekey</code> ซึ่งเป็น GUID ในลิงก์ หน้าคนไข้ทั้ง 4 ใช้แอปนี้ Proxy นี้ และรูปแบบลิงก์แบบนี้ได้เลย</td></tr>
+      <tr><td><b>PersonalToken / AllowAnonymous</b></td><td>API ของ Kiosk ใช้ PersonalToken และบาง Action เป็น AllowAnonymous อยู่แล้ว ควรแยก API สาธารณะชุดใหม่เป็น Controller เดียว เพื่อคุมความปลอดภัยที่จุดเดียว</td></tr>
+      <tr><td><b>สร้างผู้ป่วย</b> <code>Register/AddPatient</code></td><td>บังคับแค่คำนำหน้า ชื่อ และนามสกุล มี <code>CheckDuplicateIdcardPatient</code> ไว้กันคนซ้ำ ส่วน <code>FlagRegister = F</code> (<code>PreHnFlag</code>) มีอยู่แต่ไม่แนะนำให้ใช้กับข้อมูลจากอินเทอร์เน็ต</td></tr>
+      <tr><td><b>ระบบนัด</b> <code>Appointment/Appoint</code> + ตารางแพทย์</td><td>เจ้าหน้าที่ลงนัดจากคำขอหรือจากบัตร P/N ด้วยหน้าจอเดิม</td></tr>
+      <tr><td><b>ตู้ Kiosk</b></td><td>แก้: ปิดทาง Walk-in เหลือเฉพาะเปิด Visit นัดหมาย · ไม่เกี่ยวกับเช็กอินออนไลน์</td></tr>
+      <tr><td><b>ทะเบียนประวัติ / เปิด Visit</b> (<code>/register/histories</code>, <code>/register/visit</code>)</td><td>ช่องเวชระเบียนใช้สร้าง HN และเปิด Visit ตามเดิม ไม่แก้</td></tr>
+      <tr><td><b>ยังไม่มีเลย</b></td><td>การเชื่อมหมอพร้อม (IT ดูแล), คำขอออนไลน์ และบัตรคิวเวชระเบียนแบบมีประเภท</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============ phones ============ -->
+<section>
+  <div class="sec-head"><span class="eyebrow">หน้าจอคนไข้</span><h2>หน้าตาโดยประมาณบนมือถือ</h2><p class="read muted">ดูแบบกดได้จริงทุกเคสได้ในไฟล์ต้นแบบ ข้อมูลในตัวอย่างเป็นข้อมูลสมมติ</p></div>
+  <div class="phones" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div class="sb"><b>ลงทะเบียนทำบัตรใหม่</b><span>สำหรับผู้ที่ยังไม่เคยมี HN</span></div>
+      <div class="sc">
+        <div class="row2"><div><div class="lbl">คำนำหน้า *</div><div class="inp">นาง</div></div><div><div class="lbl">เพศ *</div><div class="inp">หญิง</div></div></div>
+        <div class="lbl">ชื่อ-นามสกุล *</div><div class="inp">สมใจ ใจดี</div>
+        <div class="lbl">เลขบัตรประชาชน *</div><div class="inp">3-xxxx-xxxxx-xx-x</div>
+        <div class="lbl">วันเกิด * · โทรศัพท์ *</div><div class="row2"><div class="inp">05/08/2510</div><div class="inp">08x-xxx-xxxx</div></div>
+        <div class="lbl">ที่อยู่ตามบัตร *</div><div class="inp">บ้านเลขที่ · ตำบล · อำเภอ · จังหวัด</div>
+        <div class="lbl">ผู้ติดต่อฉุกเฉิน *</div><div class="inp">ชื่อ · โทรศัพท์</div>
+        <div class="card"><span>☑ ยินยอมให้เก็บและใช้ข้อมูลส่วนบุคคล (PDPA)</span></div>
+        <div class="btn">ส่งข้อมูลให้ห้องบัตร</div>
+      </div></div></div><figcaption>งาน 2 · ทำบัตรออนไลน์</figcaption></figure>
+
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div class="sb"><b>เช็กอินออนไลน์</b><span>ก่อนพบแพทย์</span></div>
+      <div class="sc">
+        <div class="card"><div class="kv"><span>HN</span><b>125/69</b></div><div class="kv"><span>วันนัด</span><span>20 ต.ค. 69 · 09:00</span></div><div class="kv"><span>คลินิก</span><span>อายุรกรรม</span></div></div>
+        <div class="lbl">ความดัน SYS / DIA *</div><div class="row2"><div class="inp">128</div><div class="inp">82</div></div>
+        <div class="lbl">ชีพจร * · อุณหภูมิ</div><div class="row2"><div class="inp">78</div><div class="inp">ถ้ามี</div></div>
+        <div class="lbl">น้ำหนัก · ส่วนสูง</div><div class="row2"><div class="inp">72</div><div class="inp">168</div></div>
+        <div class="lbl">วันที่ · เวลาที่วัด *</div><div class="row2"><div class="inp">20/10/2569</div><div class="inp">07:30</div></div>
+        <div class="btn" style="background:var(--ok)">ส่งข้อมูลเช็กอิน</div>
+      </div></div></div><figcaption>งาน 3 · เปิดจากลิงก์ในหมอพร้อม</figcaption></figure>
+
+    <figure class="ph"><div class="phone"><div class="scr">
+      <div class="sb"><b>แบบฟอร์มขอนัดหมาย</b><span>เจ้าหน้าที่จะลงนัดหรือติดต่อกลับ</span></div>
+      <div class="sc">
+        <div class="lbl">อาการ / เหตุผลที่ขอนัด *</div><div class="inp" style="min-height:34px">ปวดเข่าขวามา 2 สัปดาห์</div>
+        <div class="lbl">คลินิก *</div><div class="inp">ศัลยกรรมกระดูก</div>
+        <div class="lbl">วันที่มาได้ (เลือกได้หลายวัน) *</div>
+        <div class="chips"><span class="chip on">จ.</span><span class="chip">อ.</span><span class="chip on">พ.</span><span class="chip">พฤ.</span><span class="chip on">ศ.</span><span class="chip">ส.</span><span class="chip">อา.</span></div>
+        <div class="lbl">ช่วงวันที่ที่ต้องการ</div><div class="row2"><div class="inp">20 ต.ค. 69</div><div class="inp">7 พ.ย. 69</div></div>
+        <div class="chips"><span class="chip">อื่น ๆ (ระบุเอง)</span></div>
+        <div class="lbl">แนบรูป · เบอร์ติดต่อกลับ *</div><div class="row2"><div class="inp">＋ เลือกรูป</div><div class="inp">08x-xxx-xxxx</div></div>
+        <div class="btn">ส่งคำขอนัด</div>
+      </div></div></div><figcaption>งาน 4 · ขอนัดออนไลน์</figcaption></figure>
+  </div>
+</section>
+
+<!-- ============ details ============ -->
+<section>
+  <div class="sec-head"><span class="eyebrow">รายละเอียดแต่ละงาน</span><h2>Flow · เงื่อนไข · งานที่ต้องทำ</h2>
+  <div class="legend"><span><i style="background:var(--soft)"></i>คนไข้</span><span><i style="background:var(--warn-soft)"></i>ระบบ</span><span><i style="background:var(--info-soft)"></i>เจ้าหน้าที่</span><span><span class="f req" style="font-size:12px">ช่องบังคับ</span></span></div></div>
+
+  <!-- job 1 -->
+  <article class="detail" id="j1">
+    <div class="dh"><div class="t"><span class="eyebrow">งาน 1</span><h3>จองคิว Walk-in (หน้าใน HA.OS ที่เวชระเบียน)</h3><div class="tags"><span class="tag staff">จองคิว Walk-in · คนที่ 1</span><span class="tag reuse">ช่องเวชระเบียน หน้าเดิม · คนที่ 2</span><span class="tag reuse">ใช้ Limit นัด/Walk-in</span><span class="tag new">รอ Limit ห้องตรวจ</span></div></div><span class="size">ขนาด: ใหญ่</span></div>
+    <div class="tix" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+      <div class="tk V"><span class="L">V</span><span class="when">คลินิกว่าง · มี HN</span><span class="go">บนบัตร: ไปช่องเวชระเบียน <b>เพื่อเปิด Visit</b></span></div>
+      <div class="tk V"><span class="L">V</span><span class="when">คลินิกว่าง · ไม่มี HN</span><span class="go">บนบัตร: ไปช่องเวชระเบียน <b>เพื่อลงทะเบียน HN ใหม่ แล้วเปิด Visit</b></span></div>
+      <div class="tk P"><span class="L">P</span><span class="when">คลินิกเต็ม · มี HN</span><span class="go">บนบัตร: ไปช่องเวชระเบียน <b>ให้เจ้าหน้าที่พิจารณาเปิด Visit หรือทำนัด</b></span></div>
+      <div class="tk N"><span class="L">N</span><span class="when">คลินิกเต็ม · ไม่มี HN</span><span class="go">บนบัตร: ไปช่องเวชระเบียน <b>เพื่อลงทะเบียน HN ใหม่ และทำนัด</b></span></div>
+    </div>
+    <div class="cols">
+      <div class="box"><h4>Flow</h4>
+        <ol class="steps">
+          <li>คนไข้ Walk-in มาที่จุดออกบัตรหน้าเวชระเบียน ส่วนคนไข้นัดใช้ตู้ Kiosk ตามเดิม</li>
+          <li class="who-staff"><b>คนที่ 1 (จุดออกบัตร)</b> เปิดหน้า <b>จองคิว Walk-in</b> ซึ่งแสดง Dashboard นัด/Walk-in ของวันนี้ เฉพาะชุดคลินิกที่จุดนี้ดูแล แยกคลินิกย่อย และมียอดรวมใต้คลินิกหลัก</li>
+          <li class="who-staff"><b>ขั้นแรก (อยู่บนสุดของหน้า)</b> มี 2 ทาง: <b>เสียบบัตร</b> ได้ชื่อ เลขบัตร วันเกิด ที่อยู่จากชิป และ<b>ตรวจสอบสิทธิได้</b>ด้วยฟังก์ชันเดิม (ทั้งมีและไม่มี HN) · <b>ไม่ได้นำบัตรมา</b> พิมพ์ HN หรือเลขบัตร ได้แค่ข้อมูลคนไข้จาก HA.OS <b>ตรวจสิทธิไม่ได้</b> และถ้าไม่พบ HN จะไม่มีชื่อให้พิมพ์ (ชื่อมาจากชิปเท่านั้น) · สิทธิที่ได้แสดงและพิมพ์บนบัตร ถ้าไม่ได้ตรวจ บัตรจะบอกให้ไปตรวจสิทธิที่เวชระเบียน · ถ้ามีนัดวันนี้ที่คลินิกหลักเดียวกัน <b>ระบบดักไม่ให้ออกบัตร Walk-in</b></li>
+          <li class="who-sys">เลือกคลินิก แล้วระบบเสนอประเภทบัตร เจ้าหน้าที่เปลี่ยนได้พร้อมใส่เหตุผล เช่น ผู้สูงอายุหรือกรณีเร่งด่วน</li>
+          <li class="who-sys">กดออกบัตร ระบบ<b>พิมพ์บัตรที่บอกปลายทางตามประเภท</b> (V มี/ไม่มี HN, P, N) โดยไม่เก็บประวัติบัตร คนที่ 1 ทำแค่นี้</li>
+          <li>คนไข้<b>ถือบัตรไปที่ช่องเวชระเบียนเอง</b> ไม่มีการเรียกคิว</li>
+          <li class="who-staff"><b>คนที่ 2 (ช่องเวชระเบียน)</b> ใช้<b>หน้าเดิมทั้งหมด ไม่แก้</b> ดูประเภทบัตร: V = เปิด Visit (ยังไม่มี HN ก็ลงทะเบียนก่อน) · P = พิจารณาเปิด Visit หรือทำนัด · N = ลงทะเบียน HN ใหม่</li>
+          <li class="who-sys">พอช่องเวชระเบียนเปิด Visit Walk-in ยอด "เปิด Visit" ของคลินิกเพิ่มขึ้นเองจากข้อมูลเดิม Dashboard จึงอัปเดตตาม</li>
+        </ol>
+      </div>
+      <div class="box"><h4>Dashboard ในหน้าจองคิว Walk-in</h4>
+        <div class="tw"><table style="min-width:440px;font-size:13.5px">
+          <thead><tr><th>คลินิก</th><th>นัด</th><th>Walk-in Limit</th><th>เรียกเข้าห้องแล้ว</th><th>ที่ว่าง</th></tr></thead>
+          <tbody>
+            <tr><td><b>อายุรกรรม (รวม)</b></td><td class="num">59/95</td><td class="num">70</td><td class="num">61</td><td class="num"><b>9</b></td></tr>
+            <tr><td>&nbsp;&nbsp;อายุรกรรม ชั้นบน</td><td class="num">12/20</td><td class="num">20</td><td class="num">16</td><td class="num" style="color:var(--ok)"><b>4</b></td></tr>
+            <tr><td>&nbsp;&nbsp;คลินิกเบาหวาน</td><td class="num">9/30</td><td class="num">5</td><td class="num">5</td><td class="num" style="color:var(--bad)"><b>เต็ม</b></td></tr>
+          </tbody>
+        </table></div>
+        <p class="muted" style="font-size:13px">ตัวเลขสมมติ · ที่ว่าง = Walk-in Limit − เรียกเข้าห้องแล้ว · ตัวเลขชุดเดียวกับหน้าสรุปจุดบริการของฝั่งพยาบาล</p>
+      </div>
+    </div>
+    <div class="box"><h4>ระบบตัดสินบัตรอย่างไร</h4>
+      <div class="formula">ที่ว่าง = Σ Limit Walk-in ของจุดในคลินิก (เฉพาะจุดที่มีแพทย์ออกตรวจวันนี้) − Walk-in ที่เรียกเข้าห้องตรวจแล้ววันนี้ (นับตามจุดจากคิวห้องตรวจ ตามสเปก Limit · อัปเดตทุกครั้งที่เรียกคิวเข้าห้อง)<br>ที่ว่าง &gt; 0 → V (แยกข้อความตามมี/ไม่มี HN) · เต็ม → P ถ้ามี HN / N ถ้าไม่มี HN · จุดที่ไม่ตั้ง Limit = ไม่จำกัด</div>
+      <div class="callout warn"><b>ข้อแลกเปลี่ยนของการไม่เก็บประวัติบัตร</b><span>ระบบนับเมื่อเรียกคิวเข้าห้องตรวจแล้วเท่านั้น คนที่ได้บัตร V แล้วแต่ยังอยู่ระหว่างเปิด Visit หรือคัดกรอง (อาจ 1–2 ชั่วโมงในช่วงเช้า) ยังไม่ถูกนับ ระบบจึงยังเห็นว่าว่าง และอาจออกบัตร V เกิน Limit ได้มากกว่าการนับตอนเปิด Visit · ข้อดีคือยอดตรงกับหน้าสรุปจุดบริการ และรู้คลินิกย่อยได้จริงจากจุดที่เรียกเข้า · ซึ่งสอดคล้องกับหลัก "เตือน ไม่ล็อก" อยู่แล้ว เจ้าหน้าที่จุดออกบัตรดู Dashboard ประกอบ และเปลี่ยนเป็นบัตร P เองได้</span></div>
+      <div class="callout info"><b>2 ชั้นที่ทำงานต่อกัน</b><span>ชั้นแรกคือ<b>หน้าจองคิว Walk-in</b> ที่ตัดสินบัตรตามที่ว่างระดับคลินิก เพื่อกันคนล้นตั้งแต่หน้าโรงพยาบาล ชั้นที่สองคือ <b>Limit ต่อจุด</b> ตามสเปก 14 ต.ค. ที่นับตอนคัดกรองจัดคิวเข้าห้องตรวจ เพื่อกระจายคนไม่ให้ล้นรายห้อง</span></div>
+    </div>
+    <div class="box"><h4>เงื่อนไขอื่น</h4>
+      <ul class="plain">
+        <li>P ที่เวชระเบียนตัดสินใจเปิด Visit ให้ จะนับเป็น Walk-in เกิน Limit และแสดงสีแดง ตรงกับหลัก "เตือน ไม่ล็อก" ของสเปก Limit</li>
+        <li>P/N ที่ทำนัดแล้ว จะนับเข้ายอดนัดของวันที่นัด ไม่ใช้ที่ว่าง Walk-in ของวันนี้</li>
+        <li>คนที่มีนัดวันนี้ ห้ามออกบัตร Walk-in ของคลินิกหลักเดียวกัน (ดักที่จุดออกบัตร) ให้เปิด Visit นัดตามปกติ</li>
+      </ul></div>
+  </article>
+
+  <!-- job 2 -->
+  <article class="detail" id="j2">
+    <div class="dh"><div class="t"><span class="eyebrow">งาน 2</span><h3>ลงทะเบียนทำบัตร (สร้าง HN) และให้เจ้าหน้าที่ยืนยัน</h3><div class="tags"><span class="tag pub">หน้าคนไข้</span><span class="tag staff">คำขอทำบัตรออนไลน์</span><span class="tag reuse">ใช้ AddPatient</span></div></div><span class="size">ขนาด: กลาง</span></div>
+    <div class="cols">
+      <div class="box"><h4>Flow</h4>
+        <ol class="steps">
+          <li>คนไข้เข้าจาก QR/ลิงก์ เจอ<b>หน้ากลาง</b>ให้เลือก <b>ลงทะเบียนทำบัตรใหม่</b> หรือ <b>ตรวจสอบ HN</b> (กรอกเลขบัตร + วันเกิด พบ = แสดง HN และชื่อแบบปิดบางส่วน ไปขอนัดต่อได้ · ไม่พบ = ไปลงทะเบียน)</li>
+          <li>คนไข้ใหม่กรอกฟอร์ม และติ๊กยินยอม PDPA</li>
+          <li class="who-sys">ระบบตรวจเลขบัตรซ้ำด้วย <code>CheckDuplicateIdcardPatient</code> ถ้ามี HN อยู่แล้ว แจ้งแค่ว่า "มีประวัติแล้ว" ไม่บอกข้อมูลอื่น</li>
+          <li class="who-sys">เก็บเวลาที่ยินยอม PDPA ไว้กับคำขอ</li>
+          <li class="who-sys">บันทึกลงตารางคำขอทำบัตร สถานะ "รอยืนยัน" และให้เลขอ้างอิง</li>
+          <li class="who-staff">ห้องบัตรเข้าเมนูแล้วเจอ<b>หน้ารายการ</b>ก่อน (แท็บรอยืนยัน / ดำเนินการแล้ว มีคอลัมน์ตรวจซ้ำและช่องทางแจ้งผล) กดเข้า<b>หน้ารายละเอียด</b> ซึ่งมีข้อมูลครบทุกช่องและแก้ได้ พร้อมกล่อง<b>ตรวจซ้ำ 2 ชั้น</b>: เลขบัตรประชาชน และ ชื่อ-สกุล + วันเกิด (จับประวัติเก่าที่ไม่ได้บันทึกเลขบัตร)</li>
+          <li class="who-staff">เลือกได้ 3 ทาง: <b>ยืนยันและออก HN</b> ด้วย <code>AddPatient</code> · <b>ใช้ HN เดิมและเติมเลขบัตร</b> เมื่อพบประวัติเก่า · <b>ปฏิเสธ</b> พร้อมเหตุผล</li>
+          <li class="who-sys">กดแล้วส่งแจ้งผลทันที<b>ทางหมอพร้อมตามเลขบัตร</b> (ส่งไม่ถึง = เจ้าหน้าที่โทรแจ้ง) (HN ใหม่ / HN เดิม / เหตุผลที่ปฏิเสธ + ให้นำบัตรประชาชนตัวจริงมาครั้งแรก) แล้วเก็บสถานะการส่ง · ไม่มีหน้าตรวจสถานะ</li>
+        </ol>
+      </div>
+      <div class="box"><h4>ช่องในฟอร์ม</h4>
+        <div class="fields"><span class="f req">คำนำหน้า</span><span class="f req">เพศ</span><span class="f req">ชื่อ</span><span class="f req">นามสกุล</span><span class="f req">เลขบัตรประชาชน</span><span class="f req">วันเกิด</span><span class="f req">สัญชาติ</span><span class="f req">เบอร์มือถือ</span><span class="f req">บ้านเลขที่</span><span class="f">หมู่</span><span class="f req">ตำบล</span><span class="f req">อำเภอ</span><span class="f req">จังหวัด</span><span class="f req">รหัสไปรษณีย์</span><span class="f req">ผู้ติดต่อฉุกเฉิน: ชื่อ</span><span class="f req">ความสัมพันธ์</span><span class="f req">เบอร์ผู้ติดต่อ</span><span class="f req">ยินยอม PDPA</span><span class="f">ศาสนา</span><span class="f">อาชีพ</span><span class="f">แพ้ยา (แจ้งเอง)</span></div>
+        <p class="muted" style="font-size:13.5px">ฟอร์มของพระนั่งเกล้ามีช่องบังคับประมาณ 25 ช่อง ส่วน HA.OS บังคับแค่คำนำหน้า ชื่อ และนามสกุล จึงบังคับช่องที่ต้องใช้ระบุตัวตน ตรวจสิทธิ และติดต่อกลับ และแยกที่อยู่เป็นช่อง (จังหวัด/อำเภอ/ตำบลเลือกจาก Master) เพื่อให้ลงตารางผู้ป่วยได้ตรงรหัส</p>
+        <div class="callout info"><b>พักในตารางแยก ไม่ใช้ PreHnFlag</b><span><code>FlagRegister = F</code> จะเขียนลงตารางผู้ป่วยทันที ข้อมูลจากอินเทอร์เน็ตจึงควรพักในตารางแยกก่อน แล้วเรียก <code>AddPatient</code> เมื่อเจ้าหน้าที่ยืนยันแล้วเท่านั้น</span></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- job 3 -->
+  <article class="detail" id="j3">
+    <div class="dh"><div class="t"><span class="eyebrow">งาน 3</span><h3>เช็กอินออนไลน์สำหรับคนไข้นัด</h3><div class="tags"><span class="tag pub">หน้าคนไข้</span><span class="tag new">IT ต่อหมอพร้อม</span><span class="tag reuse">ผูกตอนเปิด Visit นัด</span></div></div><span class="size">ขนาด: กลาง</span></div>
+    <div class="cols">
+      <div class="box"><h4>Flow</h4>
+        <ol class="steps">
+          <li class="who-sys">ระบบสร้างโทเคนต่อนัด แบบเดียวกับ <code>queuekey</code> แล้วสร้าง URL ส่งให้ IT นำไปส่งต่อทางหมอพร้อม</li>
+          <li>คนไข้กดปุ่มเช็กอินในหมอพร้อม แล้วหมอพร้อม Redirect มาเปิดฟอร์มของเรา หรือคนไข้เข้าเองด้วยเลขบัตร + วันเกิด</li>
+          <li class="who-sys">หน้าแสดง HN ชื่อ วัน เวลา คลินิก แพทย์ และเหตุผลการนัด</li>
+          <li>คนไข้ดูข้อมูลนัดและป้ายเหตุผลการนัด แล้วเลือก <b>อาการปกติ / อาการผิดปกติ</b> จากนั้นตอบแบบสอบถาม (ดูช่องในฟอร์ม) ถ้าตอบว่าไม่สะดวกเดินทาง มีปุ่มไปแจ้งเลื่อนนัด</li>
+          <li>กด เช็กอิน → กล่องยืนยัน → หน้าเช็กอินสำเร็จพร้อมขั้นตอน (อาการผิดปกติ = ให้ติดต่อเคาน์เตอร์พยาบาล)</li>
+          <li class="who-sys">บันทึกลงตารางข้อมูลเช็กอิน โดย<b>ยังไม่ผูกกับ Visit</b> คนไข้แก้ได้จนกว่าจะเปิด Visit</li>
+          <li class="who-staff">วันนัด คนไข้เปิด Visit นัดตามช่องทางเดิม (ตู้ Kiosk หรือเคาน์เตอร์) <b>หน้าจอไม่แก้</b></li>
+          <li class="who-sys">ใน <code>AddVisitFormAppointment</code> หลังเปิด Visit นัดสำเร็จ ถ้านัดนั้นมีข้อมูลเช็กอิน ระบบ<b>บันทึก Vital Sign เข้า Visit ทันที</b> พร้อมอาการเป็น CC, สูบบุหรี่/สุราเป็นประวัติ และธงอาการผิดปกติ / แพ้ยาใหม่ (Vital Sign ใช้วิธีเดียวกับ <code>VitalSignsPublicService.AddVitalSigns</code> ที่เครื่องวัดใช้) โดยใช้วันเวลาที่คนไข้วัดเป็นเวลาวัด แล้วทำเครื่องหมายว่าผูกแล้ว · บันทึกไม่สำเร็จต้องไม่ทำให้เปิด Visit ล้ม</li>
+          <li class="who-staff">หน้าคิวคัดกรอง<b>แก้เล็กน้อย</b>: ป้าย "อาการผิดปกติ" / "แพ้ยาใหม่" ในแถวคิว และกล่องเตือนในหน้าซักประวัติ · <b>แพ้ยาใหม่ไม่บันทึกลงรายการแพ้ยาเอง</b> พยาบาล/เภสัชกรยืนยันก่อน · Vital Sign และ CC ขึ้นในช่องเดิม บันทึกทับได้</li>
+        </ol>
+      </div>
+      <div class="box"><h4>ช่องในฟอร์ม (ตามแบบพระนั่งเกล้า)</h4>
+        <div class="fields"><span class="f req">อาการปกติ / ผิดปกติ</span><span class="f req">อาการวันนี้</span><span class="f req">สะดวกเดินทางไหม</span><span class="f req">แพ้ยาใหม่ไหม (โชว์แพ้ยาเดิม)</span><span class="f req">ความดัน SYS / DIA</span><span class="f req">ชีพจร</span><span class="f">น้ำหนัก</span><span class="f">ส่วนสูง</span><span class="f">อุณหภูมิ</span><span class="f">วันที่ · เวลาที่วัด</span><span class="f">เบอร์โทร (ดึงเบอร์เดิม)</span><span class="f">สูบบุหรี่</span><span class="f">ดื่มสุรา</span></div>
+        <div class="callout warn"><b>เงื่อนไข</b><span>ถ้าเลื่อนหรือยกเลิกนัด โทเคนต้องใช้ไม่ได้ · ค่าที่คนไข้วัดเองควรระบุแหล่งที่มาใน TB_VITAL_SIGNS (เช่น ผู้วัด) ไม่ปนกับค่าที่วัดที่ รพ. · กำหนดว่าวัดก่อนนัดได้ไม่เกินกี่ชั่วโมง · ต้องกำหนดว่าเปิดให้เช็กอินได้ตั้งแต่กี่วันก่อนนัด</span></div>
+        <div class="callout info"><b>ส่งให้ IT</b><span>รูปแบบ URL, อายุของโทเคน, ข้อความบนปุ่ม และช่วงเวลาที่ควรส่ง เช่น 1 วันก่อนนัด</span></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- job 4 -->
+  <article class="detail" id="j4">
+    <div class="dh"><div class="t"><span class="eyebrow">งาน 4</span><h3>ขอนัดออนไลน์</h3><div class="tags"><span class="tag pub">หน้าคนไข้</span><span class="tag staff">คำขอนัดออนไลน์</span><span class="tag reuse">ลงนัดด้วยระบบนัดเดิม</span></div></div><span class="size">ขนาด: กลาง</span></div>
+    <div class="cols">
+      <div class="box"><h4>Flow</h4>
+        <ol class="steps">
+          <li>คนไข้ยืนยันตัวด้วยเลขบัตร + วันเกิด ถ้ายังไม่มี HN ให้ไปงาน 2 ก่อน</li>
+          <li>คนไข้กรอกอาการ โรคประจำตัว คลินิก แพทย์ที่ต้องการ วันที่มาได้ รูปแนบ และเบอร์โทร</li>
+          <li class="who-sys">บันทึกเป็นคำขอสถานะ "รออนุมัติ" <b>โดยไม่จำกัดจำนวน</b> แล้วให้เลขอ้างอิง</li>
+          <li class="who-staff">เจ้าหน้าที่ที่มีสิทธิ์เมนู <b>คำขอนัดออนไลน์</b> ดูอาการ รูป และวันที่มาได้ แล้วกด <b>ลงนัด</b> ระบบเปิดหน้าจอนัดเดิมพร้อมกรอกค่าไว้ และติดป้ายวันที่ตรงกับวันที่คนไข้มาได้ หรือกด <b>ปฏิเสธ / โทรกลับ</b> พร้อมเหตุผล</li>
+          <li class="who-sys">คำขอเปลี่ยนเป็น "ลงนัดแล้ว" แล้วเก็บ AppointmentId ไว้ · <b>ไม่มีหน้าแจ้งผลนัด</b> นัดที่ลงเป็นนัดปกติของ HA.OS คนไข้ดูในหมอพร้อม · ถ้าปฏิเสธ เจ้าหน้าที่โทรแจ้งตามเบอร์ที่ให้ไว้ · คนไข้จะเข้า Flow เช็กอินออนไลน์ (งาน 3) ตามปกติ</li>
+        </ol>
+      </div>
+      <div class="box"><h4>ช่องในฟอร์ม</h4>
+        <div class="fields"><span class="f req">อาการ / เหตุผล</span><span class="f req">คลินิก (หลัก/ย่อย)</span><span class="f req">วันที่มาได้ จ.–อา. หรือ อื่น ๆ</span><span class="f req">เบอร์ติดต่อกลับ</span><span class="f">ช่วงวันที่ที่ต้องการ</span><span class="f">โรคประจำตัว</span><span class="f">แพทย์ที่ต้องการ</span><span class="f">รูปแนบ</span></div>
+        <h4>เงื่อนไข</h4>
+        <ul class="plain">
+          <li>รับคำขอไม่จำกัด แต่มีตัวนับคำขอที่รอ และเวลาที่รอนานสุดบนเมนู</li>
+          <li><b>แจ้งเลื่อนนัด</b> (ช่วงหลัง): เข้าจากข้อความเตือนนัดหรือหน้าเช็กอิน · เป็นคำขอประเภท "เลื่อนนัด" ผูกนัดเดิม ในเมนูเดียวกัน · เลื่อนแล้วโทเคนเช็กอินของนัดเดิมใช้ไม่ได้ และนัดใหม่ขึ้นในหมอพร้อม</li>
+          <li>คำขอที่เลยวันสุดท้ายของช่วงวันที่แล้วยังไม่มีใครลงนัด ให้เปลี่ยนเป็น "หมดอายุ" อัตโนมัติ ถ้าคนไข้เลือก "อื่น ๆ" ให้เจ้าหน้าที่ปิดเอง</li>
+          <li>ห้ามมีคำขอที่ยังรออยู่ซ้ำ คือเลขบัตรเดียวกันและคลินิกเดียวกัน</li>
+          <li>ลงนัดแล้วนับเข้า Limit <b>นัด</b> ของวันนั้น</li>
+        </ul>
+      </div>
+    </div>
+  </article>
+</section>
+
+<!-- ============ phases ============ -->
+<section>
+  <div class="sec-head"><span class="eyebrow">ลำดับการทำ</span><h2>แบ่งเป็น 5 ช่วง</h2><p class="read muted">เรียงตามของที่ต้องมีก่อน งานที่ไม่ต้องรอใครให้ทำก่อน</p></div>
+  <div class="phases">
+    <div class="phase"><div class="pn">ช่วง 0<small>ฐานร่วม</small></div><div><h4>API สาธารณะ และโครงหน้าใน Mobile คิว</h4><p>แยก Controller สาธารณะ จำกัดจำนวนครั้งที่ลอง ทำตัวยืนยันเลขบัตร + วันเกิดที่ใช้ร่วมกัน ทำ API อ่าน Master (คำนำหน้า ที่อยู่ คลินิก) เพิ่ม Route ใน Mobile คิว และสเปกข้อมูลที่ HA.OS ส่งให้ IT เพื่อแจ้งผลทางหมอพร้อม</p></div></div>
+    <div class="phase"><div class="pn">ช่วง 1</div><div><h4>งาน 2 ลงทะเบียนทำบัตร</h4><p>ทำครบได้ใน HA.OS และเป็นทางเข้าของคนไข้ใหม่ในงาน 4</p></div></div>
+    <div class="phase"><div class="pn">ช่วง 2</div><div><h4>งาน 4 ขอนัดออนไลน์</h4><p>ลงนัดด้วยหน้าจอนัดเดิม (รับค่าตั้งต้นจากคำขอ) ไม่ต้องรอ Limit</p></div></div>
+    <div class="phase"><div class="pn">ช่วง 3<small>รอ Limit</small></div><div><h4>งาน 1 จองคิว Walk-in</h4><p>เริ่มได้เมื่อ Limit ห้องตรวจขึ้นใช้งานแล้ว ทำหน้าจองคิว Walk-in (Dashboard + ตัดสินบัตร + พิมพ์บัตร) และตั้งค่าชุดคลินิกต่อจุดออกบัตร · ไม่มีตารางบัตรคิว และหน้าจอของช่องเวชระเบียนไม่ต้องแก้</p></div></div>
+    <div class="phase"><div class="pn">ช่วง 4<small>รอ IT</small></div><div><h4>งาน 3 เช็กอินออนไลน์ + การแจ้งผลผ่านหมอพร้อม</h4><p>ทำฟอร์มและการผูกตอนเปิด Visit ได้ก่อน โดยทดสอบผ่านทางเข้าด้วยเลขบัตร แล้วค่อยต่อลิงก์เมื่อ IT พร้อม</p></div></div>
+  </div>
+</section>
+
+<!-- ============ questions ============ -->
+<section>
+  <div class="sec-head"><span class="eyebrow">ยังเปิดอยู่</span><h2>คำถามที่เหลือ</h2><p class="read muted">เรื่องอื่นตกลงแล้วตามตารางด้านบน</p></div>
+  <div class="qs">
+    <div class="q"><span class="who">PDPA</span><p>ข้อความความยินยอม และระยะเวลาเก็บคำขอที่ถูกปฏิเสธหรือหมดอายุ รวมถึงรูปแนบ</p><p class="def">ต้องให้ DPO ของ รพ. ตรวจข้อความ</p></div>
+  </div>
+</section>
+
+<footer>ร่างแผนเพื่อคุยภายในทีม · ข้อมูลในหน้าจอตัวอย่างเป็นข้อมูลสมมติ · ตัวเลขผลลัพธ์มาจากสไลด์ดูงานของ รพ.พระนั่งเกล้า</footer>
+</div>
+</body>
+</html>

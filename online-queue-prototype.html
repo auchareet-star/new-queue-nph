@@ -1,0 +1,1361 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ต้นแบบคิวออนไลน์ HA.OS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap">
+<style>
+/* Layout: guided prototype styled after HA.OS itself — white portlets on #f2f3f8, black/grey controls, green #419700 accent.
+   Patient screens copy the Mobile คิว app (soft green gradient, #016738); kiosk screens copy the Kiosk app (white, big type, green footer).
+   Single light look on purpose, to match the real products. */
+:root{
+  color-scheme:light;
+  --bg:#f2f3f8; --paper:#ffffff; --ink:#111111; --fg:#4d4d4d; --muted:#8a8f98; --line:#e8e8e8; --head:#ebebeb; --soft:#f6f7f9;
+  --green:#419700; --green-soft:#eaf8e1; --green-pale:#f0f7eb; --green-call:#d8f0cf;
+  --kgreen:#016738; --kgreen-soft:#e3f0e9; --mob-a:#E2E8DD; --mob-b:#F3F5F1; --mob-label:#7FA694;
+  --ok:#419700; --ok-soft:#eaf8e1; --warn:#c77700; --warn-soft:#fff4e0; --bad:#e53935; --bad-soft:#fdecec; --info:#2b5aa8; --info-soft:#dbe7f7;
+  --new:#7c3aed; --new-soft:#f1eafe; --mod:#c2410c; --mod-soft:#fdeee4; --reuse:#419700; --reuse-soft:#eaf8e1;
+  --hl:#f59e0b; --hm:#000000; --hm-soft:#dedede; --hm-act:#a3a3a3; --hm-input:#000000; --hm-font-soft:#4b4b4b;
+  --ch-online:#016738; --ch-kiosk:#1a7fa0; --ch-counter:#111111;
+  --f:"Sarabun","Noto Sans Thai",Tahoma,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 var(--f)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+h1,h2,h3,h4{margin:0;color:var(--ink);line-height:1.3;text-wrap:balance}
+.app{display:grid;grid-template-columns:260px minmax(0,1fr) 300px;min-height:100vh}
+@media (max-width:1500px){.app{grid-template-columns:240px minmax(0,1fr)}.chg{grid-column:2}}
+@media (max-width:820px){.app{grid-template-columns:minmax(0,1fr)}.chg{grid-column:1}.nav{position:static!important;height:auto!important}}
+
+/* ---------- prototype nav (white, HA.OS-like) ---------- */
+.nav{background:var(--paper);border-right:1px solid var(--line);padding:16px 12px 24px max(12px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;gap:10px;align-items:center}
+.blogo{width:40px;height:40px;border-radius:50%;background:#000;color:#fff;display:grid;place-items:center;font-size:7.5px;font-weight:700;flex-shrink:0;overflow:hidden}
+.brand b{font-size:16px;color:var(--ink);display:block;line-height:1.2}
+.brand span{font-size:12px;color:var(--muted)}
+.ngrp{display:grid;gap:2px}
+.ngrp h4{font-size:12.5px;font-weight:700;padding:6px 8px 2px;display:flex;gap:6px;align-items:center}
+.ch{display:inline-block;font-size:11px;font-weight:700;color:#fff;border-radius:3px;padding:0 6px;line-height:18px}
+.ch.c-online{background:var(--ch-online)}.ch.c-kiosk{background:var(--ch-kiosk)}.ch.c-counter{background:var(--ch-counter)}
+.nb{background:none;border:0;text-align:left;padding:6px 8px;border-radius:4px;font-size:14px;color:var(--fg);display:flex;gap:8px;align-items:baseline}
+.nb:hover{background:var(--soft)}
+.nb.on{background:var(--green);color:#fff;font-weight:600}
+.nb .k{font-size:12px;color:var(--muted);min-width:24px;font-weight:600}
+.nb.on .k{color:#e6f5da}
+.nav .sep{height:1px;background:var(--line)}
+.nb.doc{font-weight:700;color:var(--mod)}
+.nb.doc.on{background:var(--mod);color:#fff}
+
+/* ---------- main + guide ---------- */
+.main{display:grid;gap:14px;align-content:start;padding:16px max(16px,env(safe-area-inset-right,0px)) 40px 16px;min-width:0}
+.guide{background:var(--paper);border-radius:6px;border-left:6px solid var(--green);padding:12px 16px;display:grid;gap:8px;position:sticky;top:env(safe-area-inset-top,0px);z-index:30;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.gh{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.gh b{font-size:17px;color:var(--ink)}
+.gh .gstep{margin-left:auto;font-size:13px;color:var(--muted);font-weight:600}
+.guide p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink)}
+.guide p b{color:var(--green)}
+.gbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dots{display:flex;gap:4px;flex:1;min-width:120px}
+.dots i{height:5px;flex:1;border-radius:3px;background:#e3e3e3}
+.dots i.done{background:#a6cf86}.dots i.now{background:var(--green)}
+.gb{border:1px solid #bbb;background:#fff;border-radius:4px;padding:5px 14px;font-size:14px}
+.gb.primary{background:var(--green);color:#fff;border-color:var(--green);font-weight:700}
+.samples{display:flex;flex-wrap:wrap;gap:6px;font-size:13px}
+.samples span{background:var(--soft);border-radius:4px;padding:1px 8px}
+.stage{min-width:0;display:grid;justify-items:center;gap:6px}
+.stage-label{justify-self:start;font-size:13px;font-weight:600;color:var(--muted)}
+.hl{outline:3px solid var(--hl)!important;outline-offset:3px;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.55)}50%{box-shadow:0 0 0 8px rgba(245,158,11,0)}}
+@media (prefers-reduced-motion:reduce){.hl{animation:none}}
+
+/* ---------- right panel ---------- */
+.chg{background:var(--paper);border-left:1px solid var(--line);padding:16px max(16px,env(safe-area-inset-right,0px)) 30px 16px;display:grid;gap:12px;align-content:start}
+@media (max-width:1500px){.chg{margin:0 16px 30px;border-radius:6px;border:1px solid var(--line)}}
+.chg h3{font-size:16px}
+.chg .sub{font-size:12.5px;color:var(--muted);margin-top:-6px}
+.ci{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;font-size:13.5px;line-height:1.55;align-items:start}
+.pill{font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 8px;white-space:nowrap}
+.pill.new{background:var(--new-soft);color:var(--new)}.pill.mod{background:var(--mod-soft);color:var(--mod)}.pill.reuse{background:var(--reuse-soft);color:var(--reuse)}
+.legend{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ---------- Mobile คิว (patient) ---------- */
+.phone{width:370px;max-width:100%;background:#1c1f24;border-radius:38px;padding:11px;box-shadow:0 14px 40px rgba(0,0,0,.18)}
+.scr{background:#fff;border-radius:28px;overflow:hidden;min-height:660px;display:flex;flex-direction:column;color:#4D4D4D}
+.mh{padding:18px 16px 10px;display:flex;gap:10px;align-items:center}
+.mlogo{width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid var(--kgreen);display:grid;place-items:center;color:var(--kgreen);font-weight:800;font-size:11px;flex-shrink:0}
+.mh b{display:block;font-size:16.5px;color:var(--kgreen)}
+.mh span{font-size:12.5px;color:#7FA694}
+.mback{background:#fff;border:0;color:var(--kgreen);width:32px;height:32px;border-radius:50%;font-size:18px;line-height:1;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.mb{padding:14px 14px 18px;display:grid;gap:12px;align-content:start;flex:1;position:relative}
+.mb::before{content:"";position:absolute;left:0;right:0;top:0;height:230px;background:#F3F5F1;border-radius:0 0 50px 50px}
+.mb>*{position:relative}
+.mnav{background:#fff;padding:14px 16px;display:flex;gap:10px;align-items:center;box-shadow:0 2px 4px rgba(0,0,0,.2);position:relative;z-index:1}
+.mnav .mlogo{width:44px;height:44px}
+.mnav div b{display:block;font-size:18px;font-weight:600;color:var(--kgreen);line-height:1.2}
+.mnav div span{display:block;font-size:12px;font-weight:700;color:var(--kgreen);letter-spacing:.02em}
+.mtitle{display:flex;gap:10px;align-items:center}
+.mtitle b{display:block;font-size:20px;font-weight:500;color:var(--kgreen);line-height:1.25}
+.mtitle span{display:block;font-size:14px;color:#7FA694}
+.mfoot{font-size:11px;color:#7FA694;text-align:center;padding:8px}
+.mcard{background:#fff;border-radius:5px 15px 15px 15px;padding:13px 18px;display:grid;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.1)}
+.mcard h4{font-size:18px;font-weight:500;color:var(--kgreen)}
+.fl{display:grid;gap:3px}
+.fl label,.lab{font-size:14px;color:var(--mob-label)}
+.r{color:var(--bad)}
+.in{width:100%;border:1px solid #cfd8cf;border-radius:8px;padding:7px 10px;background:#fff;font-size:14px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid #cfd8cf;background:#fff;border-radius:999px;padding:3px 11px;font-size:13px}
+.chip[aria-pressed="true"]{background:var(--kgreen);border-color:var(--kgreen);color:#fff}
+.mbtn{border:0;border-radius:100px;min-height:48px;padding:10px 16px;font-weight:600;background:var(--kgreen);color:#fff;font-size:16px;width:100%;box-shadow:0 0 15px rgba(0,0,0,.15)}
+.mbtn:active{background:#1a4f36}
+.mbtn.ghost{background:#fff;color:var(--kgreen);border:1px solid var(--kgreen)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:#fff;border:0;border-radius:16px;padding:12px;text-align:left;display:grid;gap:3px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.tile b{font-size:14.5px;color:var(--kgreen)}
+.tile span{font-size:12px;color:#7FA694;line-height:1.45}
+.tile[disabled]{opacity:.55;cursor:default}
+.refbox{background:#fff;border-radius:5px 15px 15px 15px;padding:16px;text-align:center;display:grid;gap:2px;box-shadow:0 10px 30px rgba(0,0,0,.1)}
+.refbox .no{font-size:32px;font-weight:600;color:var(--kgreen);letter-spacing:.02em}
+.refbox .lab{color:#7FA694}
+.msg{border-radius:10px;padding:9px 12px;font-size:13.5px}
+.msg.err{background:var(--bad-soft);color:var(--bad)}.msg.info{background:var(--info-soft);color:var(--info)}.msg.ok{background:var(--ok-soft);color:#2f6e00}.msg.warn{background:var(--warn-soft);color:var(--warn)}
+.kv{display:grid;grid-template-columns:96px minmax(0,1fr);gap:4px;font-size:13.5px}
+.kv span:first-child{color:var(--muted)}
+.mcard .kv{font-size:15px}
+.mcard .kv span:first-child{color:#4D4D4D;font-weight:600}
+.st{display:inline-block;border-radius:999px;padding:1px 10px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.st.wait{background:var(--warn-soft);color:var(--warn)}.st.ok{background:var(--ok-soft);color:var(--ok)}.st.bad{background:var(--bad-soft);color:var(--bad)}.st.mute{background:#eee;color:#777}.st.info{background:var(--info-soft);color:var(--info)}
+.chat{flex:1;padding:14px;display:grid;gap:10px;align-content:start}
+.bubble{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.bubble .bh{background:var(--kgreen);color:#fff;padding:10px 12px;font-weight:700}
+.bubble .bb{padding:10px 12px;display:grid;gap:6px;font-size:13.5px}
+
+/* ---------- HA.OS staff shell ---------- */
+/* theme tokens come from _config-custom-ehr.scss: ehr-13 (ดำ) by default, ehr-4 (เขียว, default for hospCode 10679) via the toggle */
+:root[data-ht="green"]{--hm:#13A709; --hm-soft:#D8F5D6; --hm-act:#088800; --hm-input:#77B873; --hm-font-soft:#77B873}
+.haos{width:100%;max-width:1240px;background:#f3f3f3;border:1px solid var(--line);border-radius:6px;overflow:hidden;display:grid;grid-template-columns:230px minmax(0,1fr);font-size:13px;font-weight:300;color:#4d4d4d;min-height:640px;box-shadow:0 6px 24px rgba(0,0,0,.08)}
+@media (max-width:1000px){.haos{grid-template-columns:minmax(0,1fr)}.hside{display:none!important}}
+.hside{background:var(--hm);color:#fff;display:flex;flex-direction:column;padding-bottom:16px}
+.hbrand{display:flex;align-items:center;gap:10px;padding:0 16px;height:65px;font-size:16px;font-weight:400}
+.hbrand .tg{margin-left:auto;opacity:.8;font-size:15px}
+.hlogo{width:36px;height:36px;border-radius:50%;border:2px solid #fff;display:grid;place-items:center;font-size:8px;font-weight:700}
+.hgrp{padding:20px 25px 6px;font-size:12px;font-weight:500;letter-spacing:.3px;color:rgba(255,255,255,.75)}
+.hm{background:none;border:0;color:#fff;text-align:left;padding:9px 25px;min-height:44px;font-size:13px;font-weight:400;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.hm:hover,.hm.on{background:var(--hm-act)}
+.hmain{display:flex;flex-direction:column;min-width:0}
+.htop{background:#fefefe;box-shadow:0 0 40px rgba(82,63,105,.1);min-height:65px;padding:8px 20px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px;color:#999;position:relative;z-index:1}
+.htop .hsel,.htop .srch{border:1px solid var(--hm-input);border-radius:4px;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.1);height:38px;display:flex;align-items:center;padding:0 10px}
+.htop .hsel{width:84px;justify-content:space-between;color:#4d4d4d}
+.htop .srch{width:320px;max-width:100%;justify-content:space-between;gap:8px;white-space:nowrap;overflow:hidden;font-size:13px}
+.cardicon{display:inline-grid;place-items:center;width:60px;height:38px;border-radius:4px;background:var(--hm-soft);color:var(--hm);font-size:12px;font-weight:700}
+.htop .ticons{margin-left:auto;display:flex;gap:14px;color:#6e7899}
+.htop .ticons svg{width:20px;height:20px;display:block}
+.htop .usr{text-align:right;line-height:1.3;color:#6b7594;font-size:13px}
+.htop .usr b{color:#4d4d4d;font-weight:500}
+.htop .ava{width:38px;height:38px;border-radius:50%;background:#e8ecef;display:grid;place-items:center;color:#8a8f98;font-weight:600}
+.hsub{background:#fff;box-shadow:0 10px 30px rgba(82,63,105,.08);min-height:54px;padding:8px 25px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.hsub h1{font-size:21px;font-weight:500;color:var(--hm)}
+.hsub .cr{font-size:15.5px;font-weight:500;color:var(--hm-font-soft);display:flex;gap:8px;align-items:center}
+.hsub .dot{font-size:24px;line-height:1}
+.hct{padding:20px 25px 25px;display:grid;gap:20px;min-width:0}
+.port{background:#fff;border-radius:4px;padding:25px;box-shadow:0 0 13px rgba(82,63,105,.05);min-width:0;display:grid;gap:12px;align-content:start}
+.ph2{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.ph2 h2{font-size:18px;font-weight:500;color:var(--hm)}
+.haos .hdl{font-size:24px;font-weight:700;color:#4d4d4d}
+.haos .clock{font-size:18px;font-weight:700;color:#A6BB98}
+.tabs{display:flex;gap:20px;flex-wrap:wrap}
+.tabs{border-bottom:1px solid #ebedf2;flex-wrap:nowrap!important;overflow-x:auto;gap:18px!important}
+.tab{white-space:nowrap;flex-shrink:0}
+.tab{background:none;border:0;padding:8px 0;margin-bottom:-1px;border-bottom:5px solid transparent;font-size:16px;font-weight:600;display:flex;gap:6px;align-items:center;color:var(--hm)}
+.tab:hover{border-bottom-color:var(--hm-act)}
+.tab.on{color:#419700;border-bottom-color:var(--hm-act)}
+.badge{background:#a6bb98;color:#fff;border-radius:10rem;font-size:12px;padding:1px .8em;font-weight:600}
+.tab.on .badge{background:#419700}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:var(--head);color:var(--ink);font-weight:600;padding:10px 10px;text-align:left;white-space:nowrap;border-bottom:1px solid #ddd}
+td{padding:10px;border-bottom:1px solid #eee;vertical-align:middle}
+.haos table{font-size:15px}
+.haos th{background:var(--hm-soft);color:var(--hm);font-size:16px;font-weight:500;line-height:20px;border-bottom:0}
+.haos td{font-weight:400;border-bottom:1px solid #ebedf2}
+.haos tbody tr:nth-child(even) td{background:#f8fafb}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.click{cursor:pointer}
+tr.click:hover td{background:#fafcf8}
+tr.sel td{background:var(--green-pale)}
+tr.grp td{background:var(--green-soft);font-weight:600;color:var(--ink)}
+tr.g-blue td{background:#DDE8FA!important;color:#2f70a1;font-weight:700;font-size:16px;padding:8px 10px}
+.b{border:0;border-radius:3px;padding:7px 14px;font-size:14px;white-space:nowrap}
+.b.green{background:var(--green);color:#fff}.b.black{background:#111;color:#fff;font-weight:600}.b.out{background:#fff;border:1px solid #ccc;color:#333}.b.red{background:var(--bad);color:#fff}.b.blue{background:#3b82f6;color:#fff}.b.violet{background:#a07ce6;color:#fff}.b.grey{background:#ececec;color:#aaa}
+.b[disabled]{opacity:.4;cursor:not-allowed}
+/* HA.OS mat-raised-button colors: btn-save = theme main, basic = white + main border, btn-view-4 = soft */
+.haos .b{border-radius:4px;font-size:15px;font-weight:300;letter-spacing:.35px;padding:7px 16px}
+.haos .b.green{background:var(--hm);color:#fff;font-weight:400}
+.haos .b.out{background:#fff;border:1px solid var(--hm);color:var(--hm);border-radius:5px}
+.haos .b.black{background:var(--hm-soft);color:var(--hm);font-weight:500}
+.haos .b.red{background:#fff1f7;color:#fe4d97}.haos .b.blue{background:#f1f6fd;color:#4a90e2}.haos .b.grey{background:#e8ecef;color:#4d4d4d}
+.haos .in{border:1px solid var(--hm-input);border-radius:4px;min-height:41px;font-size:14px;color:#495057}
+.haos .frm .in{border-color:var(--hm-input)}
+.haos .fl label,.haos .frm .fl label{color:var(--hm);font-size:14px;font-weight:400}
+.haos .seg button.on{background:var(--hm)}
+.haos .stepno{background:var(--hm)}
+.themebar{display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.themebar button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 10px;font-size:12.5px}
+.themebar button[aria-pressed="true"]{background:#111;color:#fff;border-color:#111}
+.themebar button.g[aria-pressed="true"]{background:#13A709;border-color:#13A709}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));gap:16px;align-items:start}
+.box{border:1px solid var(--line);border-radius:10px;padding:12px 16px;display:grid;gap:8px;align-content:start;min-width:0}
+.box h3{font-size:15.5px}
+.lblg{color:var(--green);font-size:18px;font-weight:600}
+.tagn{display:inline-block;font-size:10.5px;font-weight:700;border-radius:3px;padding:0 5px;vertical-align:middle;white-space:nowrap}
+.tagn.new{background:var(--new-soft);color:var(--new);border:1px solid #d9c6fb}
+.tagn.mod{background:var(--mod-soft);color:var(--mod);border:1px solid #f5c9ad}
+.hside .tagn.new{background:#5b21b6;color:#fff;border-color:#5b21b6}
+.hside .tagn.mod{background:#9a3412;color:#fff;border-color:#9a3412}
+.src{font-size:11.5px;font-weight:700;color:var(--mod);background:var(--mod-soft);border-radius:3px;padding:0 6px;margin-left:6px;white-space:nowrap}
+.big{font:700 44px/1 var(--f)}
+.tl{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:4px;font-weight:800;color:#fff}
+.tl.V{background:var(--ok)}.tl.P{background:var(--bad)}.tl.N{background:var(--warn)}
+.sugg{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;border-radius:6px;padding:12px}
+.sugg.V{background:var(--ok-soft)}.sugg.P{background:var(--bad-soft)}.sugg.N{background:var(--warn-soft)}.sugg.X{background:var(--bad-soft)}
+.sugg.V .big{color:var(--ok)}.sugg.P .big{color:var(--bad)}.sugg.N .big{color:var(--warn)}.sugg.X .big{color:var(--bad)}
+.tkt{border:2px dashed #999;border-radius:6px;padding:12px 14px;display:grid;gap:3px;background:#fff;max-width:300px;font-size:13.5px}
+.tkt .tno{font:700 34px/1.1 var(--f);letter-spacing:.03em}
+.tkt .tkh{font-size:12px;font-weight:700;color:#111;border-bottom:1px dashed #bbb;padding-bottom:4px;margin-bottom:2px}
+.tkt .tft{display:flex;gap:8px;align-items:center;border-top:1px dashed #bbb;padding-top:6px;margin-top:4px;font-size:12px}
+.prit{display:inline-block;border-radius:999px;padding:0 9px;font-size:12px;font-weight:700;margin-left:6px;white-space:nowrap}
+.prit.pri-e{background:#fdecec;color:#e53935;border:1px solid #f5b5b3}.prit.pri-m{background:#fff4d6;color:#b88a1a;border:1px solid #f0d58a}
+.flag{display:inline-block;border-radius:4px;padding:0 7px;font-size:12px;font-weight:700;margin-left:6px;white-space:nowrap}
+.flag.abn{background:#e53935;color:#fff}.flag.alg{background:#fff4e0;color:#c77700;border:1px solid #f3c98b}
+.chkl{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:12.5px}
+.rchips{display:flex;flex-wrap:wrap;gap:6px}.rchip{background:#eef4ff;color:#2b5aa8;border-radius:999px;padding:2px 10px;font-size:12.5px}
+.symb{display:grid;grid-template-columns:1fr 1fr;gap:8px}.symb button{border:0;border-radius:100px;min-height:44px;font:600 15px var(--f);color:#fff}
+.symb .n{background:#4ba0e0}.symb .x{background:#e32b2b}.symb button[aria-pressed="false"]{opacity:.35}
+.rad{display:flex;gap:16px;flex-wrap:wrap;font-size:14px}.rad label{display:flex;gap:6px;align-items:center;color:#4D4D4D}
+.mmodal{position:absolute;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:18px;z-index:5;border-radius:28px}
+.mmodal .box2{background:#fff;border-radius:12px;padding:18px;display:grid;gap:10px;text-align:center;width:100%}
+.scr{position:relative}
+.srcbar{background:var(--mod-soft);color:var(--mod);border-radius:4px;padding:6px 10px;font-size:13px}
+.arow{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}
+.agrp{display:flex;gap:8px;align-items:center}.agrp label{color:var(--hm);font-size:14px;font-weight:400;white-space:nowrap}
+.afoot{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:0;border-top:1px solid #ebedf2;margin:0 -25px;padding:0 25px}
+@media (max-width:900px){.afoot{grid-template-columns:minmax(0,1fr)}}
+.acal{border-right:1px solid #ebedf2;padding:18px 18px 18px 0;display:grid;gap:12px;align-content:start}
+.aday{padding:18px 0 18px 18px;display:grid;gap:10px;align-content:start}
+.dcard{display:flex;gap:12px;align-items:center}.dimg{width:56px;height:56px;border-radius:50%;background:#e8ecef}
+.chead{display:flex;justify-content:space-between;align-items:center}.chead .cnav{border:1px solid #e8e8e8;background:#fff;border-radius:4px;width:28px;height:28px;margin-left:4px}
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cdow{font-size:12.5px;color:#888;padding:2px 0}
+.cday{border:0;background:none;display:grid;justify-items:center;gap:0;padding:3px 0;border-radius:6px;position:relative}
+.cday[disabled]{cursor:default}
+.cnum{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;font-weight:600;font-size:14px}
+.cnum.dt0{color:#c9c9c9}.cnum.dt1{color:#999;text-decoration:line-through}.cnum.dt2{color:#ef2917}.cnum.dt3{color:#ffaa2b}.cnum.dt4{color:#429800}
+.cday.on .cnum{background:#429800;color:#fff}
+.cday.fit::after{content:"";position:absolute;inset:1px 4px auto;height:32px;border:2px dashed var(--new);border-radius:999px;pointer-events:none}
+.cq{font-size:11px;color:#666}.cq.full{color:#ef2917}
+.clegend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:#666}.clegend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}.clegend i.ring{border:2px dashed var(--new);width:10px;height:10px;background:none}
+.atabs{display:flex;gap:0}.atab{padding:6px 18px;border:1px solid #e8e8e8;font-size:13px;color:#888}.atab.on{background:#429800;border-color:#429800;color:#fff}
+table.slap td{border-bottom:1px solid #ebedf2;padding:10px}table.slap td.tm{width:120px;color:#4d4d4d;white-space:nowrap}
+.sbar{height:8px;background:#eef1ee;border-radius:4px;overflow:hidden;margin-bottom:3px}.sbar i{display:block;height:100%;background:#429800}
+table.lmt tr.off td{color:#aaa;background:#fafafa}
+.in.lmi{width:90px;min-height:34px;text-align:right;padding:4px 8px}
+.slip{border:1px solid #ccc;border-radius:4px;background:#fff;padding:14px 16px;display:grid;gap:8px;max-width:340px;font-size:13.5px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.slip .qrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;border:1px solid #e3e3e3;border-radius:4px;padding:8px 10px}
+.slip .qrow b.q{font:700 26px/1.1 var(--f);color:#016738}
+.qr{width:56px;height:56px;background:conic-gradient(#111 25%,#fff 0 50%,#111 0 75%,#fff 0) 0 0/14px 14px;border:3px solid #111}
+.samples{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:18px;align-items:start}
+.samples figure{margin:0;display:grid;gap:8px}
+.samples figcaption{font-size:13px;color:var(--muted)}
+.tkt.V{border-color:var(--ok)}.tkt.V .tno{color:var(--ok)}.tkt.P{border-color:var(--bad)}.tkt.P .tno{color:var(--bad)}.tkt.N{border-color:var(--warn)}.tkt.N .tno{color:var(--warn)}
+.barcode{height:34px;margin:4px 0 2px;background:repeating-linear-gradient(90deg,#111 0 2px,transparent 2px 4px,#111 4px 5px,transparent 5px 8px,#111 8px 11px,transparent 11px 13px)}
+.stepno{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;font-size:13px;font-weight:700;margin-right:8px;vertical-align:2px}
+.cap{display:inline-block;border-radius:999px;padding:1px 10px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.cap.ok{background:var(--ok-soft);color:var(--ok)}.cap.near{background:var(--warn-soft);color:var(--warn)}.cap.full{background:var(--bad-soft);color:var(--bad)}.cap.over{background:var(--bad);color:#fff}.cap.none{background:#f0f0f0;color:#777}
+.chev{display:inline-block;width:16px;color:var(--green);font-weight:700}
+.tool{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid #ccc;border-radius:4px;overflow:hidden}
+.seg button{border:0;background:#fff;padding:5px 12px;font-size:13.5px;color:#333}
+.seg button.on{background:#111;color:#fff}
+.gear{border:1px solid var(--line);background:#fff;border-radius:4px;padding:5px 10px;font-size:13.5px}
+.callrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:12px}
+@media (max-width:760px){.callrow{grid-template-columns:minmax(0,1fr)}}
+.who{border:1px solid var(--line);border-radius:6px;padding:14px;display:grid;gap:10px;align-content:center;font-size:16px;color:var(--ink);font-weight:700}
+.callbox{background:var(--green-call);border-radius:6px;display:grid;place-items:center;color:var(--green);font-size:20px;font-weight:600;min-height:110px;text-align:center;padding:10px}
+.slot{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:5px;padding:10px 14px;background:#fff;text-align:left;width:100%}
+.slot.on{border:2px solid var(--green);background:var(--green-pale);padding:9px 13px}
+.slot[disabled]{background:#f6f6f6;color:#aaa;cursor:not-allowed}
+.slot .m{font-size:11.5px;font-weight:700;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:0 8px}
+.thumb{width:72px;height:54px;border-radius:4px;background:repeating-linear-gradient(45deg,#e8ecef,#e8ecef 6px,#f5f7f8 6px,#f5f7f8 12px);display:grid;place-items:center;font-size:10px;color:#888;border:1px solid #ddd}
+.empty{color:var(--muted);text-align:center;padding:18px}
+.frm{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 14px}
+.frm .fl label{color:#555;font-size:13px}
+.frm .in{border-color:#bbb;border-radius:4px}
+.sec{font-size:15px;font-weight:700;color:var(--ink);border-bottom:1px solid var(--line);padding-bottom:4px}
+.photo{width:110px;height:130px;border:1px dashed #bbb;border-radius:4px;display:grid;place-items:center;color:#aaa;font-size:12px;text-align:center}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:16px;z-index:50}
+.mdl{background:#fff;border-radius:4px;width:min(720px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.mdl .mhd{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.mdl .mhd h4{font-size:20px}
+.mdl .mbd{padding:16px 20px;overflow:auto;display:grid;gap:14px}
+.mdl .mft{padding:12px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
+.zone{display:grid;gap:6px}
+.zone .zh{display:flex;justify-content:space-between;align-items:center;font-weight:700;color:var(--ink)}
+.zone .zl{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px 12px;font-size:14px}
+.zone label{display:flex;gap:6px;align-items:center}
+.linkb{background:none;border:0;color:var(--green);text-decoration:underline;font-size:13px;padding:0}
+
+/* ---------- Kiosk ---------- */
+.kiosk{width:760px;max-width:100%;background:#2b2f36;border-radius:20px;padding:14px;box-shadow:0 14px 40px rgba(0,0,0,.2)}
+.kscr{background:#fff;border-radius:8px;min-height:520px;display:flex;flex-direction:column;overflow:hidden;color:#4d4d4d}
+.kbody{flex:1;padding:28px 34px;display:grid;gap:16px;align-content:start;justify-items:center;text-align:center}
+.kt1{font-size:34px;font-weight:700;color:#4d4d4d}
+.kt2{font-size:24px;font-weight:600;color:#4d4d4d}
+.kslot{width:260px;height:120px;border-radius:12px;background:var(--kgreen-soft);display:grid;place-items:center;color:var(--kgreen);font-weight:700;position:relative}
+.kslot::after{content:"";position:absolute;width:150px;height:8px;border-radius:4px;background:#2b2f36;bottom:24px}
+.kcard{width:100%;max-width:620px;border-radius:14px;box-shadow:0 0 18px rgba(0,0,0,.12);padding:16px 22px;display:grid;gap:8px;text-align:left}
+.kcard .top{display:flex;gap:14px;align-items:center}
+.kno{width:70px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,.15);text-align:center;padding:4px;display:grid}
+.kno small{font-size:13px;font-weight:600}.kno b{font-size:30px;color:#4d4d4d;line-height:1.1}
+.kwork{font-size:26px;font-weight:700}
+.khn{background:var(--kgreen);color:#fff;border-radius:6px;padding:2px 10px;font-weight:700;white-space:nowrap}
+.kline{height:1px;background:#e3e3e3}
+.kkv{display:grid;grid-template-columns:120px 14px minmax(0,1fr);font-size:18px;font-weight:600}
+.kkv span:last-child{font-weight:500}
+.kbtn{border:0;border-radius:10px;background:var(--kgreen);color:#fff;font-size:24px;font-weight:600;padding:12px 60px;box-shadow:0 0 12px rgba(0,0,0,.15)}
+.kfoot{background:var(--kgreen);color:#fff;font-weight:600;font-size:15px;text-align:center;padding:10px;display:flex;gap:10px;justify-content:center;align-items:center}
+.kfoot i{width:24px;height:24px;border-radius:50%;background:#fff;display:inline-block}
+.demo-cards{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:13px}
+.demo-cards .lab2{width:100%;text-align:center;color:var(--muted)}
+.idc{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px;text-align:left;display:grid;font-size:12.5px}
+.idc b{font-size:13.5px;color:var(--ink)}
+
+/* ---------- doc ---------- */
+.doc{width:100%;max-width:1200px;background:#fff;border-radius:4px;padding:22px;display:grid;gap:16px;box-shadow:0 0 12px rgba(82,63,105,.05)}
+.doc h2{font-size:22px}
+.doc tr.grp2 td{background:var(--head);font-weight:700;color:var(--ink);font-size:13px;padding:7px 10px}
+
+.toast{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:max(20px,env(safe-area-inset-bottom,0px));background:var(--green);color:#fff;padding:10px 16px;border-radius:4px;z-index:60;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:min(420px,calc(100vw - 40px))}
+.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="nav" id="nav" aria-label="เลือกเคส"></nav>
+  <main class="main">
+    <div class="guide" id="guide" aria-live="polite"></div>
+    <div class="stage" id="stage"></div>
+  </main>
+  <aside class="chg" id="chg" aria-label="สิ่งที่ต้องทำในหน้านี้"></aside>
+</div>
+<div id="modal-root"></div>
+<script>
+/* ======================= helpers ======================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const digits = s => String(s || "").replace(/\D/g, "");
+const val = id => { const e = document.getElementById(id); return e ? e.value.trim() : ""; };
+const pad = n => String(n).padStart(3, "0");
+/* queue priority: kept on the visit via the existing "ฉุกเฉิน?" flag (UrgentFlag) + one new value for monks / 80+; queue number format unchanged */
+const PRI = {N:["ทั่วไป",""], M:["พระ / อายุ 80 ปีขึ้นไป","pri-m"], E:["ฉุกเฉิน","pri-e"]};
+const PRANK = {E:0, M:1, N:2};
+const priTag = k => k && k !== "N" ? `<span class="prit ${PRI[k][1]}">${PRI[k][0]}</span>` : "";
+const plusMin = (t, m) => { const [h, mm] = t.split(":").map(Number), x = h * 60 + mm + m; return String(Math.floor(x / 60) % 24).padStart(2, "0") + ":" + String(x % 60).padStart(2, "0"); };
+const hhmm = () => new Date().toTimeString().slice(0, 5);
+const nowStr = () => "16/10 " + hhmm();
+const pname = p => p ? `${p.title} ${p.first} ${p.last}` : "-";
+const fmtCid = c => { c = digits(c); return c.length === 13 ? `${c[0]}-${c.slice(1,5)}-${c.slice(5,10)}-${c.slice(10,12)}-${c[12]}` : c; };
+function toast(t){ const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 2800); }
+const DOW = ["จ.","อ.","พ.","พฤ.","ศ.","ส.","อา."];
+const HOSP = "โรงพยาบาลตัวอย่าง", HOSP_EN = "SAMPLE HOSPITAL";
+
+/* ======================= data ======================= */
+const Z1 = "OPD ชั้น 1", Z2 = "OPD ชั้น 2", Z3 = "OPD ชั้น 3", Z4 = "อาคารเฉลิมพระเกียรติ";
+function seed(){ return {
+  clinics: {
+    GP00:{name:"เวชปฏิบัติทั่วไป", main:null, zone:Z1, lim:60, vis:33, limA:10, ap:5},
+    ME00:{name:"ห้องตรวจอายุรกรรม", main:null, zone:Z1, lim:45, vis:40, limA:45, ap:38},
+    ME01:{name:"อายุรกรรม ชั้นบน", main:"ME00", zone:Z1, lim:20, vis:16, limA:20, ap:12},
+    ME02:{name:"คลินิกเบาหวาน", main:"ME00", zone:Z1, lim:5, vis:5, limA:30, ap:9},
+    ME03:{name:"คลินิกความดันโลหิต", main:"ME00", zone:Z1, lim:10, vis:8, limA:25, ap:20},
+    SS00:{name:"คลินิกประกันสังคม", main:null, zone:Z1, lim:40, vis:29, limA:20, ap:14},
+    SU00:{name:"ห้องตรวจศัลยกรรม", main:null, zone:Z2, lim:30, vis:30, limA:40, ap:20},
+    SU01:{name:"ศัลยกรรมระบบปัสสาวะ", main:"SU00", zone:Z2, lim:8, vis:3, limA:15, ap:10},
+    OR00:{name:"ศัลยกรรมกระดูก", main:null, zone:Z2, lim:null, vis:22, limA:null, ap:15},
+    PE00:{name:"ห้องตรวจกุมารเวช", main:null, zone:Z3, lim:25, vis:12, limA:30, ap:18},
+    PE01:{name:"คลินิกเด็กดี", main:"PE00", zone:Z3, lim:10, vis:2, limA:20, ap:15},
+    OB00:{name:"สูติ-นรีเวช", main:null, zone:Z3, lim:20, vis:19, limA:30, ap:27},
+    EN00:{name:"หู คอ จมูก", main:null, zone:Z4, lim:15, vis:6, limA:20, ap:11},
+    EY00:{name:"จักษุ", main:null, zone:Z4, lim:15, vis:15, limA:25, ap:25},
+    DE00:{name:"ทันตกรรม", main:null, zone:Z4, lim:10, vis:4, limA:20, ap:16},
+    PS00:{name:"จิตเวช", main:null, zone:Z4, lim:5, vis:1, limA:15, ap:9}
+  },
+  cfg: {set:["GP00","ME00","ME01","ME02","ME03","SS00","SU00","SU01","OR00"], point:"จุดออกบัตรคิว หน้าเวชระเบียน"},
+  patients: [
+    {hn:"125/69", title:"นาย", first:"สมชาย", last:"ใจงาม", cid:"1100000000011", dob:"12/03/2508", phone:"081-234-5678", sex:"ชาย", allergy:"Penicillin", right:"ข้าราชการ (เบิกจ่ายตรง)"},
+    {hn:"880/69", title:"นาง", first:"สมศรี", last:"มีสุข", cid:"1100000000022", dob:"05/08/2501", phone:"089-765-4321", sex:"หญิง", allergy:"-", right:"หลักประกันสุขภาพ (บัตรทอง) · หน่วยบริการหลัก รพ.ตัวอย่าง"},
+    {hn:"455/69", title:"นาย", first:"มานะ", last:"ตั้งใจ", cid:"1100000000055", dob:"30/06/2496", phone:"086-555-1212", sex:"ชาย", allergy:"-", right:"ประกันสังคม · รพ.ตัวอย่าง"},
+    {hn:"077/45", title:"นาย", first:"กล้า", last:"หาญยิ่ง", cid:"", dob:"02/11/2535", phone:"", sex:"ชาย", allergy:"-", legacy:true}
+  ],
+  people: [
+    {title:"นางสาว", first:"ใจดี", last:"มาใหม่", cid:"3100000000033", dob:"20/01/2540", phone:"062-111-2233", sex:"หญิง", hno:"99", moo:"3", tambon:"พระปฐมเจดีย์", amphoe:"เมืองนครปฐม", province:"นครปฐม", zip:"73000", cname:"นาง ใจงาม มาใหม่", crel:"มารดา", cphone:"062-111-0000", religion:"พุทธ", job:"พนักงานบริษัท", allergy:"ไม่มี", right:"ประกันสังคม · รพ.ตัวอย่าง"},
+    {title:"นาย", first:"กล้า", last:"หาญยิ่ง", cid:"3100000000044", dob:"02/11/2535", phone:"063-444-5566", sex:"ชาย", hno:"7", moo:"1", tambon:"บ่อพลับ", amphoe:"เมืองนครปฐม", province:"นครปฐม", zip:"73000", cname:"นาง กล้วย หาญยิ่ง", crel:"ภรรยา", cphone:"063-444-0000", religion:"พุทธ", job:"รับจ้าง", allergy:"ไม่มี", right:"หลักประกันสุขภาพ (บัตรทอง) · หน่วยบริการหลัก รพ.สต.ตัวอย่าง"}
+  ],
+  appts: [
+    {id:"AP-501", cid:"1100000000011", date:"วันนี้ 16 ต.ค. 2569", time:"10:00", end:"11:00", clinic:"ME00", doctor:"พญ.ตัวอย่าง หนึ่ง", reason:"ติดตามความดันโลหิต", no:"APP6910-000501", reasons:["ติดตามความดันโลหิต","เจาะเลือดก่อนพบแพทย์ งดน้ำและอาหารหลัง 20.00 น."], today:true, visited:false},
+    {id:"AP-502", cid:"1100000000055", date:"วันนี้ 16 ต.ค. 2569", time:"13:00", end:"14:00", clinic:"ME03", doctor:"นพ.ตัวอย่าง สอง", reason:"ปรับยาความดัน", today:true, visited:false}
+  ],
+  reqs: [
+    {ref:"R-0398", cid:"1100000000022", hn:"880/69", name:"นาง สมศรี มีสุข", clinic:"ME02", days:["อ.","พฤ."], from:"21/10/2569", to:"31/10/2569", other:"", phone:"089-765-4321", symptom:"น้ำตาลสูง ขอปรับยา", chronic:"เบาหวาน", doctor:"", attach:0, status:"รออนุมัติ", at:"15/10 19:42", ex:true}
+  ],
+  regs: [{ref:"H-0102", notify:"moph", title:"นาย", first:"ตัวอย่าง", last:"ลงทะเบียน", cid:"3100000000099", dob:"01/01/2530", sex:"ชาย", nat:"ไทย", phone:"080-000-0000", hno:"12", moo:"5", tambon:"พระปฐมเจดีย์", amphoe:"เมืองนครปฐม", province:"นครปฐม", zip:"73000", cname:"นาง ตัวอย่าง ลงทะเบียน", crel:"มารดา", cphone:"080-000-0001", religion:"พุทธ", job:"-", allergy:"ไม่มี", consentAt:"16/10 07:14", status:"รอยืนยัน", at:"16/10 07:15", ex:true}],
+  checkins: {},
+  tickets: [],
+  visits: [
+    {q:"ME00-A021", hn:"492/69", name:"นาย ตัวอย่าง สาม", type:"นัด", clinic:"ME00", ci:null},
+    {q:"ME00-R022", hn:"301/69", name:"นางสาว ตัวอย่าง สี่", type:"Walk-in", clinic:"ME00", ci:null}
+  ],
+  n: {req:412, reg:103, V:0, P:0, N:0, hn:900, ap:600, vq:22},
+  last: {}
+};}
+let db = seed();
+
+const cl = c => db.clinics[c];
+const mainOf = c => cl(c).main || c;
+const subsOf = m => Object.keys(db.clinics).filter(c => cl(c).main === m);
+const pendingA = c => db.tickets.filter(t => t.clinic === c && t.type === "V" && t.status === "waiting").length;
+const usedOf = c => cl(c).vis;
+const leftOf = c => cl(c).lim == null ? Infinity : cl(c).lim - usedOf(c);
+const capState = (used, lim) => lim == null ? "none" : used > lim ? "over" : used === lim ? "full" : used / lim >= .8 ? "near" : "ok";
+const suggest = (c, hasHn) => leftOf(c) > 0 ? "V" : (hasHn ? "P" : "N");
+const findPt = (cid, dob) => db.patients.find(p => p.cid && p.cid === digits(cid) && (!dob || p.dob === dob.trim()));
+const anyPerson = cid => db.patients.find(p => p.cid && p.cid === digits(cid)) || db.people.find(p => p.cid === digits(cid));
+const apptsToday = cid => db.appts.filter(a => a.cid === cid && a.today && !a.visited);
+function newReq(pt, data){
+  const r = {ref:"R-0" + (++db.n.req), cid:pt.cid, hn:pt.hn, name:pname(pt), status:"รออนุมัติ", at:nowStr(), ...data};
+  db.reqs.push(r); db.last.req = r.ref; return r;
+}
+function slotsFor(c){
+  const doc = c.startsWith("ME") ? "พญ.ตัวอย่าง หนึ่ง" : c.startsWith("SU") ? "นพ.ตัวอย่าง ศัลย์" : "นพ.ตัวอย่าง " + cl(c).name;
+  /* October 2569 (2026): the 1st is a Thursday; 23 = วันปิยมหาราช */
+  return [
+    {d:20, date:"อ. 20 ต.ค. 69", dow:"อ.", doctor:doc, free:0, cap:20},
+    {d:21, date:"พ. 21 ต.ค. 69", dow:"พ.", doctor:doc, free:3, cap:20},
+    {d:22, date:"พฤ. 22 ต.ค. 69", dow:"พฤ.", doctor:doc, free:6, cap:20},
+    {d:27, date:"อ. 27 ต.ค. 69", dow:"อ.", doctor:doc, free:2, cap:20},
+    {d:29, date:"พฤ. 29 ต.ค. 69", dow:"พฤ.", doctor:doc, free:8, cap:20}
+  ];
+}
+function newPatientFrom(w){
+  const pt = {hn:(++db.n.hn) + "/69", title:w.title, first:w.first, last:w.last, cid:w.cid, dob:w.dob, phone:w.phone, sex:w.sex || "", allergy:"-"};
+  db.patients.push(pt); db.people = db.people.filter(x => x.cid !== w.cid); return pt;
+}
+function openVisitFromTicket(t){
+  t.status = "เปิด Visit แล้ว";
+  const v = {q:mainOf(t.clinic) + "-R" + pad(++db.n.vq), hn:t.hn, name:t.name, type:"Walk-in", clinic:mainOf(t.clinic), ci:null, ticket:t.no};
+  db.visits.push(v); db.last.visit = v.q; t.visit = v.q; return v;
+}
+
+/* results go through MOPH Prompt only, addressed by national ID (MOPH Prompt is tied to the citizen ID) */
+const maskCid = c => { c = digits(c); return c.length === 13 ? `${c[0]}-xxxx-xxxxx-${c.slice(10,12)}-${c[12]}` : c; };
+const maskPhone = t => String(t || "").replace(/^(\d{3})-?\d{3}-?(\d{2})(\d{2})$/, "$1-xxx-xx$3");
+const sendResult = x => { x.sent = `หมอพร้อม → เลขบัตร ${fmtCid(x.cid)}`; x.sentAt = nowStr(); };
+const notifyPick = () => `<div class="mcard"><h4>รับแจ้งผลทางหมอพร้อม</h4>
+  <span style="font-size:13.5px">ผลจะส่งไปที่<b>หมอพร้อม</b>ตามเลขบัตรประชาชนของท่าน ไม่ต้องเปิดหน้านี้ค้างไว้</span>
+  <span class="lab">ยังไม่เคยใช้หมอพร้อม? เพิ่มเพื่อน LINE หมอพร้อมก่อน · ถ้าไม่ได้รับผลภายใน 2 วันทำการ เจ้าหน้าที่จะโทรแจ้งตามเบอร์ที่กรอก</span></div>`;
+const readNotify = () => "moph";
+
+/* one printed walk-in ticket (80 mm thermal); A carries the reserved exam-room queue number */
+function ticketBody(t){
+  const who = `${t.name ? t.name + " · " : `เลขบัตร ${fmtCid(t.cid)} · `}${t.hn ? "HN " + t.hn : "ยังไม่มี HN"}`;
+  return `<span class="tkh">${HOSP} · บัตรคิว Walk-in</span>
+    <span class="muted">บัตร ${t.type} · ${TNAME[t.type]}</span><span class="tno">${t.no}</span>
+    <b>${cl(t.clinic).name}</b><span>${who}</span>
+    ${t.right ? `<span class="muted">สิทธิ: ${t.right}</span>` : t.noCard ? `<span class="muted">ยังไม่ได้ตรวจสิทธิ · นำบัตรประชาชนไปตรวจสิทธิที่เวชระเบียน</span>` : ""}
+    <b style="font-size:15px">${destText(t.type, !!t.hn)}</b>
+    ${t.type !== "N" ? `<span>ยื่นบัตรที่ช่องเวชระเบียนภายใน <b>${plusMin(t.at, 30)} น.</b></span>` : ""}
+    <span class="tft"><span class="muted">พิมพ์ ${t.at}</span><span class="barcode" style="flex:1;height:26px;margin:0"></span></span>`;
+}
+/* what the ticket tells the patient to do at the registration counter */
+const TNAME = {V:"Visit · ตรวจวันนี้", P:"Pending · รอพิจารณา", N:"Next · นัดวันอื่น"};
+const destText = (type, hasHn) => type === "V" ? (hasHn ? "ไปช่องเวชระเบียน เพื่อเปิด Visit" : "ไปช่องเวชระเบียน เพื่อลงทะเบียน HN ใหม่ แล้วเปิด Visit")
+  : type === "P" ? "ไปช่องเวชระเบียน ให้เจ้าหน้าที่พิจารณาเปิด Visit หรือทำนัด" : "ไปช่องเวชระเบียน เพื่อลงทะเบียน HN ใหม่ และทำนัด";
+/* the counter uses the existing pages; this simulates the walk-in being opened, screened and called into the exam room — only that call moves the count */
+function simVisitFromTicket(){
+  const t = db.lastIssued; if (!t || t.visit) return;
+  openVisitFromTicket(t);
+}
+function simCounterVisit(){
+  const t = db.lastIssued; if (!t || t.done) return;
+  if (t.type !== "N") simVisitFromTicket();
+  t.done = true; cl(t.clinic).vis++;
+}
+
+/* ======================= cases ======================= */
+const SAMPLE_DEFAULT = "1100000000011";
+const tick = () => { const c = $("#f-consent"); if (c) c.checked = true; };
+const SC = [
+ /* ---------- Counter ---------- */
+ {id:"C1", ch:"counter", title:"บัตร V · คลินิกว่าง · มี HN", who:"1100000000022", steps:[
+  {scr:"s-ticket", t:"<b>เจ้าหน้าที่ ก</b> (จุดออกบัตรคิว ก่อนถึงเวชระเบียน) คนไข้ Walk-in ยื่นบัตรประชาชน เจ้าหน้าที่<b>เสียบบัตร</b> ระบบอ่านชื่อ เลขบัตร วันเกิด และที่อยู่<b>จากชิป</b> กด <b>เสียบบัตร · อ่านจากชิป</b>", hl:"#tk-insert", on:"tk:read"},
+  {scr:"s-ticket", t:"พบ HN และเพราะ<b>เสียบบัตร จึงตรวจสอบสิทธิได้</b> (ฟังก์ชันเดิม) จากนั้นเลือก <b>อายุรกรรม ชั้นบน</b> ใน Dashboard ด้านล่าง (Walk-in เหลือ 4)", hl:'[data-cl="ME01"]', on:"tk:clinic"},
+  {scr:"s-ticket", t:"ระบบดูเงื่อนไขแล้วเสนอ<b>บัตร V (มี HN)</b> กด <b>ออกบัตร</b> ระบบแค่พิมพ์บัตร <b>ไม่จับคู่และไม่เก็บประวัติบัตร</b>", hl:"#tk-issue", on:"tk:issue"},
+  {scr:"s-ticket", t:"บนบัตรบอกว่า <b>\"ไปช่องเวชระเบียน เพื่อเปิด Visit\"</b> คนไข้ถือบัตรไปเอง ช่องเวชระเบียนเปิด Visit ด้วยหน้าเดิม (ได้เลขคิวตามปกติตอนเปิด Visit) <b>ตอนนี้ที่ว่างยังไม่ลด</b> เพราะยังไม่ได้เข้าห้องตรวจ กด <b>ถัดไป</b> เพื่อจำลองว่าเปิด Visit คัดกรอง แล้วพยาบาล<b>เรียกคิวเข้าห้องตรวจ</b>", hl:"#tk-ticket"},
+  {scr:"s-ticket", enter:simCounterVisit, t:"พอเรียกคิวเข้าห้องตรวจอายุรกรรม ชั้นบน ยอด <b>เรียกเข้าห้องแล้ว</b> เพิ่มเป็น 17 จากคิวห้องตรวจโดยตรง (ชุดเดียวกับสรุปจุดบริการ) ไม่ต้องจับคู่กับบัตร ที่ว่างจึงลดจาก 4 เป็น 3", hl:'[data-cl="ME01"]'}
+ ]},
+ {id:"C2", ch:"counter", title:"บัตร V · คลินิกว่าง · ไม่มี HN", who:"3100000000033", steps:[
+  {scr:"s-ticket", t:"เจ้าหน้าที่ ก <b>เสียบบัตร</b> ของคนไข้", hl:"#tk-insert", on:"tk:read"},
+  {scr:"s-ticket", t:"ไม่พบ HN แต่<b>ชื่อที่จะพิมพ์บนบัตรคิวอ่านมาจากชิปบัตรประชาชน</b> และเสียบบัตรจึงตรวจสิทธิด้วยเลขบัตรได้ คลินิกยังว่างจึงได้บัตร V เลือก <b>อายุรกรรม ชั้นบน</b>", hl:'[data-cl="ME01"]', on:"tk:clinic"},
+  {scr:"s-ticket", t:"ระบบเสนอ<b>บัตร V (ไม่มี HN)</b> กด <b>ออกบัตร</b>", hl:"#tk-issue", on:"tk:issue"},
+  {scr:"s-ticket", t:"บนบัตรบอกว่า <b>\"ไปช่องเวชระเบียน เพื่อลงทะเบียน HN ใหม่ แล้วเปิด Visit\"</b> ช่องเวชระเบียนทำด้วยหน้าทะเบียนประวัติและหน้าเปิด Visit เดิม", hl:"#tk-ticket"}
+ ]},
+ {id:"C3", ch:"counter", title:"บัตร P · คลินิกเต็ม · มี HN", who:"1100000000022", steps:[
+  {scr:"s-ticket", t:"<b>เสียบบัตร</b> ของคนไข้", hl:"#tk-insert", on:"tk:read"},
+  {scr:"s-ticket", t:"เลือก <b>คลินิกเบาหวาน</b> ซึ่ง Walk-in เต็มแล้ว แต่นัดยังว่าง", hl:'[data-cl="ME02"]', on:"tk:clinic"},
+  {scr:"s-ticket", t:"ระบบเสนอ<b>บัตร P</b> กด <b>ออกบัตร</b>", hl:"#tk-issue", on:"tk:issue"},
+  {scr:"s-ticket", t:"บนบัตรบอกว่า <b>\"ไปช่องเวชระเบียน ให้เจ้าหน้าที่พิจารณาเปิด Visit หรือทำนัด\"</b> กด <b>ถัดไป</b> เพื่อจำลองว่าเวชระเบียนเลือกเปิด Visit และคนไข้ถูกเรียกเข้าห้องตรวจแล้ว", hl:"#tk-ticket"},
+  {scr:"s-ticket", enter:simCounterVisit, t:"Dashboard แสดงคลินิกเบาหวาน <b>เกิน 1</b> เป็นสีแดง ตรงกับหลัก \"เตือน ไม่ล็อก\"", hl:'[data-cl="ME02"]'}
+ ]},
+ {id:"C4", ch:"counter", title:"บัตร N · คลินิกเต็ม · ไม่มี HN", who:"3100000000044", steps:[
+  {scr:"s-ticket", t:"<b>เสียบบัตร</b> ของคนไข้", hl:"#tk-insert", on:"tk:read"},
+  {scr:"s-ticket", t:"เลือก <b>ห้องตรวจศัลยกรรม</b> ซึ่ง Walk-in เต็มแล้ว", hl:'[data-cl="SU00"]', on:"tk:clinic"},
+  {scr:"s-ticket", t:"ระบบเสนอ<b>บัตร N</b> กด <b>ออกบัตร</b>", hl:"#tk-issue", on:"tk:issue"},
+  {scr:"s-ticket", t:"บนบัตรบอกว่า <b>\"ไปช่องเวชระเบียน เพื่อลงทะเบียน HN ใหม่ และทำนัด\"</b> ช่องเวชระเบียนทำด้วยหน้าเดิม บัตร N ไม่กระทบที่ว่าง Walk-in ของวันนี้", hl:"#tk-ticket"}
+ ]},
+ {id:"C5", ch:"counter", title:"มีนัดวันนี้ แต่มาขอ Walk-in", who:"1100000000011", steps:[
+  {scr:"s-ticket", t:"คนไข้คนนี้<b>มีนัดวันนี้</b> แต่มาที่จุดออกบัตร Walk-in <b>เสียบบัตร</b>", hl:"#tk-insert", on:"tk:read"},
+  {scr:"s-ticket", t:"ระบบขึ้นแถบเตือนว่ามีนัดวันนี้ ลองเลือก <b>อายุรกรรม ชั้นบน</b> ซึ่งอยู่ใต้คลินิกเดียวกับที่นัดไว้", hl:'[data-cl="ME01"]', on:"tk:clinic"},
+  {scr:"s-ticket", t:"ระบบ<b>ดักไว้</b>: ออกบัตร Walk-in ของคลินิกที่มีนัดไม่ได้ ให้เปิด Visit นัดตามปกติ (ตู้ Kiosk หรือแท็บนัดหมาย) (ดักที่จุดออกบัตร ส่วนหน้าเปิด Visit เดิมไม่แก้)", hl:"#tk-block"}
+ ]},
+ {id:"C6", ch:"counter", title:"เลือกให้เห็นเฉพาะคลินิกที่เกี่ยวข้อง", who:"1100000000022", steps:[
+  {scr:"s-ticket", t:"โรงพยาบาลมีหลายคลินิก Dashboard จึงแสดงเฉพาะ<b>ชุดคลินิกที่จุดออกบัตรนี้ดูแล</b> (ตั้งค่าครั้งเดียวต่อจุด เหมือนที่ตั้งค่าตู้ Kiosk) กด <b>⚙ คลินิกที่จุดนี้ดูแล</b>", hl:"#tk-cfg", on:"cfg:open"},
+  {scr:"s-ticket", t:"เลือกทั้งโซนหรือรายคลินิกก็ได้ ลองกด <b>เลือกทั้งโซน OPD ชั้น 3</b> แล้วกด <b>บันทึก</b>", hl:"#cfg-save", on:"cfg:save", prep:() => { const b = document.querySelector('[data-zone="OPD ชั้น 3"]'); if (b) b.click(); }},
+  {scr:"s-ticket", t:"คลินิกชั้น 3 เข้ามาในตารางแล้ว ลองพิมพ์ <b>จักษุ</b> ในช่องค้นหา เพื่อดูคลินิกที่อยู่นอกชุดได้ชั่วคราว", hl:"#tk-q", on:"tk:search", prep:() => { const i = $("#tk-q"); if (i){ i.value = "จักษุ"; i.dispatchEvent(new Event("input", {bubbles:true})); } }},
+  {scr:"s-ticket", t:"ใช้ปุ่ม <b>ใกล้เต็ม / เต็ม</b> เพื่อดูเฉพาะคลินิกที่ต้องระวัง และกดหัวกลุ่มเพื่อพับหรือขยายคลินิกย่อยได้"}
+ ]},
+ {id:"C7", ch:"counter", title:"ไม่ได้นำบัตรประชาชนมา · ค้นด้วย HN", who:"1100000000022", steps:[
+  {scr:"s-ticket", t:"คนไข้ไม่ได้นำบัตรประชาชนมา แต่จำ HN ได้ พิมพ์ <b>880/69</b> แล้วกด <b>ค้นหา</b>", hl:"#tk-search", on:"tk:read", prep:() => { const i = $("#tk-q2"); if (i) i.value = "880/69"; }},
+  {scr:"s-ticket", t:"ได้แค่<b>ข้อมูลคนไข้จากระบบ HA.OS</b> และ<b>ตรวจสอบสิทธิไม่ได้</b> เพราะไม่ได้เสียบบัตร เลือก <b>อายุรกรรม ชั้นบน</b>", hl:'[data-cl="ME01"]', on:"tk:clinic"},
+  {scr:"s-ticket", t:"กด <b>ออกบัตร</b>", hl:"#tk-issue", on:"tk:issue"},
+  {scr:"s-ticket", t:"บนบัตรคิวเขียนว่า <b>ยังไม่ได้ตรวจสิทธิ ให้นำบัตรประชาชนไปตรวจสิทธิที่เวชระเบียน</b> · ถ้าพิมพ์เลขแล้วไม่พบ HN จะไม่มีชื่อคนไข้ให้พิมพ์ เพราะชื่อมาจากชิปบัตรเท่านั้น", hl:"#tk-ticket"}
+ ]},
+ {id:"C8", ch:"counter", title:"ตั้ง Limit แล้ว Dashboard เปลี่ยนตาม", who:"1100000000022", steps:[
+  {scr:"s-limit", t:"พยาบาลหัวหน้าเข้าเมนูใหม่ <b>สรุปจุดบริการ</b> เห็นทุกจุดของอายุรกรรม คลินิกเบาหวานมีห้อง 7 ที่มีแพทย์ (Limit Walk-in 5) และห้อง 8 ที่วันนี้ไม่มีแพทย์ (ไม่นับ) · เปลี่ยน Limit Walk-in ของ<b>ห้องตรวจ 7 เป็น 8</b> แล้วกด <b>บันทึก Limit</b>", hl:"#lm-save", on:"lm:save", prep:() => { const i = $("#lm-w-ME02-0"); if (i) i.value = "8"; }},
+  {scr:"s-limit", t:"บันทึกแล้วเก็บว่าใครแก้เมื่อไร · Limit นัดไม่ได้ตั้งที่หน้านี้ แสดงจาก <b>LimitCase ของตารางแพทย์</b> (ข้อเสนอ G-41) · กด <b>ถัดไป</b> ไปดูที่จุดออกบัตร"},
+  {scr:"s-ticket", t:"Dashboard ของจุดออกบัตรอ่าน Limit ชุดเดียวกัน คลินิกเบาหวานเปลี่ยนจาก <b>เต็ม</b> เป็น <b>เหลือ 3</b> (8 − 5) และยอดรวมของห้องตรวจอายุรกรรมเพิ่มตาม · บัตรที่ออกหลังจากนี้ตัดสิน V/P/N ด้วยค่าใหม่", hl:'[data-cl="ME02"]'}
+ ]},
+ /* ---------- Online ---------- */
+ {id:"O1", ch:"online", title:"ลงทะเบียนทำบัตรใหม่", who:"3100000000033", steps:[
+  {scr:"m-reg-entry", t:"คนไข้สแกน QR บนโปสเตอร์หรือกดลิงก์บนเว็บโรงพยาบาล แล้วเจอ<b>หน้ากลาง</b>ให้เลือก 2 ทาง: <b>ลงทะเบียนทำบัตรใหม่</b> หรือ <b>ตรวจสอบ HN</b> (ไม่แน่ใจว่าเคยมี HN หรือยัง) คนไข้ใหม่กด <b>ลงทะเบียนทำบัตรใหม่</b>", hl:"#e-new", on:"go:m-register"},
+  {scr:"m-register", t:"ฟอร์มมี<b>ข้อมูลผู้ป่วย · ที่อยู่แยกช่อง · ผู้ติดต่อฉุกเฉิน</b> และข้อมูลเพิ่มเติมที่ไม่บังคับ ติ๊ก<b>ยินยอม PDPA</b> แล้วกดส่ง", hl:"#f-submit", on:"reg:submit", prep:tick},
+  {scr:"m-register-done", t:"ข้อมูล<b>ยังไม่เข้าตารางผู้ป่วย</b> หน้านี้บอกว่า<b>ผลจะส่งไปที่ไหน</b> (หมอพร้อมของเลขบัตร) คนไข้ปิดหน้าได้เลย กด <b>ถัดไป</b>"},
+  {scr:"s-reg-req", t:"เจ้าหน้าที่เข้าเมนู <b>คำขอทำบัตรออนไลน์</b> เจอหน้ารายการก่อน (แท็บรอยืนยัน) กดที่คำขอของคนไข้เพื่อเปิดดู", hl:"tr.is-last", on:"rr:open"},
+  {scr:"s-reg-req", t:"หน้ารายละเอียดมี<b>ข้อมูลครบทุกช่องและแก้ได้</b> ผล<b>ตรวจซ้ำ</b> และ<b>ช่องทางแจ้งผล</b>ที่คนไข้เลือก ตรวจแล้วกด <b>ยืนยันและสร้าง HN</b> ระบบเรียก AddPatient เดิม แล้วส่งแจ้งผลทันที", hl:"#rr-confirm", on:"rr:confirm"},
+  {scr:"m-notify", t:"ผลส่งไปตาม<b>เลขบัตรประชาชน</b> เพราะหมอพร้อมผูกกับเลขบัตร คนไข้จึง<b>ไม่ต้องมี URL หรือเปิดหน้าค้างไว้</b> ถ้าส่งไม่ถึง (เช่น ยังไม่เคยใช้หมอพร้อม) เจ้าหน้าที่โทรแจ้งตามเบอร์ที่กรอก"}
+ ]},
+ {id:"O2", ch:"online", title:"ตรวจสอบ HN (ไม่แน่ใจว่าเคยมีหรือยัง)", who:"1100000000011", steps:[
+  {scr:"m-reg-entry", t:"คนไข้ไม่แน่ใจว่าเคยทำบัตรที่โรงพยาบาลหรือยัง จากหน้ากลางกด <b>ตรวจสอบ HN</b>", hl:"#e-check", on:"go:m-hn-check"},
+  {scr:"m-hn-check", t:"กรอก<b>เลขบัตรประชาชน + วันเกิด</b> (ต้องตรงทั้งคู่) แล้วกด <b>ตรวจสอบ</b>", hl:"#f-check", on:"hn:check"},
+  {scr:"m-hn-check", t:"พบ HN จึงแสดง <b>HN และชื่อแบบปิดบางส่วน</b> ไม่ต้องลงทะเบียนใหม่ ไปขอนัดออนไลน์ต่อได้ · ถ้าไม่พบ จะมีปุ่มไปลงทะเบียนทำบัตรใหม่ (ถ้าเคยมาแต่ไม่เคยให้เลขบัตร ห้องบัตรจะตรวจซ้ำกับประวัติเก่าให้ เหมือนเคส O4)"}
+ ]},
+ {id:"O3", ch:"online", title:"ลงทะเบียนซ้ำ (มีเลขบัตรในระบบแล้ว)", who:"1100000000011", steps:[
+  {scr:"m-reg-entry", t:"คนไข้ที่มี HN แล้วเลือก <b>ลงทะเบียนทำบัตรใหม่</b> โดยไม่ได้ตรวจสอบ HN ก่อน", hl:"#e-new", on:"go:m-register"},
+  {scr:"m-register", t:"ติ๊กยินยอม แล้วกดส่ง", hl:"#f-submit", on:"reg:dup", prep:tick},
+  {scr:"m-register", t:"ระบบบอกแค่ว่า<b>มีประวัติแล้ว</b> ไม่บอกข้อมูลอื่น เพื่อกันการสุ่มเลขบัตรมาดูข้อมูลคนอื่น"}
+ ]},
+ {id:"O4", ch:"online", title:"ลงทะเบียน · มีประวัติเก่าที่ไม่มีเลขบัตร", who:"3100000000044", steps:[
+  {scr:"m-reg-entry", t:"จากหน้ากลางกด <b>ลงทะเบียนทำบัตรใหม่</b> (ถ้ากดตรวจสอบ HN ก่อนจะได้ผลว่าไม่พบ เพราะประวัติเก่าไม่มีเลขบัตร)", hl:"#e-new", on:"go:m-register"},
+  {scr:"m-register", t:"คนไข้คนนี้เคยมา รพ. นานแล้ว ประวัติเก่า<b>ไม่ได้บันทึกเลขบัตรประชาชน</b> ระบบจึงตรวจซ้ำด้วยเลขบัตรไม่เจอ คำขอจึงผ่านเข้ามา ติ๊กยินยอม แล้วกดส่ง", hl:"#f-submit", on:"reg:submit", prep:tick},
+  {scr:"m-register-done", t:"กด <b>ถัดไป</b> เพื่อไปที่ห้องบัตร"},
+  {scr:"s-reg-req", t:"เปิดคำขอจากหน้ารายการ (คอลัมน์ตรวจซ้ำขึ้นว่า <b>อาจซ้ำ</b>)", hl:"tr.is-last", on:"rr:open"},
+  {scr:"s-reg-req", t:"กล่องตรวจซ้ำพบ <b>HN 077/45 ชื่อ-สกุลและวันเกิดตรงกัน แต่ไม่มีเลขบัตร</b> ถ้าออก HN ใหม่จะได้ HN ซ้ำ เจ้าหน้าที่ตรวจแล้วกด <b>ใช้ HN เดิม และเติมเลขบัตร</b>", hl:"#rr-merge", on:"rr:merge"},
+  {scr:"m-notify", t:"แจ้งคนไข้ทางหมอพร้อมว่า<b>ใช้ HN เดิม 077/45</b> ไม่มี HN ใหม่เกิดขึ้น"}
+ ]},
+ {id:"O5", ch:"online", title:"ขอนัดออนไลน์", who:"1100000000022", steps:[
+  {scr:"m-request", t:"คนไข้สแกน QR หรือกดลิงก์บนเว็บโรงพยาบาล แล้ว<b>เข้าหน้าขอนัดโดยตรง</b> กรอกอาการ เลือก<b>วันที่มาได้ จ.–อา.</b> ช่วงวันที่ หรืออื่น ๆ แนบรูปได้ แล้วกด <b>ส่งคำขอนัด</b>", hl:"#f-submit", on:"request:submit"},
+  {scr:"m-request-done", t:"รับคำขอ<b>ไม่จำกัดจำนวน</b> แล้วให้เลขอ้างอิง เมื่อลงนัดแล้ว<b>นัดจะขึ้นในหมอพร้อม</b> ไม่มีหน้าแจ้งผลแยก กด <b>ถัดไป</b>"},
+  {scr:"s-requests", t:"เจ้าหน้าที่เมนู <b>คำขอนัดออนไลน์</b> เห็นอาการ รูป และวันที่มาได้ กด <b>ลงนัด</b> (หรือลองปฏิเสธ)", hl:'tr.is-last [data-act="appoint"]', on:"go:s-appoint"},
+  {scr:"s-appoint", t:"<b>หน้านัดหมายเดิมของ HA.OS</b> (ห้องตรวจ แพทย์ วันที่นัด ช่วงเวลานัด + ปฏิทินแพทย์ + ตาราง SLAP) ห้องตรวจ แพทย์ และวันที่ถูกเติมจากคำขอ ปฏิทินมีวงบอก<b>วันที่คนไข้มาได้</b> กด <b>บันทึกนัด</b>", hl:"#ap-save", on:"appt:save"},
+  {scr:"s-requests", t:"บันทึกนัดแล้ว คำขอเปลี่ยนเป็น<b>ลงนัดแล้ว</b> นัดนี้คือนัดปกติของ HA.OS คนไข้<b>ดูนัดในหมอพร้อม</b>ได้เลย จึงไม่มีหน้าแจ้งผลนัด · ถ้าปฏิเสธ เจ้าหน้าที่โทรแจ้งตามเบอร์ที่ให้ไว้ · ก่อนวันนัดคนไข้จะได้ลิงก์เช็กอินออนไลน์ (เคส O6)"}
+ ]},
+ {id:"O6", ch:"online", title:"เช็กอินออนไลน์ · แจ้งอาการผิดปกติ", who:"1100000000011", steps:[
+  {scr:"m-msg", t:"1 วันก่อนนัด ข้อความ<b>แจ้งเตือนใบนัดล่วงหน้า</b>ในหมอพร้อมมีเลขที่นัด เหตุผลการนัด ข้อควรปฏิบัติ และปุ่ม <b>เช็กอินออนไลน์</b> กับ <b>แจ้งความประสงค์เลื่อนนัด</b> กด <b>เช็กอินออนไลน์</b>", hl:"#msg-btn", on:"go:m-checkin"},
+  {scr:"m-checkin", t:"หน้าแสดงข้อมูลนัดและ<b>เหตุผลการนัดเป็นป้าย</b> (แบบพระนั่งเกล้า) ให้เลือกก่อนว่า<b>อาการปกติ / อาการผิดปกติ</b> เคสนี้กด <b>อาการผิดปกติ</b>", hl:"#ci-abn", on:"ci:sym"},
+  {scr:"m-checkin", t:"<b>บังคับ</b>: อาการวันนี้ · สะดวกเดินทางไหม (ไม่สะดวก → แจ้งเลื่อนนัด) · แพ้ยาใหม่ไหม (โชว์แพ้ยาเดิม) · BP และ PR <b>ไม่บังคับ</b>: น้ำหนัก ส่วนสูง อุณหภูมิ วันเวลาที่วัด เบอร์โทร (ดึงเบอร์เดิมมา) สูบบุหรี่ ดื่มสุรา · เลื่อนลงไปกด <b>เช็กอิน</b>", hl:"#f-submit", on:"ci:ask"},
+  {scr:"m-checkin", t:"มีกล่อง<b>ยืนยันการเช็กอิน</b>ก่อนบันทึก กด <b>บันทึก</b>", hl:"#ci-ok", on:"ci:submit"},
+  {scr:"m-checkin-done", t:"หน้าเช็กอินสำเร็จบอก<b>ขั้นตอนการรับบริการ</b> และเพราะแจ้งอาการผิดปกติ จึงบอกให้<b>ติดต่อเคาน์เตอร์พยาบาล</b> ข้อมูลยังพักไว้ แก้ได้จนกว่าจะเปิด Visit กด <b>ถัดไป</b>"},
+  {scr:"s-screen", enter:openApptVisit, t:"วันนัด คนไข้เปิด Visit นัดตามช่องทางเดิม (หน้าจอตู้และเคาน์เตอร์ไม่แก้) ฝั่ง API บันทึก<b>Vital Sign + อาการ (CC) + สูบบุหรี่/สุรา</b> เข้า Visit ทันที แถวคิวมีป้าย <b>อาการผิดปกติ</b> กดที่แถว", hl:"tr.is-last", on:"scr:open"},
+  {scr:"s-screen", t:"หน้าคัดกรอง<b>แก้เล็กน้อย</b>: ป้ายในแถวคิว และกล่องเตือนอาการผิดปกติ · ช่อง CC มีอาการที่คนไข้กรอก · Vital Sign อยู่ในช่องเดิม · ถ้าแจ้ง<b>แพ้ยาใหม่</b> จะขึ้นเป็นข้อความให้ยืนยันก่อน <b>ไม่บันทึกลงรายการแพ้ยาเอง</b>"}
+ ]},
+ {id:"O7", ch:"online", title:"แจ้งความประสงค์เลื่อนนัด", who:"1100000000011", steps:[
+  {scr:"m-msg", t:"คนไข้มาตามนัดไม่ได้ กด <b>แจ้งความประสงค์เลื่อนนัด</b> จากข้อความเตือนนัด (หรือตอบว่าไม่สะดวกเดินทางในหน้าเช็กอิน)", hl:"#msg-resched", on:"go:m-resched"},
+  {scr:"m-resched", t:"หน้าแสดงนัดเดิม ให้เลือกเหตุผลและวันที่มาได้ (ชุดเดียวกับขอนัด) กด <b>ส่งคำขอเลื่อนนัด</b>", hl:"#f-submit", on:"resched:submit"},
+  {scr:"m-request-done", t:"ได้เลขอ้างอิง นัดใหม่จะขึ้นในหมอพร้อมเมื่อเจ้าหน้าที่เลื่อนให้ กด <b>ถัดไป</b>"},
+  {scr:"s-requests", t:"คำขอเข้าเมนู <b>คำขอนัดออนไลน์</b> เดิม มีป้าย <b>เลื่อนนัด AP-501</b> กด <b>ลงนัด</b>", hl:'tr.is-last [data-act="appoint"]', on:"go:s-appoint"},
+  {scr:"s-appoint", t:"หน้าจอนัดเดิมเลือกวันใหม่ กด <b>บันทึกนัด</b>", hl:"#ap-save", on:"appt:save"},
+  {scr:"s-requests", t:"นัดเดิมถูกเลื่อนไปนัดใหม่ <b>โทเคนเช็กอินของนัดเดิมใช้ไม่ได้</b> นัดใหม่ขึ้นในหมอพร้อมเอง ไม่มีหน้าแจ้งผลแยก"}
+ ]}
+];
+const CHANNELS = [["counter","Counter · เวชระเบียน"],["online","Online · มือถือ"]];
+function openApptVisit(){
+  const a = db.appts.find(x => x.id === "AP-501"), pt = db.patients.find(x => x.cid === a.cid);
+  if (a.visited) return;
+  a.visited = true;
+  const ci = db.checkins[a.id];
+  const v = {q:a.clinic + "-A" + pad(++db.n.vq), hn:pt.hn, name:pname(pt), type:"นัด", clinic:a.clinic, appt:a.id, vs:ci ? {...ci} : null, pri:"N", allergy:pt.allergy};
+  if (ci) ci.bound = v.q;  // AddVisitFormAppointment: vitals saved into the visit right after it is created
+  db.visits.push(v); db.last.visit = v.q;
+}
+
+/* ======================= what changes, per screen ======================= */
+const CH = {
+ "s-ticket":[["new","เมนูใหม่ \"จองคิว Walk-in\" (เวชระเบียน · จุดออกบัตร) เรียง 1. อ่านบัตร 2. เลือกคลินิก 3. ออกบัตร"],["new","Dashboard นัด/Walk-in รายคลินิก แยกคลินิกย่อย และรวมใต้คลินิกหลัก โดยอ่าน Limit ชุดเดียวกับสรุปจุดบริการ (ต้องทำสเปก Limit ก่อน)"],["new","ตั้งค่าชุดคลินิกต่อจุด/เครื่องออกบัตร + ค้นหา + กรองใกล้เต็ม/เต็ม + พับกลุ่ม"],["new","ตัดสินบัตรตอนออก: ที่ว่าง = Limit − Walk-in ที่เรียกเข้าห้องตรวจแล้ว (อัปเดตเมื่อมีการเรียกคิวเข้าห้องตรวจนั้น) · V (แยกข้อความมี/ไม่มี HN) / P / N"],["new","พิมพ์บัตรบอกปลายทาง: V มี HN เปิด Visit · V ไม่มี HN ลงทะเบียนแล้วเปิด Visit · P ให้เวชระเบียนพิจารณา · N ลงทะเบียน HN ใหม่และทำนัด"],["new","ดักคนที่มีนัดวันนี้ที่คลินิกหลักเดียวกัน"],["new","บัตรพิมพ์เวลาที่ต้องยื่นที่เวชระเบียน (ออกบัตร + 30 นาที ตั้งค่าได้)"],["reuse","เสียบบัตร: อ่านชื่อ เลขบัตร วันเกิด ที่อยู่จากชิป (ReadSmartCardService) และตรวจสอบสิทธิด้วยฟังก์ชันเดิมได้ (มี/ไม่มี HN)"],["new","ไม่ได้นำบัตรมา: ค้นด้วย HN หรือเลขบัตร ได้แค่ข้อมูลคนไข้จาก HA.OS ตรวจสิทธิไม่ได้ · ไม่พบ HN = ไม่มีชื่อให้พิมพ์บนบัตร"],["reuse","ช่องเวชระเบียนใช้หน้าทะเบียนประวัติ เปิด Visit และนัด เดิมทั้งหมด"]],
+  "s-limit":[["new","เมนูใหม่ \"สรุปจุดบริการ\" (สเปก Limit ห้องตรวจ) งานพยาบาล • ห้องตรวจผู้ป่วยนอก: คลินิกหลัก + คลินิกย่อย แยกตามจุด"],["new","ตั้ง Limit Walk-in ต่อจุด ตั้งครั้งเดียวใช้ทุกวัน ไม่ใส่ = ไม่จำกัด · เก็บว่าใครแก้เมื่อไร"],["reuse","Limit นัด แสดงจาก LimitCase ของตารางแพทย์เดิม (ข้อเสนอ Gap G-41)"],["new","ค่ารวมระดับคลินิก (เฉพาะจุดที่มีแพทย์วันนี้) ส่งไปที่ Dashboard จุดออกบัตร และใช้ตัดสินบัตร V/P/N"],["mod","TbmWorkRooms เพิ่มคอลัมน์ Limit Walk-in (ยังไม่มี)"]],
+ "s-appoint":[["mod","หน้านัดหมายเดิม (appointment-index): รับค่าตั้งต้นจากคำขอ ได้แก่ ผู้ป่วย ห้องตรวจ แพทย์ วันที่ และหมายเหตุ"],["new","ปฏิทินแพทย์เดิม เพิ่มวงบอกวันที่คนไข้มาได้ (จ.–อา. / ช่วงวันที่)"],["mod","หลังบันทึก คืน AppointmentId ไปผูกกับคำขอหรือบัตร"],["reuse","ตารางแพทย์และช่องว่างของนัดเดิม"]],
+ "s-requests":[["new","เมนูใหม่ \"คำขอนัดออนไลน์\""],["mod","menu.config / สิทธิ์เมนู: คนที่เข้าเมนูได้คือคนที่อนุมัติได้"],["new","คำขอที่เลยวันสุดท้ายของช่วงวันที่ เปลี่ยนเป็น \"หมดอายุ\" อัตโนมัติ"]],
+ "s-reg-req":[["new","เมนูใหม่ \"คำขอทำบัตรออนไลน์\": หน้ารายการก่อน (แท็บรอยืนยัน / ดำเนินการแล้ว) แล้วกดเข้าหน้ารายละเอียด"],["new","หน้ารายละเอียด: ข้อมูลครบทุกช่อง แก้ได้ · เวลาที่ยินยอม PDPA · ตรวจซ้ำ 2 ชั้น (เลขบัตร + ชื่อ-สกุล-วันเกิด)"],["new","สร้าง HN ใหม่ / ใช้ HN เดิมและเติมเลขบัตร / ปฏิเสธพร้อมเหตุผล"],["reuse","สร้าง HN ด้วย RegisterService.AddPatient เดิม"],["new","ส่งแจ้งผลทันทีทางหมอพร้อม (ตามเลขบัตร) และเก็บสถานะการส่ง · ส่งไม่ถึง = เจ้าหน้าที่โทรแจ้ง"]],
+ "s-screen":[["mod","ป้ายในแถวคิว: อาการผิดปกติ / แพ้ยาใหม่ (จากเช็กอินออนไลน์)"],["mod","ซักประวัติ: กล่องเตือนอาการผิดปกติ · แพ้ยาใหม่เป็นข้อความให้ยืนยัน ไม่บันทึกลงรายการแพ้ยาเอง · CC มีอาการที่คนไข้กรอก"],["mod","PrivilegeService.AddVisitFormAppointment (ที่ตู้ Kiosk และเคาน์เตอร์เรียก): เปิด Visit นัดสำเร็จแล้ว ถ้านัดนั้นมีข้อมูลเช็กอิน ให้บันทึก Vital Sign เข้า TB_VITAL_SIGNS, อาการเป็น CC, สูบบุหรี่/สุราเป็นประวัติ และธงอาการผิดปกติ / แพ้ยาใหม่ ของ Visit ด้วยวิธีเดียวกับ VitalSignsPublicService.AddVitalSigns (ที่เครื่องวัดใช้อยู่) แล้วทำเครื่องหมายว่าผูกแล้ว"],["reuse","หน้าจอตู้ Kiosk และหน้าเปิด Visit ที่เคาน์เตอร์ไม่ต้องแก้ (แก้ฝั่ง API อย่างเดียว) · บันทึกเข้า Visit ไม่สำเร็จ ต้องไม่ทำให้เปิด Visit ล้ม"]],
+ "m-reg-entry":[["new","หน้ากลาง เข้าจาก QR/ลิงก์บนเว็บโรงพยาบาลหรือโปสเตอร์: เลือก ลงทะเบียนทำบัตรใหม่ / ตรวจสอบ HN"]],
+ "m-hn-check":[["new","ตรวจสอบ HN ด้วยเลขบัตร + วันเกิด (ต้องตรงทั้งคู่) · พบ = แสดง HN และชื่อแบบปิดบางส่วน · ไม่พบ = ปุ่มไปลงทะเบียน"],["reuse","ค้นผู้ป่วยด้วยเลขบัตรแบบเดียวกับ GetPatientDemographicFromCID"],["new","จำกัดจำนวนครั้งต่อเครื่อง/ต่อเลขบัตร กันการสุ่มเลขบัตร"]],
+ "m-register":[["new","หน้าลงทะเบียนทำบัตร เข้าจากหน้ากลาง"],["new","ช่องบังคับ: คำนำหน้า เพศ ชื่อ นามสกุล เลขบัตร วันเกิด สัญชาติ มือถือ · ที่อยู่แยกช่อง (บ้านเลขที่ หมู่ ตำบล อำเภอ จังหวัด รหัสไปรษณีย์) · ผู้ติดต่อฉุกเฉิน (ชื่อ ความสัมพันธ์ เบอร์)"],["new","ไม่บังคับ: ศาสนา อาชีพ แพ้ยา (คนไข้แจ้งเอง)"],["mod","แอป Mobile คิว: เพิ่ม Route โดยไม่มีหน้าหลัก · หน้าติดตามคิวเดิมไม่แตะ · Proxy เปิด Path API สาธารณะ"],["reuse","CheckDuplicateIdcardPatient · Master คำนำหน้า และ จังหวัด/อำเภอ/ตำบล (เปิดผ่าน API สาธารณะ)"],["new","ข้อความความยินยอม PDPA (รอ DPO ตรวจ)"]],
+ "m-register-done":[["new","หน้ายืนยันการส่งคำขอ"]],
+ "m-request":[["new","หน้าขอนัดออนไลน์ เข้าจาก QR/ลิงก์บนเว็บโรงพยาบาล + ส่วนเลือกวัน จ.–อา. / ช่วงวันที่ / อื่น ๆ"],["new","ตารางคำขอนัด + ไฟล์แนบ"]],
+ "m-request-done":[["new","เลขอ้างอิงคำขอ และกันคำขอซ้ำ (เลขบัตร + คลินิกเดียวกันที่ยังรออยู่)"],["reuse","ไม่มีหน้าแจ้งผลนัด: ลงนัดแล้วเป็นนัดปกติ คนไข้ดูในหมอพร้อม · ปฏิเสธ = เจ้าหน้าที่โทรแจ้ง"]],
+ "m-msg":[["new","IT ส่งข้อความผ่านหมอพร้อม (ช่องทางจริง): เลขที่นัด เหตุผลการนัด ข้อควรปฏิบัติ + ปุ่มเช็กอินออนไลน์ และแจ้งเลื่อนนัด"],["new","HA.OS สร้างโทเคนต่อนัดแบบเดียวกับ queuekey แล้วส่ง URL ให้ IT"],["mod","เลื่อนหรือยกเลิกนัด โทเคนต้องใช้ไม่ได้"]],
+ "m-checkin":[["new","หน้าเช็กอินออนไลน์แบบพระนั่งเกล้า: ข้อมูลนัด + ป้ายเหตุผลการนัด · เลือกอาการปกติ / ผิดปกติ · บังคับ: อาการวันนี้, สะดวกเดินทาง, แพ้ยาใหม่ (โชว์แพ้ยาเดิม), BP, PR · ไม่บังคับ: น้ำหนัก ส่วนสูง อุณหภูมิ วันเวลาที่วัด เบอร์โทร สูบบุหรี่ ดื่มสุรา · กล่องยืนยันก่อนบันทึก"],["new","ตารางข้อมูลเช็กอิน (ยังไม่ผูก Visit) · เก็บวันเวลาที่วัดไปเป็นเวลาวัดของ Vital Sign"]],
+ "m-checkin-done":[["new","หน้าเช็กอินสำเร็จ + ขั้นตอนการรับบริการ (อาการผิดปกติ → ติดต่อเคาน์เตอร์พยาบาล)"]],
+ "m-resched":[["new","แจ้งความประสงค์เลื่อนนัด: เข้าจากข้อความเตือนนัด หรือตอบไม่สะดวกเดินทาง · เหตุผล + วันที่มาได้ + เบอร์"],["reuse","เข้าเมนูคำขอนัดออนไลน์เดิม เป็นประเภท \"เลื่อนนัด\" ผูกนัดเดิม · เจ้าหน้าที่เลื่อนด้วยหน้าจอนัดเดิม"],["mod","เลื่อนแล้ว โทเคนเช็กอินของนัดเดิมใช้ไม่ได้ · นัดใหม่ขึ้นในหมอพร้อมเอง"]],
+ "m-notify":[["new","ไม่มีหน้าตรวจสถานะ · แจ้งผลทำบัตรส่งตามเลขบัตรประชาชน (หมอพร้อมผูกกับเลขบัตร) คนไข้ไม่ต้องมี URL · ช่องทางเดียวคือหมอพร้อม"],["new","ข้อความที่ HA.OS ต้องส่งให้ IT: ทำบัตรสำเร็จ (HN) / ใช้ HN เดิม / ปฏิเสธพร้อมเหตุผล · เตือนนัด + ลิงก์เช็กอิน · ผลคำขอนัดไม่ต้องส่ง (นัดขึ้นในหมอพร้อมเอง)"],["mod","ระหว่างที่ IT ยังไม่พร้อม ให้เจ้าหน้าที่โทรแจ้งตามเบอร์ที่คนไข้กรอก"]],
+ "doc":[["mod","รวมรายการที่ต้องปรับของเดิมทั้งหมด"]]
+};
+
+/* ======================= kits ======================= */
+const phone = (title, sub, body, back) => `<div class="phone"><div class="scr"><div class="mnav"><span class="mlogo">รพ.</span><div><b>${HOSP}</b><span>${HOSP_EN}</span></div></div><div class="mb"><div class="mtitle">${back ? `<button class="mback" type="button" data-go="${back}" aria-label="กลับ">‹</button>` : ""}<div><b>${title}</b><span>${sub}</span></div></div>${body}</div></div></div>`;
+const fl = (id, label, value, req, ph) => `<div class="fl"><label for="${id}">${label}${req ? ' <span class="r">*</span>' : ""}</label><input class="in" id="${id}" value="${esc(value)}" ${ph ? `placeholder="${ph}"` : ""}></div>`;
+const clinicSelect = (id, sel, label = "คลินิก") => `<div class="fl"><label for="${id}">${label} <span class="r">*</span></label><select class="in" id="${id}">${Object.entries(db.clinics).map(([k, c]) => `<option value="${k}" ${k === sel ? "selected" : ""}>${c.main ? "· " : ""}${c.name}</option>`).join("")}</select></div>`;
+const daysPicker = (sel, from, to) => `<div class="fl"><span class="lab">วันที่มาได้ (เลือกได้หลายวัน) <span class="r">*</span></span><div class="chips">${DOW.map(d => `<button type="button" class="chip" data-act="chip" data-day="${d}" aria-pressed="${sel.includes(d)}">${d}</button>`).join("")}</div></div>
+  <div class="row2">${fl("f-from","ตั้งแต่วันที่",from)}${fl("f-to","ถึงวันที่",to)}</div>
+  <label class="lab" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="f-oth"> อื่น ๆ</label><input class="in" id="f-othtxt" placeholder="เช่น สะดวกหลัง 15:00 น. เท่านั้น">`;
+const readDays = () => ({days:[...document.querySelectorAll('[data-day][aria-pressed="true"]')].map(b => b.dataset.day), from:val("f-from"), to:val("f-to"), other:$("#f-oth")?.checked ? (val("f-othtxt") || "อื่น ๆ") : ""});
+const daysText = r => [r.days?.length ? r.days.join(" ") : "", r.from ? `${r.from}–${r.to}` : "", r.other ? `อื่น ๆ: ${r.other}` : ""].filter(Boolean).join(" · ");
+const stPill = s => `<span class="st ${/รอ/.test(s) ? "wait" : /ลงนัด|ออก HN|เปิด Visit|ทำนัด/.test(s) ? "ok" : /ปฏิเสธ|ยกเลิก/.test(s) ? "bad" : "mute"}">${s}</span>`;
+const T = k => k ? `<span class="tagn ${k}">${k === "new" ? "ใหม่" : "แก้"}</span>` : "";
+const MENU = [
+  ["เวชระเบียน", [["s-ticket","จองคิว Walk-in","new"],["s-reg-req","คำขอทำบัตรออนไลน์","new"],["s-requests","คำขอนัดออนไลน์","new"]]],
+  ["ห้องตรวจผู้ป่วยนอก", [["s-screen","เรียกคิวคัดแยก/ซักประวัติ","mod"],["s-limit","สรุปจุดบริการ","new"]]]
+];
+const USERS = {"s-limit":"พยาบาลหัวหน้า<br>OPD อายุรกรรม", "s-ticket":"เจ้าหน้าที่ ก<br>จุดออกบัตรคิว หน้าเวชระเบียน", "s-appoint":"เจ้าหน้าที่ ข<br>เวชระเบียน", "s-reg-req":"เจ้าหน้าที่ห้องบัตร<br>เวชระเบียน", "s-requests":"เจ้าหน้าที่นัดหมาย<br>เวชระเบียน", "s-screen":"พยาบาลคัดกรอง<br>ห้องตรวจอายุรกรรม"};
+const TICONS = ['<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h16v10H9l-5 4z"/></svg>','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20h4"/></svg>','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>'].join("");
+function shell(active, title, crumb, body){
+  return `<div class="haos"><aside class="hside"><div class="hbrand"><span class="hlogo">HA.OS</span>${HOSP}<span class="tg" aria-hidden="true">«</span></div>
+    ${MENU.map(([g, items]) => `<div class="hgrp">${g}</div>${items.map(([k, n, t]) => `<button type="button" class="hm ${k === active ? "on" : ""}" data-go="${k}">${n} ${T(t)}</button>`).join("")}`).join("")}
+    </aside><div class="hmain"><div class="htop"><span class="hsel">HN <span>▾</span></span><span class="srch">ค้นหา HN/ชื่อ-นามสกุล/บัตรประชาชน/Passport <span aria-hidden="true">⌕</span></span><span class="cardicon" title="อ่านบัตรประชาชน">ID</span>
+      <div class="ticons" aria-hidden="true">${TICONS}</div><div class="usr"><b>${(USERS[active] || "ผู้ใช้ ตัวอย่าง").split("<br>")[0]}</b><br>${(USERS[active] || "").split("<br>")[1] || ""}</div><span class="ava" aria-hidden="true">${(USERS[active] || "ผ").charAt(0)}</span></div>
+    <div class="hsub"><h1>${title}</h1><span class="cr"><span aria-hidden="true">⌂</span><span class="dot" aria-hidden="true">•</span>${crumb}</span></div><div class="hct">${body}</div></div></div>`;
+}
+const kioskFrame = (body, cards) => `<div class="kiosk"><div class="kscr"><div class="kbody">${body}</div><div class="kfoot"><i></i>${HOSP} | โทร 0-0000-0000</div></div></div>${cards || ""}`;
+
+/* ======================= screens ======================= */
+const SCR = {};
+const P = () => cur.params;
+
+/* ---------- Counter: จองคิว Walk-in ---------- */
+/* limits live per point (room) as in the Limit spec; a clinic's limit = sum over points with a doctor today ("" = no limit) */
+const ROOMSEED = {
+  ME00:[{room:"ห้องตรวจ 1", doc:"พญ.ตัวอย่าง หนึ่ง", w:20, a:20}, {room:"ห้องตรวจ 2", doc:"นพ.ตัวอย่าง สอง", w:25, a:25}, {room:"ห้องตรวจ 3", doc:"", w:15, a:20}],
+  ME01:[{room:"ห้องตรวจ 5", doc:"นพ.ตัวอย่าง ห้า", w:20, a:20}],
+  ME02:[{room:"ห้องตรวจ 7", doc:"พญ.ตัวอย่าง เบาหวาน", w:5, a:30}, {room:"ห้องตรวจ 8", doc:"", w:5, a:10}],
+  ME03:[{room:"ห้องตรวจ 9", doc:"นพ.ตัวอย่าง ความดัน", w:10, a:25}]
+};
+function roomsOf(c){
+  db.rooms = db.rooms || {};
+  if (!db.rooms[c]){ const x = cl(c); db.rooms[c] = (ROOMSEED[c] || [{room:"ห้องตรวจ 1", doc:"แพทย์ประจำคลินิก", w:x.lim, a:x.limA}]).map(r => ({...r})); }
+  return db.rooms[c];
+}
+function recalcLimit(c){
+  const on = roomsOf(c).filter(r => r.doc);
+  const sum = k => on.some(r => r[k] == null || r[k] === "") ? null : on.reduce((t, r) => t + Number(r[k]), 0);
+  cl(c).lim = sum("w"); cl(c).limA = sum("a");
+}
+/* split a clinic-level count over its points with a doctor, in proportion to their limits (prototype only) */
+function splitCount(c, total){
+  const on = roomsOf(c).map((r, i) => ({r, i})).filter(o => o.r.doc), w = on.reduce((t, o) => t + (Number(o.r.w) || 1), 0); let left = total;
+  const out = {}; on.forEach((o, k) => { const v = k === on.length - 1 ? left : Math.round(total * (Number(o.r.w) || 1) / w); out[o.i] = v; left -= v; }); return out;
+}
+function dashRows(p){
+  const q = (p.q || "").trim(), only = p.only || "all";
+  const inScope = c => q ? (cl(c).name.includes(q) || c.toLowerCase().includes(q.toLowerCase())) : db.cfg.set.includes(c);
+  const passCap = c => { if (only === "all") return true; const x = cl(c), s = capState(usedOf(c), x.lim); return only === "full" ? (s === "full" || s === "over") : (s !== "ok" && s !== "none"); };
+  const mains = Object.keys(db.clinics).filter(c => !cl(c).main);
+  const capCell = c => { const x = cl(c); if (x.lim == null) return `<span class="cap none">ไม่จำกัด</span>`; const left = x.lim - usedOf(c), s = capState(usedOf(c), x.lim); return `<span class="cap ${s}">${left > 0 ? "เหลือ " + left : left === 0 ? "เต็ม" : "เกิน " + (-left)}</span>`; };
+  const apCell = c => { const x = cl(c); return x.limA == null ? `${x.ap} <span class="muted">/ ไม่จำกัด</span>` : `${x.ap}<span class="muted">/${x.limA}</span>`; };
+  let html = "", shown = 0;
+  for (const m of mains){
+    const members = [m, ...subsOf(m)];
+    const vis = members.filter(c => inScope(c) && passCap(c));
+    if (!vis.length) continue;
+    const open = !(p.closed || []).includes(m);
+    if (members.length > 1){
+      const lim = members.some(c => cl(c).lim == null) ? null : members.reduce((s, c) => s + cl(c).lim, 0);
+      const used = members.reduce((s, c) => s + usedOf(c), 0), visN = members.reduce((s, c) => s + cl(c).vis, 0), pa = members.reduce((s, c) => s + pendingA(c), 0);
+      const ap = members.reduce((s, c) => s + cl(c).ap, 0), limA = members.reduce((s, c) => s + (cl(c).limA || 0), 0);
+      const st = capState(used, lim);
+      html += `<tr class="grp click" data-act="fold" data-m="${m}" tabindex="0"><td><span class="chev">${open ? "▾" : "▸"}</span>${cl(m).name} <span class="muted" style="font-weight:400">(รวม ${members.length} คลินิก · ${cl(m).zone})</span></td><td class="n">${ap}<span class="muted">/${limA}</span></td><td class="n">${lim ?? "-"}</td><td class="n">${visN}</td><td class="n"><span class="cap ${st}">${lim == null ? "ไม่จำกัด" : lim - used > 0 ? "เหลือ " + (lim - used) : lim === used ? "เต็ม" : "เกิน " + (used - lim)}</span></td></tr>`;
+      if (!open) continue;
+    }
+    for (const c of vis){
+      shown++;
+      html += `<tr class="${p.read ? "click" : ""} ${c === p.cl ? "sel" : ""}" ${p.read ? `data-act="cl" data-cl="${c}" tabindex="0"` : ""}><td>${cl(c).main ? "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" : ""}${cl(c).name} <span class="muted">${c}${cl(c).main ? " · ย่อย" : members.length > 1 ? " · หลัก" : " · " + cl(c).zone}</span>${!db.cfg.set.includes(c) ? ' <span class="st info">นอกชุด</span>' : ""}</td>
+        <td class="n">${apCell(c)}</td><td class="n">${cl(c).lim ?? "-"}</td><td class="n">${cl(c).vis}</td><td class="n">${capCell(c)}</td></tr>`;
+    }
+  }
+  return html || `<tr><td colspan="5" class="empty">ไม่พบคลินิกตามเงื่อนไข</td></tr>`;
+}
+SCR["s-ticket"] = {kind:"staff", label:"Counter · เจ้าหน้าที่ ก · จองคิว Walk-in", render(){
+  const p = P();
+  const typed = p.method === "type";
+  const typedHit = typed ? db.patients.find(x => x.hn === p.pq || (x.cid && x.cid === digits(p.pq))) : null;
+  const who = !p.read ? null : typed ? (typedHit || {title:"", first:"", last:"", cid:digits(p.pq), dob:"-", unknown:true}) : anyPerson(p.cid);
+  const hasHn = !!who?.hn, canRight = p.read && !typed;
+  const aps = who && who.cid ? apptsToday(who.cid) : [];
+  const blocked = p.cl && aps.find(a => mainOf(a.clinic) === mainOf(p.cl));
+  const sug = p.read && p.cl ? suggest(p.cl, hasHn) : null, type = blocked ? null : (p.type || sug);
+  const last = p.issued || null;
+  const why = {V:(hasHn ? "คลินิกว่าง · มี HN · " : "คลินิกว่าง · ไม่มี HN · ") + destText("V", hasHn), P:"คลินิกเต็ม · มี HN · " + destText("P", true), N:"คลินิกเต็ม · ไม่มี HN · " + destText("N", false)};
+  return shell("s-ticket", "จองคิว Walk-in", "เวชระเบียน • จองคิว Walk-in", `
+    <div class="two"><div class="port"><h3 style="font-size:16px"><span class="stepno">1</span>อ่านบัตรประชาชน</h3>
+      <div class="acts"><button type="button" class="b black" id="tk-insert" data-act="insert">⛶ เสียบบัตร · อ่านจากชิป</button>
+        <span class="muted" style="font-size:12.5px">บัตรที่อยู่ในเครื่องอ่าน (จำลอง): ${[...db.patients.filter(x => x.cid), ...db.people].map(x => `<button type="button" class="b ${x.cid === (p.cardCid ?? sample()) ? "black" : "out"}" style="padding:2px 8px;font-size:12px" data-act="pickcard" data-cid="${x.cid}">${x.first}${x.hn ? "" : " (ไม่มี HN)"}</button>`).join(" ")}</span></div>
+      <div class="acts" style="align-items:end"><div class="fl" style="min-width:200px;flex:1"><label for="tk-q2" style="color:#555;font-size:13px">ไม่ได้นำบัตรมา: พิมพ์ HN หรือเลขบัตรประชาชน</label><input class="in" style="border-radius:4px;border-color:#333" id="tk-q2" value="${esc(p.pq || "")}" placeholder="เช่น 880/69"></div>
+        <button type="button" class="b out" id="tk-search" data-act="search">ค้นหา</button></div>
+      ${p.read ? (typed && who.unknown ? `<div class="msg err"><b>ไม่พบ HN และไม่มีชื่อคนไข้</b> เพราะไม่ได้เสียบบัตร มีแค่เลขที่พิมพ์ · บัตรคิวจะพิมพ์ได้แค่เลขบัตร ให้คนไข้นำบัตรประชาชนไปที่เวชระเบียน</div>`
+        : `<div class="msg ${hasHn ? "ok" : "warn"}">${pname(who)} · ${hasHn ? `<b>HN ${who.hn}</b>` : "<b>ไม่พบ HN (คนไข้ใหม่)</b>"} · วันเกิด ${who.dob} <span class="src">${typed ? "จากระบบ HA.OS" : "จากชิปบัตรประชาชน"}</span></div>`)
+        + (canRight ? `<div class="box" id="tk-right" style="gap:4px"><span class="muted" style="font-size:12.5px">ตรวจสอบสิทธิด้วยบัตรที่เสียบ (ฟังก์ชันตรวจสอบสิทธิเดิม) · ${p.rightAt || ""} ${T("new")}</span><b>${who.right || "ไม่พบสิทธิ"}</b></div>`
+          : `<div class="msg warn" id="tk-right">ไม่ได้เสียบบัตร จึง<b>ตรวจสอบสิทธิไม่ได้</b> · ได้แค่ข้อมูลคนไข้จาก HN · บนบัตรคิวจะบอกให้ไปตรวจสิทธิที่เวชระเบียน</div>`) : ""}
+      ${aps.length ? `<div class="msg err"><b>มีนัดวันนี้</b> ${aps.map(a => `${cl(a.clinic).name} ${a.time} น.`).join(", ")} · ให้เปิด Visit นัดตามปกติ (ตู้ Kiosk หรือแท็บนัดหมาย)</div>` : ""}
+      ${p.cl ? `<div class="kv"><span>คลินิกที่เลือก</span><b>${cl(p.cl).name}${cl(p.cl).main ? ` <span class="muted" style="font-weight:400">(Visit = ${cl(cl(p.cl).main).name})</span>` : ""}</b></div>` : ""}</div>
+    <div class="port"><h3 style="font-size:16px"><span class="stepno">3</span>ออกบัตรคิว</h3>${blocked ? `<div class="sugg X" id="tk-block"><span class="big">✕</span><div><b>ออกบัตร Walk-in ไม่ได้</b><br><span style="font-size:13.5px">มีนัดวันนี้ที่${cl(blocked.clinic).name} ${blocked.time} น. ซึ่งอยู่ใต้คลินิกหลักเดียวกัน</span></div></div><button type="button" class="b black" disabled>ออกบัตร</button>`
+      : type ? `<div class="sugg ${type}"><span class="big">${type}</span><div><b>${type === sug ? "ระบบเสนอ" : "เจ้าหน้าที่เปลี่ยนเป็น"} บัตร ${type}</b><br><span style="font-size:13.5px">${why[type]}</span></div></div>
+      <div class="acts" style="align-items:end"><div class="fl"><label for="tk-type" style="color:#555;font-size:13px">ประเภทบัตร</label><select class="in" id="tk-type" style="border-radius:4px;width:170px">${["V","P","N"].map(x => `<option value="${x}" ${x === type ? "selected" : ""}>${x} · ${TNAME[x].split(" · ")[1]}</option>`).join("")}</select></div>
+      ${type !== sug ? `<div class="fl" style="flex:1"><label for="tk-why" style="color:#555;font-size:13px">เหตุผลที่เปลี่ยน</label><input class="in" id="tk-why" style="border-radius:4px" value="ผู้สูงอายุ 80 ปีขึ้นไป"></div>` : ""}
+      <button type="button" class="b green" id="tk-issue" data-act="issue">ออกบัตร ${type}</button></div>`
+      : `<div class="empty">${p.read ? "เลือกคลินิกจาก Dashboard ด้านล่าง" : "เสียบบัตรหรือค้นหาคนไข้ก่อน"}</div>`}
+      ${last ? `<div class="tkt ${last.type}" id="tk-ticket">${ticketBody(last)}</div>` : ""}
+    </div></div>
+    <div class="port"><div class="ph2"><h2><span class="stepno">2</span>เลือกคลินิก · Dashboard นัด / Walk-in วันนี้ ${T("new")}</h2><span class="muted" style="font-size:13px">${db.cfg.point} · อัปเดตทุก 30 วินาที</span></div>
+      <div class="tool"><input class="in" id="tk-q" style="max-width:240px;border-radius:4px;border-color:#333" placeholder="ค้นหาคลินิก (รวมนอกชุด)" value="${esc(p.q || "")}">
+        <span class="seg">${[["all","ทั้งหมด"],["near","ใกล้เต็ม"],["full","เต็ม"]].map(([k, n]) => `<button type="button" data-act="only" data-o="${k}" class="${(p.only || "all") === k ? "on" : ""}">${n}</button>`).join("")}</span>
+        <button type="button" class="gear" id="tk-cfg" data-act="cfg">⚙ คลินิกที่จุดนี้ดูแล (${db.cfg.set.length})</button>
+        <span class="muted" style="font-size:12.5px;margin-left:auto">${p.read ? "กดแถวเพื่อเลือกคลินิก" : "เสียบบัตรหรือค้นหาก่อน จึงเลือกคลินิกได้"}</span></div>
+      <div class="tw"><table style="min-width:680px"><thead><tr><th rowspan="2">คลินิก</th><th class="n" rowspan="2">นัด<br><span class="muted" style="font-weight:400">มาแล้ว/Limit</span></th><th colspan="3" style="text-align:center;border-bottom:0">Walk-in</th></tr><tr><th class="n">Limit</th><th class="n">เรียกเข้าห้องแล้ว</th><th class="n">ที่ว่าง</th></tr></thead><tbody>${dashRows(p)}</tbody></table></div>
+      <span class="muted" style="font-size:12.5px">Limit มาจาก Limit นัด/Walk-in ต่อจุด รวมเฉพาะจุดที่มีแพทย์ออกตรวจวันนี้ · ที่ว่าง = Limit − Walk-in ที่เรียกเข้าห้องตรวจแล้ว (ยอดจากคิวห้องตรวจ ชุดเดียวกับสรุปจุดบริการ · ไม่เก็บประวัติบัตร) · ไม่ตั้ง Limit = ไม่จำกัด</span></div>
+`);
+ },
+ act(a, el){
+  const p = P();
+  if (a === "fold"){ const m = el.dataset.m; p.closed = (p.closed || []).includes(m) ? p.closed.filter(x => x !== m) : [...(p.closed || []), m]; return rerender(); }
+  if (a === "only"){ p.only = el.dataset.o; return rerender(); }
+  if (a === "cfg"){ openCfg(); return emit("cfg:open"); }
+  if (a === "pickcard"){ Object.assign(p, {cardCid:el.dataset.cid, read:false, cl:null, type:null, issued:null}); return rerender(); }
+  if (a === "insert"){ Object.assign(p, {method:"card", cid:p.cardCid ?? sample(), read:true, cl:null, type:null, issued:null, rightAt:"ตรวจเมื่อ " + hhmm() + " น."}); rerender(); return emit("tk:read"); }
+  if (a === "search"){ const q = val("tk-q2"); if (!q) return toast("พิมพ์ HN หรือเลขบัตรประชาชน"); Object.assign(p, {method:"type", pq:q, read:true, cl:null, type:null, issued:null}); rerender(); return emit("tk:read"); }
+  if (a === "cl"){ p.cl = el.dataset.cl; p.type = null; rerender(); return emit("tk:clinic"); }
+  if (a !== "issue") return;
+  const typed = p.method === "type";
+  const who = typed ? (db.patients.find(x => x.hn === p.pq || (x.cid && x.cid === digits(p.pq))) || {title:"", first:"", last:"", cid:digits(p.pq), unknown:true}) : anyPerson(p.cid), type = val("tk-type");
+  if (type === "V" && leftOf(p.cl) <= 0 && !p.type){ toast("ที่ว่างเพิ่งเต็ม ระบบเสนอประเภทใหม่"); return rerender(); }
+  const t = {no:type + pad(++db.n[type]), type, cid:who.cid, hn:who.hn || null, name:who.unknown ? "" : pname(who), clinic:p.cl, status:"waiting", at:hhmm(), why:val("tk-why"), card:{...who}, right:typed ? null : (who.right || null), noCard:typed};
+  p.issued = t; db.lastIssued = t;  // printed only: no ticket history, no matching
+  rerender(); toast(`พิมพ์บัตร ${t.no}`); emit("tk:issue");
+ },
+ input(el){ if (el.id === "tk-q"){ P().q = el.value; const pos = el.selectionStart; rerender(); const i = $("#tk-q"); i.focus(); i.setSelectionRange(pos, pos); if (el.value.trim()) emit("tk:search"); } },
+ change(el){ if (el.id === "tk-type"){ P().type = el.value; rerender(); } }};
+
+function openCfg(){
+  const zones = [...new Set(Object.values(db.clinics).map(c => c.zone))];
+  const sel = new Set(db.cfg.set);
+  const draw = () => {
+    $("#modal-root").innerHTML = `<div class="modal"><div class="mdl" role="dialog" aria-label="คลินิกที่จุดนี้ดูแล"><div class="mhd"><h4>คลินิกที่จุดนี้ดูแล</h4><span class="muted" style="font-size:13px">${db.cfg.point}</span></div>
+      <div class="mbd"><span class="muted" style="font-size:13.5px">ตั้งครั้งเดียวต่อจุดออกบัตร (เก็บกับเครื่อง/จุด เหมือนการตั้งค่าตู้ Kiosk) · คลินิกนอกชุดยังค้นหาได้จากช่องค้นหา</span>
+      ${zones.map(z => `<div class="zone"><div class="zh">${z}<button type="button" class="linkb" data-zone="${z}">เลือกทั้งโซน ${z}</button></div><div class="zl">${Object.entries(db.clinics).filter(([, c]) => c.zone === z).map(([k, c]) => `<label><input type="checkbox" data-c="${k}" ${sel.has(k) ? "checked" : ""}> ${c.main ? "· " : ""}${c.name}</label>`).join("")}</div></div>`).join("")}</div>
+      <div class="mft"><button type="button" class="b out" id="cfg-cancel">ยกเลิก</button><button type="button" class="b green" id="cfg-save">บันทึก (${sel.size} คลินิก)</button></div></div></div>`;
+    document.querySelectorAll("[data-c]").forEach(i => i.onchange = () => { i.checked ? sel.add(i.dataset.c) : sel.delete(i.dataset.c); draw(); });
+    document.querySelectorAll("[data-zone]").forEach(b => b.onclick = () => { Object.entries(db.clinics).forEach(([k, c]) => { if (c.zone === b.dataset.zone) sel.add(k); }); draw(); });
+    $("#cfg-cancel").onclick = () => { $("#modal-root").innerHTML = ""; };
+    $("#cfg-save").onclick = () => { db.cfg.set = [...sel]; $("#modal-root").innerHTML = ""; rerender(); toast(`บันทึกชุดคลินิก ${sel.size} คลินิก`); emit("cfg:save"); };
+    renderGuide();
+  };
+  draw();
+}
+
+/* ---------- Counter: ทะเบียนประวัติ (existing, prefilled from ticket) ---------- */
+/* ---------- Counter: นัดหมาย (existing) ---------- */
+SCR["s-limit"] = {kind:"staff", label:"พยาบาล · สรุปจุดบริการ (ตั้ง Limit)", render(){
+  const p = P(), main = "ME00", group = [main, ...subsOf(main)];
+  const rows = group.map(c => {
+    const rs = roomsOf(c), vis = splitCount(c, cl(c).vis), ap = splitCount(c, cl(c).ap);
+    return `<tr class="grp"><td colspan="7">${cl(c).name} <span class="muted" style="font-weight:400">${c}${cl(c).main ? " · ย่อย" : " · หลัก"} · รวม Walk-in ${cl(c).lim ?? "ไม่จำกัด"} · นัด ${cl(c).limA ?? "ไม่จำกัด"}</span></td></tr>` + rs.map((r, i) => {
+      const used = vis[i] ?? 0, over = r.doc && r.w !== "" && r.w != null && used > r.w;
+      return `<tr class="${r.doc ? "" : "off"}"><td>${r.room}</td><td>${r.doc || '<span class="muted">ไม่มีแพทย์ออกตรวจวันนี้ (ไม่นับ)</span>'}</td>
+        <td class="n">${r.doc ? (ap[i] ?? 0) : "-"}<span class="muted"> / ${r.a ?? "-"}</span></td>
+        <td class="n"><input class="in lmi" id="lm-w-${c}-${i}" value="${r.w ?? ""}" placeholder="ไม่จำกัด" inputmode="numeric"></td>
+        <td class="n">${r.doc ? used : "-"}</td><td class="n">${r.doc ? Math.max(0, Math.round(used * .2)) : "-"}</td><td class="n">${over ? `<span class="cap over">เกิน ${used - r.w}</span>` : "-"}</td></tr>`;
+    }).join("");
+  }).join("");
+  return shell("s-limit", "สรุปจุดบริการ", "งานพยาบาล • ห้องตรวจผู้ป่วยนอก • สรุปจุดบริการ", `<div class="port">
+    <div class="ph2"><h2>สรุปจุดบริการ · ${cl(main).name} ${T("new")}</h2><span class="muted" style="font-size:13px">${db.limLog ? `แก้ไขล่าสุด ${db.limLog.at} โดย ${db.limLog.by}` : "ตั้งครั้งเดียว ใช้ทุกวัน · ไม่ใส่ = ไม่จำกัด"}</span></div>
+    <div class="tw"><table class="lmt" style="min-width:820px"><thead><tr><th>จุดบริการ</th><th>แพทย์วันนี้</th><th class="n">นัด<br><span style="font-weight:400">มาแล้ว / Limit นัด</span></th><th class="n">Limit Walk-in</th><th class="n">Walk-in<br><span style="font-weight:400">เรียกเข้าห้องแล้ว</span></th><th class="n">รอ</th><th class="n">เกิน</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="msg info" style="font-size:13px"><b>Limit นัด</b> แสดงจาก <b>LimitCase ของตารางแพทย์</b> (แก้ที่หน้าตั้งตารางแพทย์เดิม) ตามข้อเสนอใน Gap G-41 · ตั้งเองที่หน้านี้แค่ <b>Limit Walk-in</b> · จุดที่ไม่มีแพทย์ออกตรวจวันนี้ไม่ถูกนับรวม · ค่ารวมระดับคลินิกส่งไปที่ Dashboard ของจุดออกบัตรทันที</div>
+    <div class="acts" style="justify-content:flex-end"><button type="button" class="b green" id="lm-save" data-act="save" style="min-width:100px">บันทึก Limit</button></div></div>`);
+ },
+ act(a){
+  if (a !== "save") return;
+  const main = "ME00", group = [main, ...subsOf(main)];
+  for (const c of group){ roomsOf(c).forEach((r, i) => { const v = val(`lm-w-${c}-${i}`).trim(); r.w = v === "" ? null : Math.max(0, parseInt(v, 10) || 0); }); recalcLimit(c); }
+  db.limLog = {by:"พยาบาลหัวหน้า OPD อายุรกรรม", at:nowStr()};
+  rerender(); toast("บันทึก Limit แล้ว · Dashboard จุดออกบัตรอัปเดตตาม"); emit("lm:save");
+ }};
+
+SCR["s-appoint"] = {kind:"staff", label:"Counter · นัดหมาย (หน้าเดิม)", render(){
+  const p = P(), s = p.src || {};
+  const r = s.kind === "req" ? db.reqs.find(x => x.ref === s.ref) : null;
+  const t = s.kind === "ticket" ? db.tickets.find(x => x.no === s.no) : null;
+  const pt = db.patients.find(x => x.cid === (r ? r.cid : t?.cid)) || {};
+  const clinic = r ? r.clinic : t ? t.clinic : "ME00";
+  const slots = slotsFor(clinic), days = r ? r.days || [] : [];
+  if (p.sel == null){ const i = slots.findIndex(x => x.free > 0 && (!days.length || days.includes(x.dow))); p.sel = i >= 0 ? i : slots.findIndex(x => x.free > 0); }
+  const sl = slots[p.sel] || slots[0], DOWS = ["อา.","จ.","อ.","พ.","พฤ.","ศ.","ส."];
+  const cell = d => {
+    const dow = DOWS[(d + 3) % 7], x = slots.findIndex(y => y.d === d), o = slots[x];
+    const cls = d === 23 ? "dt3" : d === 28 ? "dt1" : o ? (o.free ? "dt4" : "dt2") : "dt0";
+    const ok = o && o.free && days.includes(dow);
+    return `<button type="button" class="cday ${x === p.sel ? "on" : ""} ${ok ? "fit" : ""}" ${o && o.free ? `data-act="pick" data-i="${x}"` : "disabled"} title="${d === 23 ? "วันปิยมหาราช" : ""}"><span class="cnum ${cls}">${d}</span>${o ? `<span class="cq ${o.free ? "" : "full"}">${o.cap - o.free}/${o.cap}</span>` : ""}</button>`;
+  };
+  const grid = [...Array(4).fill('<span></span>'), ...Array.from({length:31}, (_, i) => cell(i + 1))].join("");
+  const times = [["09:00","09:00–10:00",7],["10:00","10:00–11:00",6],["11:00","11:00–12:00",5 - (sl.free > 2 ? 2 : 0)]];
+  const mine = db.appts.filter(a => a.cid === pt.cid);
+  const sel = (id, label, w, inner, dis) => `<div class="agrp"><label for="${id}">${label}</label><select class="in" id="${id}" style="width:${w}px" ${dis ? "disabled" : ""}>${inner}</select></div>`;
+  return shell(t ? "s-ticket" : "s-requests", "นัดหมาย", "นัดหมาย • สร้างนัดหมาย", `
+    <div class="two">
+      <div class="port"><div class="ph2"><h2>ข้อมูลผู้ป่วย</h2></div><div class="kv"><span>HN</span><b>${pt.hn || "-"}</b></div><div class="kv"><span>ชื่อ-นามสกุล</span><span>${pname(pt)}</span></div><div class="kv"><span>เลขบัตร</span><span>${fmtCid(pt.cid || "")}</span></div><div class="kv"><span>สิทธิ</span><span>${pt.right || "-"}</span></div><div class="kv"><span>แพ้ยา</span><span style="color:#e53935">${pt.allergy || "-"}</span></div></div>
+      <div class="port"><div class="ph2"><h2>นัดหมายที่มีอยู่</h2></div>${mine.length ? mine.map(a => `<div class="kv"><span>${a.date}</span><span>${cl(a.clinic).name} · ${a.time} น. · ${a.doctor}${a.moved ? ` <span class="st mute">เลื่อนไป ${a.moved}</span>` : ""}</span></div>`).join("") : `<span class="muted">ไม่มีนัด</span>`}</div>
+    </div>
+    <div class="port">
+      ${r || t ? `<div class="srcbar">${T("mod")} เปิดจาก${r ? `${r.kind || "คำขอนัด"} ${r.ref}` : `บัตร ${t.no}`} · เติมห้องตรวจ แพทย์ และวันที่ให้แล้ว${days.length ? ` · คนไข้มาได้: <b>${daysText(r)}</b>` : ""}</div>` : ""}
+      <div class="arow">
+        ${sel("ap-room","ห้องตรวจ",200,`<option>${cl(clinic).name}</option>`)}
+        ${sel("ap-doc","แพทย์",180,`<option>${sl.doctor}</option>`)}
+        <div class="agrp"><label>Week</label><select class="in" style="width:80px" disabled><option></option></select><input class="in" style="width:50px" disabled></div>
+        <div class="agrp"><label for="ap-date">วันที่นัด</label><input class="in" id="ap-date" style="width:160px" value="${sl.d}/10/2569" readonly></div>
+        ${sel("ap-time","ช่วงเวลานัด",160,times.map(([v, n]) => `<option value="${v}">${n}</option>`).join(""))}
+      </div>
+      <div class="arow"><div class="agrp"><label for="ap-remark">หมายเหตุ</label><input class="in" id="ap-remark" style="width:200px" value="${r ? esc(r.symptom).slice(0, 40) : ""}"></div>
+        <div style="margin-left:auto" class="acts"><button type="button" class="b out" data-act="cancel">ยกเลิก</button><button type="button" class="b green" id="ap-save" data-act="save" style="min-width:100px">บันทึกนัด</button></div></div>
+      <div class="afoot">
+        <div class="acal">
+          <div class="dcard"><span class="dimg" aria-hidden="true"></span><div><span class="muted">รหัสห้อง : <b style="color:inherit">${clinic}</b></span><b style="display:block;font-size:16px">${sl.doctor}</b><span class="muted">รหัสแพทย์ : D-1024</span></div></div>
+          <div class="chead"><b>ตุลาคม 2569</b><span><button type="button" class="cnav" disabled>‹</button><button type="button" class="cnav" disabled>›</button></span></div>
+          <div class="cgrid">${DOWS.map(d => `<span class="cdow">${d}</span>`).join("")}${grid}</div>
+          <div class="clegend"><span style="text-decoration:line-through">งดตรวจ</span><span><i style="background:#ef2917"></i>คิวเต็ม</span><span><i style="background:#ffaa2b"></i>วันหยุดนักขัตฤกษ์</span><span><i style="background:#429800"></i>วันออกตรวจ</span>${days.length ? `<span><i class="ring"></i>วันที่คนไข้มาได้ ${T("new")}</span>` : ""}</div>
+        </div>
+        <div class="aday">
+          <div class="atabs"><span class="atab">SLOT</span><span class="atab on">SLAP</span></div>
+          <div class="chead"><b>${sl.date.replace("69", "2569")}</b><span><button type="button" class="cnav" disabled>‹</button><button type="button" class="cnav" disabled>›</button></span></div>
+          <table class="slap"><tbody>${times.map(([v, n, c]) => `<tr><td class="tm">${n}</td><td><div class="sbar"><i style="width:${Math.round(c / 7 * 100)}%"></i></div><span class="muted">นัดแล้ว ${c}/7</span></td></tr>`).join("")}</tbody></table>
+          <span class="muted" style="font-size:12.5px">ทั้งวัน ${sl.cap - sl.free}/${sl.cap} · ว่าง ${sl.free}</span>
+        </div>
+      </div>
+      <div class="sec">กิจกรรมการนัดครั้งต่อไป</div>
+      <div class="acts"><button type="button" class="b black">สั่ง LAB</button><button type="button" class="b black">สั่ง x-ray</button><button type="button" class="b black">สั่ง Order</button></div>
+      <div class="tw"><table><thead><tr><th>รายการ</th><th class="n">จำนวน</th><th class="n">ราคา</th><th class="n">เบิกได้</th><th class="n">เบิกไม่ได้</th></tr></thead><tbody><tr><td colspan="5" class="empty">ไม่มีกิจกรรม</td></tr></tbody></table></div>
+    </div>`);
+ },
+ act(a, el){
+  const p = P(), s = p.src || {};
+  if (a === "pick"){ p.sel = +el.dataset.i; return rerender(); }
+  const back = () => s.kind === "ticket" ? navigate("s-ticket", {}, true) : navigate("s-requests", {}, true);
+  if (a === "cancel") return back();
+  if (a !== "save") return;
+  const r = s.kind === "req" ? db.reqs.find(x => x.ref === s.ref) : null, t = s.kind === "ticket" ? db.tickets.find(x => x.no === s.no) : null;
+  const clinic = r ? r.clinic : t.clinic, slot = slotsFor(clinic)[p.sel];
+  const ap = {id:"AP-" + (++db.n.ap), cid:r ? r.cid : t.cid, date:slot.date, time:val("ap-time") || "09:00", end:"", clinic, doctor:slot.doctor, reason:r ? r.symptom : "Walk-in คลินิกเต็ม", today:false, visited:false};
+  db.appts.push(ap);
+  if (r){ r.status = "ลงนัดแล้ว"; r.apptId = ap.id; db.last.req = r.ref; r.sent = "นัดขึ้นในหมอพร้อม";
+    if (r.oldAppt){ const old = db.appts.find(x => x.id === r.oldAppt); if (old){ old.moved = ap.id; r.sent = `เลื่อนจาก ${old.id} · นัดใหม่ขึ้นในหมอพร้อม · โทเคนเช็กอินของนัดเดิมใช้ไม่ได้`; } } }
+  if (t){ t.status = "ทำนัดแล้ว"; t.apptId = ap.id; }
+  toast(`บันทึกนัด ${ap.id} · ${ap.date} ${ap.time} น.`);
+  back(); emit("appt:save");
+ }};
+
+/* ---------- Online request lists (staff) ---------- */
+SCR["s-requests"] = {kind:"staff", label:"เจ้าหน้าที่ · คำขอนัดออนไลน์", render(){
+  const p = P(), list = db.reqs.slice().reverse(), pend = db.reqs.filter(r => /รอ/.test(r.status));
+  const rows = list.map(r => {
+    const ap = r.apptId ? db.appts.find(x => x.id === r.apptId) : null;
+    return `<tr class="${r.ref === db.last.req ? "is-last" : ""}"><td><b>${r.ref}</b>${r.ex ? ' <span class="muted">(ตัวอย่าง)</span>' : ""}</td><td>${r.at}</td><td>${r.name}<br><span class="muted">HN ${r.hn}</span></td><td>${cl(r.clinic).name}${r.kind ? `<br><span class="st info">${r.kind} ${r.oldAppt}</span>` : ""}</td><td>${daysText(r)}</td><td>${esc(r.symptom)}<br><span class="muted">โรคประจำตัว: ${esc(r.chronic || "-")}</span></td><td>${r.attach ? '<span class="thumb">รูปแนบ</span>' : "-"}</td>
+      <td>${stPill(r.status)}${ap ? `<br><span class="muted">${ap.id} · ${ap.date}</span>` : ""}${r.reason ? `<br><span class="muted">${r.reason}</span>` : ""}${r.sent ? `<br><span class="muted">${r.sent}</span>` : ""}</td>
+      <td>${/รอ/.test(r.status) ? `<div class="acts"><button type="button" class="b green" data-act="appoint" data-ref="${r.ref}">ลงนัด</button><button type="button" class="b out" data-act="rej" data-ref="${r.ref}">ปฏิเสธ</button></div>` : ""}</td></tr>
+      ${p.rej === r.ref ? `<tr><td colspan="9" style="background:#fff8f3"><div class="acts">เหตุผล: <select class="in" id="rej-why" style="width:auto;border-radius:4px"><option>ตารางเต็มทุกวันในช่วงที่ขอ · โทรแจ้งแล้ว</option><option>ไม่ใช่คลินิกที่ถูกต้อง · แนะนำให้มาตรวจ Walk-in</option><option>ติดต่อคนไข้ไม่ได้</option></select><button type="button" class="b red" data-act="rejok" data-ref="${r.ref}">ยืนยันปฏิเสธ</button></div></td></tr>` : ""}`;
+  }).join("");
+  return shell("s-requests", "คำขอนัดออนไลน์", "เวชระเบียน • คำขอนัดออนไลน์", `<div class="port">
+    <div class="ph2"><h2>คำขอนัดออนไลน์ ${T("new")}</h2><span class="muted" style="font-size:13px">รอ ${pend.length} รายการ${pend[0] ? ` · รอนานสุดตั้งแต่ ${pend[0].at}` : ""}</span></div>
+    <div class="tw"><table style="min-width:900px"><thead><tr><th>เลขอ้างอิง</th><th>ส่งเมื่อ</th><th>ผู้ป่วย</th><th>คลินิก</th><th>วันที่มาได้</th><th>อาการ</th><th>รูป</th><th>สถานะ</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+    <span class="muted" style="font-size:12.5px">คำขอที่เลยวันสุดท้ายของช่วงวันที่ จะเปลี่ยนเป็น "หมดอายุ" อัตโนมัติ · ผู้ที่เข้าเมนูนี้ได้คือผู้ที่อนุมัติได้</span></div>`);
+ },
+ act(a, el){
+  const p = P();
+  if (a === "rej"){ p.rej = p.rej === el.dataset.ref ? null : el.dataset.ref; return rerender(); }
+  if (a === "rejok"){ const r = db.reqs.find(x => x.ref === el.dataset.ref); r.status = "ปฏิเสธ"; r.reason = val("rej-why"); r.sent = `โทรแจ้ง ${r.phone}`; p.rej = null; rerender(); return toast(`ปฏิเสธ ${r.ref} แล้ว · โทรแจ้งคนไข้ที่ ${r.phone}`); }
+  if (a === "appoint") navigate("s-appoint", {src:{kind:"req", ref:el.dataset.ref}});
+ }};
+
+SCR["s-reg-req"] = {kind:"staff", label:"เจ้าหน้าที่ · คำขอทำบัตรออนไลน์", render(){
+  const p = P(), list = db.regs.slice().reverse();
+  const dupOf = x => db.patients.filter(y => y.first === x.first && y.last === x.last && y.dob === x.dob && y.cid !== x.cid);
+  const chan = () => `หมอพร้อม (เลขบัตร)`;
+  if (p.view !== "detail"){
+    const tab = p.tab || "wait", rows = list.filter(x => tab === "wait" ? x.status === "รอยืนยัน" : x.status !== "รอยืนยัน");
+    return shell("s-reg-req", "คำขอทำบัตรออนไลน์", "เวชระเบียน • คำขอทำบัตรออนไลน์", `<div class="port"><div class="ph2"><h2>คำขอทำบัตรออนไลน์ ${T("new")}</h2><span class="muted" style="font-size:13px">กดที่รายการเพื่อดู แก้ไข และยืนยันสร้าง HN</span></div>
+      <div class="tabs"><button type="button" class="tab ${tab === "wait" ? "on" : ""}" data-act="tab" data-t="wait">รอยืนยัน <span class="badge">${list.filter(x => x.status === "รอยืนยัน").length}</span></button><button type="button" class="tab ${tab === "done" ? "on" : ""}" data-act="tab" data-t="done">ดำเนินการแล้ว <span class="badge">${list.filter(x => x.status !== "รอยืนยัน").length}</span></button></div>
+      <div class="tw"><table><thead><tr><th>เลขอ้างอิง</th><th>ส่งเมื่อ</th><th>ชื่อ-นามสกุล</th><th>เลขบัตร</th><th>วันเกิด</th><th>ตรวจซ้ำ</th><th>แจ้งผลทาง</th><th>สถานะ</th><th></th></tr></thead><tbody>
+      ${rows.map(x => `<tr class="click ${x.ref === db.last.reg ? "is-last" : ""}" data-act="open" data-ref="${x.ref}" tabindex="0"><td><b>${x.ref}</b>${x.ex ? ' <span class="muted">(ตัวอย่าง)</span>' : ""}</td><td>${x.at}</td><td>${x.title} ${x.first} ${x.last}</td><td>${fmtCid(x.cid)}</td><td>${x.dob}</td>
+        <td>${x.status === "รอยืนยัน" && dupOf(x).length ? '<span class="st bad">อาจซ้ำ</span>' : '<span class="muted">-</span>'}</td><td>${chan(x)}</td><td>${stPill(x.status)}${x.hn ? `<br><b>HN ${x.hn}</b>` : ""}</td><td><span class="b out" style="padding:3px 10px">เปิด ›</span></td></tr>`).join("") || `<tr><td colspan="9" class="empty">ไม่มีรายการ</td></tr>`}</tbody></table></div></div>`);
+  }
+  const g = db.regs.find(x => x.ref === p.sel);
+  const inp = (id, label, v) => `<div class="fl"><label for="${id}">${label}</label><input class="in" id="${id}" value="${esc(v || "")}"></div>`;
+  const byCid = db.patients.find(x => x.cid && x.cid === g.cid), byName = dupOf(g), pend = g.status === "รอยืนยัน";
+  return shell("s-reg-req", "คำขอทำบัตรออนไลน์", "เวชระเบียน • คำขอทำบัตรออนไลน์ • " + g.ref, `<div class="port">
+    <div class="ph2"><div class="acts"><button type="button" class="b out" id="rr-back" data-act="back">‹ กลับไปรายการ</button><h2>${g.ref} · ${g.title} ${g.first} ${g.last}</h2>${stPill(g.status)}</div><span class="muted" style="font-size:12.5px">ส่งเมื่อ ${g.at} · ยินยอม PDPA เมื่อ ${g.consentAt || "-"}</span></div>
+    <div class="two"><div class="box" style="gap:6px"><h3>ตรวจซ้ำ ${T("new")}</h3>
+        <span>เลขบัตรประชาชน: ${byCid ? `<span class="st bad">พบ HN ${byCid.hn}</span>` : '<span class="st ok">ไม่พบในระบบ</span>'}</span>
+        <span>ชื่อ-สกุล + วันเกิด: ${byName.length ? byName.map(x => `<span class="st bad">อาจซ้ำ HN ${x.hn}</span> ${pname(x)} · เกิด ${x.dob} · ${x.cid ? "เลขบัตร " + fmtCid(x.cid) : "<b>ไม่มีเลขบัตรในระบบ</b> (ประวัติเก่า)"}`).join("<br>") : '<span class="st ok">ไม่พบ</span>'}</span></div>
+      <div class="box" style="gap:6px"><h3>แจ้งผลกลับ ${T("new")}</h3>
+        <span>ช่องทาง: <b>หมอพร้อม</b></span>
+        <span class="muted" style="font-size:13px">ส่งตามเลขบัตร ${fmtCid(g.cid)} (หมอพร้อมผูกกับเลขบัตร) · ถ้าส่งไม่ถึง โทรแจ้งที่ ${g.phone}</span>
+        ${g.sent ? `<span class="st ok" style="justify-self:start">ส่งแล้ว ${g.sentAt} · ${g.sent}</span>` : ""}</div></div>
+    <div class="sec">ข้อมูลผู้ป่วย</div><div class="frm">${inp("g-title","คำนำหน้า",g.title)}${inp("g-first","ชื่อ",g.first)}${inp("g-last","นามสกุล",g.last)}${inp("g-sex","เพศ",g.sex)}${inp("g-cid","เลขบัตรประชาชน",fmtCid(g.cid))}${inp("g-dob","วันเกิด",g.dob)}${inp("g-nat","สัญชาติ",g.nat)}${inp("g-phone","เบอร์มือถือ",g.phone)}</div>
+    <div class="sec">ที่อยู่ตามบัตร</div><div class="frm">${inp("g-hno","บ้านเลขที่",g.hno)}${inp("g-moo","หมู่",g.moo)}${inp("g-tam","ตำบล/แขวง",g.tambon)}${inp("g-amp","อำเภอ/เขต",g.amphoe)}${inp("g-prov","จังหวัด",g.province)}${inp("g-zip","รหัสไปรษณีย์",g.zip)}</div>
+    <div class="sec">ผู้ติดต่อฉุกเฉิน</div><div class="frm">${inp("g-cname","ชื่อ-นามสกุล",g.cname)}${inp("g-crel","ความสัมพันธ์",g.crel)}${inp("g-cphone","เบอร์โทร",g.cphone)}</div>
+    <div class="sec">ข้อมูลเพิ่มเติม</div><div class="frm">${inp("g-rel","ศาสนา",g.religion)}${inp("g-job","อาชีพ",g.job)}${inp("g-alg","แพ้ยา (คนไข้แจ้งเอง)",g.allergy)}</div>
+    ${pend ? `<div class="acts"><select class="in" id="rr-why" style="width:auto;border-radius:4px"><option>ข้อมูลไม่ครบหรือไม่ถูกต้อง</option><option>มีประวัติที่ รพ. แล้ว</option><option>ติดต่อคนไข้ไม่ได้</option></select><button type="button" class="b out" data-act="reject">ปฏิเสธ</button>
+      <button type="button" class="b out" data-act="save">บันทึกการแก้ไข</button>
+      ${byName.length ? `<button type="button" class="b blue" id="rr-merge" data-act="merge" data-hn="${byName[0].hn}">ใช้ HN เดิม ${byName[0].hn} และเติมเลขบัตร</button>` : ""}
+      <button type="button" class="b green" id="rr-confirm" data-act="confirm">${byName.length ? "ยืนยันว่าเป็นคนละคน และสร้าง HN ใหม่" : "ยืนยันและสร้าง HN"}</button></div>`
+    : `<div class="msg ok">${g.status}${g.hn ? ` · HN ${g.hn}` : ""}${g.reason ? ` · ${g.reason}` : ""}</div>`}</div>`);
+ },
+ act(a, el){
+  const p = P();
+  if (a === "tab"){ p.tab = el.dataset.t; return rerender(); }
+  if (a === "open"){ p.sel = el.dataset.ref; p.view = "detail"; rerender(); return emit("rr:open"); }
+  if (a === "back"){ p.view = "list"; return rerender(); }
+  const g = db.regs.find(x => x.ref === p.sel); if (!g) return;
+  const keep = () => Object.assign(g, {title:val("g-title"), first:val("g-first"), last:val("g-last"), sex:val("g-sex"), cid:digits(val("g-cid")), dob:val("g-dob"), nat:val("g-nat"), phone:val("g-phone"), hno:val("g-hno"), moo:val("g-moo"), tambon:val("g-tam"), amphoe:val("g-amp"), province:val("g-prov"), zip:val("g-zip"), cname:val("g-cname"), crel:val("g-crel"), cphone:val("g-cphone"), religion:val("g-rel"), job:val("g-job"), allergy:val("g-alg")});
+  db.last.reg = g.ref;
+  if (a === "save"){ keep(); rerender(); return toast("บันทึกการแก้ไขแล้ว"); }
+  if (a === "reject"){ g.status = "ปฏิเสธ"; g.reason = val("rr-why"); sendResult(g); rerender(); toast(`ปฏิเสธแล้ว · ส่งแจ้งผล${g.sent}`); return emit("rr:reject"); }
+  if (a === "merge"){ keep(); const old = db.patients.find(x => x.hn === el.dataset.hn); old.cid = g.cid; old.phone = g.phone; old.legacy = false; g.status = "ใช้ HN เดิม"; g.hn = old.hn; sendResult(g); rerender(); toast(`ใช้ HN เดิม ${old.hn} · ส่งแจ้งผล${g.sent}`); return emit("rr:merge"); }
+  if (a !== "confirm") return;
+  keep();
+  const pt = newPatientFrom(g); g.status = "ออก HN แล้ว"; g.hn = pt.hn; sendResult(g);
+  rerender(); toast(`สร้าง HN ${pt.hn} แล้ว (AddPatient) · ส่งแจ้งผล${g.sent}`); emit("rr:confirm");
+ }};
+
+/* ---------- Screening (existing) ---------- */
+SCR["s-screen"] = {kind:"staff", label:"พยาบาล · เรียกคิวคัดแยก/ซักประวัติ", render(){
+  const p = P(), v = db.visits.find(x => x.q === p.open), ci = v?.vs;
+  const bmi = ci && ci.wt && ci.ht ? (ci.wt / Math.pow(ci.ht / 100, 2)).toFixed(1) : "";
+  const vf = (id, label, value) => `<div class="fl"><label for="${id}">${label}</label><input class="in" id="${id}" value="${esc(value || "")}"></div>`;
+  const flags = x => (x.vs?.sym === "abn" ? '<span class="flag abn">อาการผิดปกติ</span>' : "") + (x.vs?.newAlg ? '<span class="flag alg">แพ้ยาใหม่</span>' : "");
+  const list = db.visits.slice().reverse();
+  return shell("s-screen", "เรียกคิวคัดแยก/ซักประวัติ", "งานพยาบาล • ห้องตรวจผู้ป่วยนอก", `
+    <div class="two"><div class="port"><div class="ph2"><span class="hdl">คัดแยก/ซักประวัติ</span><span class="clock">10:05:12</span></div><div class="tabs"><span class="tab on">รอคัดแยก/ซักประวัติ <span class="badge">${db.visits.length}</span></span><span class="tab">กำลังรับบริการ <span class="badge">4</span></span><span class="tab">รอเช็กอิน <span class="badge">7</span></span><span class="tab">เสร็จสิ้น <span class="badge">21</span></span></div>
+      <div class="tw"><table><thead><tr><th>Queue ID</th><th>HN</th><th>ชื่อ-นามสกุล</th><th>ประเภท</th></tr></thead><tbody><tr class="g-blue"><td colspan="4">รอเรียกคิว</td></tr>
+      ${list.map(x => `<tr class="click ${x.q === db.last.visit ? "is-last" : ""} ${x.q === p.open ? "sel" : ""}" data-act="open" data-q="${x.q}" tabindex="0"><td style="white-space:nowrap">${x.q}</td><td>${x.hn}</td><td>${x.name}${flags(x)}</td><td>${x.type}</td></tr>`).join("")}</tbody></table></div>
+      <span class="muted" style="font-size:12.5px">${T("mod")} ป้ายอาการผิดปกติ / แพ้ยาใหม่ มาจากเช็กอินออนไลน์</span></div>
+    <div class="port">${!v ? `<div class="empty">กดที่แถวเพื่อซักประวัติ</div>` : `<h3 style="font-size:16px">ซักประวัติ · ${v.name}${flags(v)}</h3>
+      ${ci?.sym === "abn" ? `<div class="msg err"><b>คนไข้แจ้งว่าอาการผิดปกติ</b> ตอนเช็กอินออนไลน์ · ประเมินก่อน</div>` : ""}
+      ${ci?.newAlg ? `<div class="msg warn"><b>คนไข้แจ้งแพ้ยาใหม่:</b> ${esc(ci.newAlgTxt || "-")} · แพ้ยาเดิม: ${esc(v.allergy || "-")}<br>ยังไม่บันทึกลงรายการแพ้ยา พยาบาล/เภสัชกรยืนยันก่อน</div>` : ""}
+      <div class="sec">Vital Sign</div>
+      ${ci ? `<span class="muted" style="font-size:12.5px">จากเช็กอินออนไลน์${ci.when ? " · วัดเมื่อ " + ci.when : ""}</span>` : ""}
+      <div class="frm">${vf("h-sys","BP (SYS)",ci?.sys)}${vf("h-dia","BP (DIA)",ci?.dia)}${vf("h-pr","PR",ci?.pr)}${vf("h-t","T (°C)",ci?.temp)}${vf("h-wt","น้ำหนัก (kg)",ci?.wt)}${vf("h-ht","ส่วนสูง (cm)",ci?.ht)}<div class="fl"><label for="h-bmi">BMI</label><input class="in" id="h-bmi" value="${bmi}" readonly></div></div>
+      <div class="fl"><label for="h-cc">อาการสำคัญ (CC)</label><textarea class="in" id="h-cc" style="min-height:56px">${esc(ci?.cc || "")}</textarea></div>
+      ${ci ? `<div class="frm">${vf("h-smk","สูบบุหรี่",ci.smoke)}${vf("h-alc","ดื่มสุรา",ci.alc)}</div>` : ""}
+      <div><button type="button" class="b green">บันทึกซักประวัติ</button></div>`}</div></div>`);
+ },
+ act(a, el){ if (a === "open"){ P().open = el.dataset.q; rerender(); emit("scr:open"); } }};
+
+/* ---------- Online: Mobile คิว ---------- */
+SCR["m-reg-entry"] = {kind:"phone", label:"Online · ทำบัตร (หน้ากลาง)", render(){
+  const opt = (id, go, h, d) => `<button type="button" class="mcard" id="${id}" data-go="${go}" style="text-align:left;cursor:pointer;font:inherit"><h4>${h} ›</h4><span style="font-size:13px">${d}</span></button>`;
+  return phone("ทำบัตรผู้ป่วย", HOSP, `
+    ${opt("e-new", "m-register", "ลงทะเบียนทำบัตรใหม่", "สำหรับผู้ที่ยังไม่เคยมาโรงพยาบาล กรอกข้อมูลส่งให้ห้องบัตรยืนยันและออก HN")}
+    ${opt("e-check", "m-hn-check", "ตรวจสอบ HN", "ไม่แน่ใจว่าเคยมีบัตรหรือยัง ตรวจด้วยเลขบัตรประชาชนและวันเกิด")}
+    <span class="lab">มี HN แล้ว ขอนัดออนไลน์ได้เลย ไม่ต้องลงทะเบียนใหม่</span>`);
+}};
+
+SCR["m-hn-check"] = {kind:"phone", label:"Online · ตรวจสอบ HN", render(){
+  const p = P(), who = anyPerson(sample()) || {}, r = p.res;
+  const mask = t => String(t || "").split(" ").map(w => w ? w[0] + "x".repeat(Math.max(2, w.length - 1)) : w).join(" ");
+  return phone("ตรวจสอบ HN", "ยืนยันตัวตนด้วยเลขบัตร + วันเกิด", `
+    <div class="mcard">${fl("f-cid","เลขบัตรประชาชน",fmtCid(who.cid),1)}${fl("f-dob","วันเกิด",who.dob,1)}</div>
+    ${p.err ? `<div class="msg err">${p.err}</div>` : ""}
+    ${!r ? `<button type="button" class="mbtn" id="f-check" data-act="check">ตรวจสอบ</button>`
+      : r.hn ? `<div class="refbox"><span class="lab">HN ของท่าน</span><span class="no">${r.hn}</span><span>${r.title} ${mask(r.first)} ${mask(r.last)}</span></div>
+        <div class="msg ok">มีประวัติที่โรงพยาบาลแล้ว ไม่ต้องลงทะเบียนใหม่</div><button type="button" class="mbtn" data-go="m-request">ขอนัดออนไลน์</button>`
+      : `<div class="msg warn"><b>ไม่พบ HN ของเลขบัตรนี้</b><br>ถ้าเคยมาโรงพยาบาลแต่ไม่เคยแจ้งเลขบัตร ลงทะเบียนได้เลย ห้องบัตรจะตรวจกับประวัติเก่าให้</div><button type="button" class="mbtn" data-go="m-register">ลงทะเบียนทำบัตรใหม่</button>`}`);
+ },
+ act(a){
+  if (a !== "check") return;
+  const p = P();
+  if (digits(val("f-cid")).length !== 13 || !val("f-dob")){ p.err = "กรุณากรอกเลขบัตร 13 หลักและวันเกิด"; return rerender(); }
+  const pt = findPt(val("f-cid"), val("f-dob"));
+  p.err = ""; p.res = pt ? {hn:pt.hn, title:pt.title || "", first:pt.first || pname(pt).split(" ")[0], last:pt.last || ""} : {hn:""};
+  rerender(); emit("hn:check");
+ }};
+
+SCR["m-register"] = {kind:"phone", label:"Online · ลงทะเบียนทำบัตร", render(){
+  const p = P(), who = anyPerson(sample()) || {};
+  const sel = (id, label, opts, v, req) => `<div class="fl"><label for="${id}">${label}${req ? ' <span class="r">*</span>' : ""}</label><select class="in" id="${id}">${opts.map(o => `<option ${o === v ? "selected" : ""}>${o}</option>`).join("")}</select></div>`;
+  return phone("ลงทะเบียนทำบัตรใหม่", "สำหรับผู้ที่ยังไม่เคยมี HN", `
+    <div class="mcard"><h4>ข้อมูลผู้ป่วย</h4>
+      <div class="row2">${sel("f-title","คำนำหน้า",["นาย","นาง","นางสาว","ด.ช.","ด.ญ."],who.title,1)}${sel("f-sex","เพศ",["ชาย","หญิง"],who.sex,1)}</div>
+      <div class="row2">${fl("f-first","ชื่อ",who.first,1)}${fl("f-last","นามสกุล",who.last,1)}</div>
+      ${fl("f-cid","เลขบัตรประชาชน",fmtCid(who.cid),1)}<div class="row2">${fl("f-dob","วันเกิด",who.dob,1)}${sel("f-nat","สัญชาติ",["ไทย"],"ไทย",1)}</div>
+      ${fl("f-phone","เบอร์มือถือ",who.phone,1)}</div>
+    <div class="mcard"><h4>ที่อยู่ตามบัตร</h4>
+      <div class="row2">${fl("f-hno","บ้านเลขที่",who.hno,1)}${fl("f-moo","หมู่ที่",who.moo)}</div>
+      <div class="row2">${sel("f-prov","จังหวัด",["นครปฐม","กรุงเทพมหานคร","ราชบุรี"],who.province,1)}${sel("f-amp","อำเภอ/เขต",["เมืองนครปฐม","สามพราน","กำแพงแสน"],who.amphoe,1)}</div>
+      <div class="row2">${sel("f-tam","ตำบล/แขวง",["พระปฐมเจดีย์","บ่อพลับ","สนามจันทร์"],who.tambon,1)}${fl("f-zip","รหัสไปรษณีย์",who.zip,1)}</div></div>
+    <div class="mcard"><h4>ผู้ติดต่อฉุกเฉิน</h4>${fl("f-cname","ชื่อ-นามสกุล",who.cname,1)}
+      <div class="row2">${sel("f-crel","ความสัมพันธ์",["บิดา","มารดา","สามี","ภรรยา","บุตร","ญาติ","อื่น ๆ"],who.crel,1)}${fl("f-cphone","เบอร์โทร",who.cphone,1)}</div></div>
+    <div class="mcard"><h4>ข้อมูลเพิ่มเติม (ไม่บังคับ)</h4>
+      <div class="row2">${sel("f-rel","ศาสนา",["พุทธ","อิสลาม","คริสต์","อื่น ๆ"],who.religion)}${fl("f-job","อาชีพ",who.job)}</div>
+      ${fl("f-alg","แพ้ยา (ถ้ามี)",who.allergy,"","เช่น Penicillin หรือ ไม่มี")}</div>
+    ${notifyPick("moph")}
+    <label class="mcard" style="grid-template-columns:auto 1fr;font-size:13px"><input type="checkbox" id="f-consent"> <span>ยินยอมให้โรงพยาบาลเก็บ ใช้ และประมวลผลข้อมูลส่วนบุคคลเพื่อการลงทะเบียนและการรักษา <span style="color:#7FA694">(ข้อความจริงรอ DPO ตรวจ)</span></span></label>
+    ${p.err ? `<div class="msg err">${p.err}</div>` : ""}
+    ${p.dup ? `<div class="msg warn"><b>เลขบัตรนี้มีประวัติที่โรงพยาบาลแล้ว</b><br>ไม่ต้องลงทะเบียนใหม่ ใช้บริการขอนัดได้เลย</div><button type="button" class="mbtn ghost" data-go="m-request">ไปขอนัดออนไลน์</button>`
+      : `<button type="button" class="mbtn" id="f-submit" data-act="submit">ส่งข้อมูลให้ห้องบัตร</button>`}`);
+ },
+ act(a){
+  if (a !== "submit") return;
+  const p = P(), cid = digits(val("f-cid"));
+  if (!$("#f-consent").checked){ p.err = "กรุณาติ๊กยินยอมการเก็บข้อมูลส่วนบุคคล"; return rerender(); }
+  if (db.patients.some(x => x.cid && x.cid === cid)){ p.err = ""; p.dup = true; rerender(); return emit("reg:dup"); }
+  if (["f-first","f-last","f-cid","f-dob","f-phone","f-hno","f-zip","f-cname","f-cphone"].some(id => !val(id))){ p.err = "กรุณากรอกช่องที่มี * ให้ครบ"; return rerender(); }
+  if (cid.length !== 13){ p.err = "เลขบัตรประชาชนต้องมี 13 หลัก"; return rerender(); }
+  const g = {ref:"H-0" + (++db.n.reg), title:val("f-title"), first:val("f-first"), last:val("f-last"), cid, dob:val("f-dob"), sex:val("f-sex"), nat:val("f-nat"), phone:val("f-phone"),
+    hno:val("f-hno"), moo:val("f-moo"), province:val("f-prov"), amphoe:val("f-amp"), tambon:val("f-tam"), zip:val("f-zip"), cname:val("f-cname"), crel:val("f-crel"), cphone:val("f-cphone"),
+    religion:val("f-rel"), job:val("f-job"), allergy:val("f-alg"), notify:readNotify(), consentAt:nowStr(), status:"รอยืนยัน", at:nowStr()};
+  db.regs.push(g); db.last.reg = g.ref;
+  navigate("m-register-done", {ref:g.ref}); emit("reg:submit");
+ }};
+
+SCR["m-register-done"] = {kind:"phone", label:"Online · ส่งข้อมูลทำบัตรแล้ว", render(){
+  const g = db.regs.find(x => x.ref === P().ref) || db.regs[db.regs.length - 1];
+  return phone("ส่งข้อมูลแล้ว", "ลงทะเบียนทำบัตร", `<div class="refbox"><span class="lab">เลขอ้างอิง</span><span class="no">${g.ref}</span><span>${g.title} ${g.first} ${g.last}</span></div>
+    <div class="mcard"><h4>ผลจะส่งไปที่</h4><span>หมอพร้อมของเลขบัตร ${maskCid(g.cid)}</span>
+      <span class="lab">ปิดหน้านี้ได้เลย ไม่ต้องเก็บลิงก์ไว้ · ถ้าไม่ได้รับผลภายใน 2 วันทำการ โทร 0-0000-0000 แจ้งเลขอ้างอิง ${g.ref}</span></div>`);
+}};
+
+SCR["m-request"] = {kind:"phone", label:"Online · ขอนัดออนไลน์", render(){
+  const p = P(), who = anyPerson(sample()) || {};
+  return phone("แบบฟอร์มขอนัดหมาย", "เจ้าหน้าที่จะลงนัดให้ตามตารางที่ว่าง", `
+    <div class="mcard"><h4>ยืนยันตัวตน</h4>${fl("f-cid","เลขบัตรประชาชน",fmtCid(who.cid),1)}${fl("f-dob","วันเกิด",who.dob,1)}</div>
+    <div class="mcard"><div class="fl"><label for="f-sym">อาการ / เหตุผลที่ขอนัด <span class="r">*</span></label><textarea class="in" id="f-sym" style="min-height:56px">ปวดเข่าขวามา 2 สัปดาห์ เดินขึ้นบันไดลำบาก</textarea></div>
+      ${fl("f-chronic","โรคประจำตัว","เบาหวาน")}${clinicSelect("f-clinic","OR00")}${fl("f-doc","แพทย์ที่ต้องการ (ถ้ามี)","")}
+      ${daysPicker(["อ.","พฤ."], "21/10/2569", "07/11/2569")}
+      <div class="fl"><span class="lab">แนบรูป (ใบนัดเดิม / ใบส่งตัว)</span><button type="button" class="chip" data-act="attach" aria-pressed="${p.att ? "true" : "false"}" style="justify-self:start">${p.att ? "แนบแล้ว 1 รูป" : "＋ เลือกรูป"}</button></div>
+      ${fl("f-phone","เบอร์ติดต่อกลับ",who.phone,1)}</div>
+    ${p.err ? `<div class="msg err">${p.err}</div>` : ""}
+    ${p.nf ? `<div class="msg warn">ไม่พบประวัติผู้ป่วย กรุณาลงทะเบียนทำบัตรก่อน</div><button type="button" class="mbtn" data-go="m-register">ไปลงทะเบียนทำบัตร</button>` : `<button type="button" class="mbtn" id="f-submit" data-act="submit">ส่งคำขอนัด</button>`}`);
+ },
+ act(a, el){
+  const p = P();
+  if (a === "chip"){ el.setAttribute("aria-pressed", el.getAttribute("aria-pressed") === "true" ? "false" : "true"); return; }
+  if (a === "attach"){ p.att = !p.att; return rerender(); }
+  if (a !== "submit") return;
+  if (!val("f-sym")){ p.err = "กรุณากรอกอาการ"; return rerender(); }
+  const d = readDays(); if (!d.days.length && !d.other){ p.err = "กรุณาเลือกวันที่มาได้"; return rerender(); }
+  const pt = findPt(val("f-cid"), val("f-dob"));
+  if (!pt){ p.nf = true; return rerender(); }
+  if (db.reqs.some(r => r.cid === pt.cid && r.clinic === val("f-clinic") && /รอ/.test(r.status))){ p.err = "มีคำขอของคลินิกนี้ที่ยังรออยู่แล้ว"; return rerender(); }
+  const r = newReq(pt, {clinic:val("f-clinic"), ...d, phone:val("f-phone"), symptom:val("f-sym"), chronic:val("f-chronic"), doctor:val("f-doc"), attach:p.att ? 1 : 0});
+  navigate("m-request-done", {ref:r.ref}); emit("request:submit");
+ }};
+
+SCR["m-request-done"] = {kind:"phone", label:"Online · ส่งคำขอนัดแล้ว", render(){
+  const r = db.reqs.find(x => x.ref === P().ref) || db.reqs[db.reqs.length - 1];
+  return phone("ส่งคำขอแล้ว", "ขอนัดออนไลน์", `<div class="refbox"><span class="lab">เลขอ้างอิง</span><span class="no">${r.ref}</span><span>${r.name} · ${cl(r.clinic).name}</span></div>
+    <div class="mcard"><div class="kv"><span>วันที่มาได้</span><span>${daysText(r)}</span></div><div class="kv"><span>สถานะ</span><span>${stPill(r.status)}</span></div></div>
+    <div class="mcard"><h4>ดูผลที่ไหน</h4><span>เมื่อเจ้าหน้าที่ลงนัดแล้ว <b>นัดจะขึ้นในหมอพร้อม</b> ของเลขบัตร ${maskCid(r.cid)}</span>
+      <span class="lab">ถ้าลงนัดไม่ได้ เจ้าหน้าที่จะโทรแจ้งที่เบอร์ ${maskPhone(r.phone)} · ปิดหน้านี้ได้เลย · ถ้าไม่มีนัดขึ้นภายใน 2 วันทำการ โทร 0-0000-0000 แจ้งเลขอ้างอิง ${r.ref}</span></div>`);
+}};
+
+SCR["m-msg"] = {kind:"phone", label:"Online · ข้อความเตือนนัด (จำลอง)", render(){
+  const a = db.appts.find(x => x.id === "AP-501"), pt = db.patients.find(x => x.cid === a.cid);
+  return `<div class="phone"><div class="scr"><div class="mh"><span class="mlogo">รพ.</span><div><b>หมอพร้อม · แจ้งเตือนใบนัดล่วงหน้า</b><span>จำลอง · ช่องทางจริงคือหมอพร้อม (IT ดูแล)</span></div></div>
+    <div class="chat"><div class="bubble"><div class="bh">แจ้งเตือนใบนัดล่วงหน้า · ${HOSP}</div><div class="bb">
+      <div class="msg ok" style="font-size:12.5px">ใกล้ถึงวันนัดแล้ว กรุณาตรวจสอบวัน เวลา คลินิก</div>
+      <div class="kv"><span>HN</span><b>${pt.hn}</b></div><div class="kv"><span>เลขที่นัด</span><b>${a.no}</b></div><div class="kv"><span>ชื่อ</span><span>${pname(pt)}</span></div><div class="kv"><span>วันนัด</span><span>${a.date} · ${a.time} น.</span></div><div class="kv"><span>คลินิก</span><span>${cl(a.clinic).name}</span></div><div class="kv"><span>แพทย์</span><span>${a.doctor}</span></div>
+      <div><span class="lab" style="font-size:12.5px">เหตุผลการนัด</span><div class="rchips">${(a.reasons || [a.reason]).map(r => `<span class="rchip">${r}</span>`).join("")}</div></div>
+      <div style="font-size:12.5px;background:#fff8e6;border-radius:8px;padding:6px 9px"><b>ข้อควรปฏิบัติ</b><br>- เช็กอินออนไลน์และกรอกอาการก่อนมา<br>- ยื่นบัตรนัดก่อนเวลานัด 30 นาที</div>
+      <button type="button" class="mbtn" id="msg-btn" data-go="m-checkin" data-p='{"token":"${a.id}"}'>เช็กอินออนไลน์</button>
+      <button type="button" class="mbtn ghost" id="msg-resched" data-go="m-resched" data-p='{"token":"${a.id}"}'>แจ้งความประสงค์เลื่อนนัด</button></div></div></div><div class="mfoot">ลิงก์ = URL ของ Mobile คิว + โทเคนต่อนัด</div></div></div>`;
+}};
+
+SCR["m-checkin"] = {kind:"phone", label:"Online · เช็กอินออนไลน์", render(){
+  const p = P(), a = p.token ? db.appts.find(x => x.id === p.token) : null;
+  if (!a){
+    const who = anyPerson(sample()) || {};
+    return phone("เช็กอินออนไลน์", "สำหรับผู้ที่มีนัด", `<div class="msg info">ไม่ได้รับลิงก์? ยืนยันตัวด้วยเลขบัตร + วันเกิด</div><div class="mcard">${fl("f-cid","เลขบัตรประชาชน",fmtCid(who.cid),1)}${fl("f-dob","วันเกิด",who.dob,1)}</div>
+      ${p.err ? `<div class="msg err">${p.err}</div>` : ""}<button type="button" class="mbtn" data-act="find">ค้นหานัด</button>`);
+  }
+  const pt = db.patients.find(x => x.cid === a.cid), ci = db.checkins[a.id] || {}, sym = p.sym || ci.sym;
+  if (a.visited) return phone("เช็กอินออนไลน์", "ก่อนพบแพทย์", `<div class="msg ok">เปิด Visit ของนัดนี้แล้ว ข้อมูลถูกบันทึกเข้า Visit แล้ว จึงแก้ไขไม่ได้</div>`);
+  const rad = (name, opts, v) => `<div class="rad">${opts.map(o => `<label><input type="radio" name="${name}" value="${o}" ${o === v ? "checked" : ""}> ${o}</label>`).join("")}</div>`;
+  const form = !sym ? "" : `
+    <div class="mcard"><h4>อาการวันนี้เป็นอย่างไร <span class="r">*</span></h4><textarea class="in" id="f-cc" style="min-height:60px" placeholder="เช่น อาการปกติ ทานยาตามแพทย์สั่ง">${esc(ci.cc || (sym === "abn" ? "เวียนศีรษะ 2 วัน ความดันที่บ้านสูงกว่าปกติ" : "อาการปกติ ทานยาตามแพทย์สั่ง"))}</textarea></div>
+    <div class="mcard"><h4>สะดวกเดินทางมาโรงพยาบาลหรือไม่ <span class="r">*</span></h4>${rad("f-travel", ["สะดวก","ไม่สะดวก"], ci.travel || "สะดวก")}
+      <span class="lab">ถ้าไม่สะดวก แจ้งเลื่อนนัดได้</span><button type="button" class="mbtn ghost" data-go="m-resched" data-p='{"token":"${a.id}"}' style="min-height:38px;font-size:14px">แจ้งความประสงค์เลื่อนนัด</button></div>
+    <div class="mcard"><h4>มีแพ้ยาใหม่หรือไม่ <span class="r">*</span></h4><div style="background:#F3F5F1;border-radius:8px;padding:6px 10px;font-size:13.5px"><span class="lab">รายการแพ้ยาที่โรงพยาบาล</span><br><b>${esc(pt.allergy || "-")}</b></div>
+      ${rad("f-newalg", ["ไม่มีแพ้ยาใหม่","มีแพ้ยาใหม่"], ci.newAlg ? "มีแพ้ยาใหม่" : "ไม่มีแพ้ยาใหม่")}<input class="in" id="f-newalgtxt" placeholder="ชื่อยาที่แพ้ / อาการ" value="${esc(ci.newAlgTxt || "")}"></div>
+    <div class="mcard"><h4>สัญญาณชีพ</h4>
+      <div class="row2">${fl("f-sys","ความดันตัวบน (SYS)",ci.sys || "128",1)}${fl("f-dia","ความดันตัวล่าง (DIA)",ci.dia || "82",1)}</div>
+      ${fl("f-pr","ชีพจร (ครั้ง/นาที)",ci.pr || "78",1)}
+      <span class="lab">ไม่บังคับ</span>
+      <div class="row2">${fl("f-wt","น้ำหนัก (กก.)",ci.wt || "72")}${fl("f-ht","ส่วนสูง (ซม.)",ci.ht || "168")}</div>
+      <div class="row2">${fl("f-temp","อุณหภูมิ (°C)",ci.temp || "")}<div class="fl"><label for="f-wdate">วันที่วัด</label><input class="in" type="date" id="f-wdate" value="${ci.wdate || "2026-10-15"}"></div></div>
+      <div class="row2"><div class="fl"><label for="f-wtime">เวลาที่วัด</label><input class="in" type="time" id="f-wtime" value="${ci.wtime || "19:30"}"></div><div></div></div></div>
+    <div class="mcard"><h4>ข้อมูลเพิ่มเติม (ไม่บังคับ)</h4>${fl("f-phone","เบอร์โทรที่ติดต่อได้",ci.phone || pt.phone)}
+      <span class="lab">สูบบุหรี่</span>${rad("f-smoke", ["ไม่สูบ","สูบ"], ci.smoke)}<span class="lab">ดื่มสุรา</span>${rad("f-alc", ["ไม่ดื่ม","ดื่ม"], ci.alc)}</div>
+    ${p.err ? `<div class="msg err">${p.err}</div>` : ""}
+    <button type="button" class="mbtn" id="f-submit" data-act="ask">เช็กอิน</button>`;
+  const body = `
+    <div class="mcard"><h4>ข้อมูลการนัดหมาย</h4><div class="kv"><span>HN</span><b>${pt.hn}</b></div><div class="kv"><span>ชื่อ-สกุล</span><span>${pname(pt)}</span></div><div class="kv"><span>วันนัด</span><span>${a.date} ${a.time} น.</span></div><div class="kv"><span>คลินิก</span><span>${cl(a.clinic).name}</span></div><div class="kv"><span>แพทย์</span><span>${a.doctor}</span></div>
+      <span class="lab">เหตุผลการนัด</span><div class="rchips">${(a.reasons || [a.reason]).map(r => `<span class="rchip">${r}</span>`).join("")}</div></div>
+    ${db.checkins[a.id] ? `<div class="msg info">ส่งข้อมูลไว้แล้วเมื่อ ${ci.at} แก้ไขได้จนกว่าจะเปิด Visit</div>` : ""}
+    <div class="symb"><button type="button" class="n" id="ci-normal" data-act="sym" data-v="normal" aria-pressed="${sym !== "abn"}">อาการปกติ</button><button type="button" class="x" id="ci-abn" data-act="sym" data-v="abn" aria-pressed="${sym !== "normal"}">อาการผิดปกติ</button></div>
+    ${sym ? "" : `<span class="lab">กรุณาเลือก แล้วตอบแบบสอบถามให้ครบ เพื่อใช้ซักประวัติ</span>`}
+    ${form}
+    ${p.ask ? `<div class="mmodal"><div class="box2"><b style="font-size:18px">ยืนยันการเช็กอิน</b><span style="font-size:13.5px">ข้อมูลจะส่งให้โรงพยาบาล และเข้า Visit ตอนเปิด Visit นัด</span><div class="row2"><button type="button" class="mbtn ghost" data-act="cancel">ยกเลิก</button><button type="button" class="mbtn" id="ci-ok" data-act="submit">บันทึก</button></div></div></div>` : ""}`;
+  return phone("เช็กอินออนไลน์", "ก่อนพบแพทย์", body);
+ },
+ act(a, el){
+  const p = P();
+  if (a === "find"){ const pt = findPt(val("f-cid"), val("f-dob")); const ap = pt && db.appts.find(x => x.cid === pt.cid && !x.visited); if (!ap){ p.err = "ไม่พบนัดของวันนี้หรือพรุ่งนี้"; return rerender(); } p.token = ap.id; p.err = ""; return rerender(); }
+  if (a === "sym"){ p.sym = el.dataset.v; p.err = ""; rerender(); return emit("ci:sym"); }
+  if (a === "cancel"){ p.ask = false; return rerender(); }
+  const radio = n => document.querySelector(`input[name="${n}"]:checked`)?.value || "";
+  if (a === "ask"){
+    if (!val("f-cc")){ p.err = "กรุณากรอกอาการวันนี้"; return rerender(); }
+    if (!val("f-sys") || !val("f-dia") || !val("f-pr")){ p.err = "กรุณากรอกความดันและชีพจร"; return rerender(); }
+    if (radio("f-newalg") === "มีแพ้ยาใหม่" && !val("f-newalgtxt")){ p.err = "กรุณาระบุยาที่แพ้"; return rerender(); }
+    const d = val("f-wdate"), [y, m, dd] = d ? d.split("-") : [];
+    p.draft = {sym:p.sym, cc:val("f-cc"), travel:radio("f-travel"), newAlg:radio("f-newalg") === "มีแพ้ยาใหม่", newAlgTxt:val("f-newalgtxt"), sys:val("f-sys"), dia:val("f-dia"), pr:val("f-pr"), wt:val("f-wt"), ht:val("f-ht"), temp:val("f-temp"),
+      wdate:d, wtime:val("f-wtime"), when:d ? `${dd}/${m}/${+y + 543}${val("f-wtime") ? " " + val("f-wtime") + " น." : ""}` : "", phone:val("f-phone"), smoke:radio("f-smoke"), alc:radio("f-alc")};
+    p.err = ""; p.ask = true; rerender(); return emit("ci:ask");
+  }
+  if (a !== "submit") return;
+  db.checkins[p.token] = {...p.draft, at:nowStr()};
+  navigate("m-checkin-done", {token:p.token}); emit("ci:submit");
+ }};
+
+SCR["m-checkin-done"] = {kind:"phone", label:"Online · เช็กอินสำเร็จ", render(){
+  const ci = db.checkins[P().token] || {};
+  return phone("เช็กอินสำเร็จ", "โรงพยาบาลได้รับข้อมูลของท่านแล้ว", `<div class="refbox"><span class="no">✓</span><span>BP ${ci.sys}/${ci.dia} · PR ${ci.pr}${ci.sym === "abn" ? " · แจ้งอาการผิดปกติ" : ""}</span></div>
+    <div class="mcard"><h4>ขั้นตอนการรับบริการ</h4><ol style="margin:0;padding-left:18px;font-size:14px;display:grid;gap:4px"><li>เปิด Visit นัดที่ตู้ Kiosk หรือเคาน์เตอร์ ก่อนเวลานัด 30 นาที</li><li>ข้อมูลที่กรอกจะเข้า Visit ให้เอง ไม่ต้องกรอกซ้ำ</li><li>${ci.sym === "abn" ? "<b>ติดต่อเคาน์เตอร์พยาบาลในแผนกที่มีนัด พร้อมแจ้งว่าเช็กอินแล้ว มีอาการผิดปกติ</b>" : "รอเรียกที่จุดคัดกรอง"}</li></ol></div>
+    <button type="button" class="mbtn ghost" data-go="m-checkin" data-p='{"token":"${P().token}"}'>แก้ไขข้อมูล</button>`);
+}};
+
+SCR["m-resched"] = {kind:"phone", label:"Online · แจ้งความประสงค์เลื่อนนัด", render(){
+  const p = P(), a = db.appts.find(x => x.id === (p.token || "AP-501")), pt = db.patients.find(x => x.cid === a.cid);
+  return phone("แจ้งความประสงค์เลื่อนนัด", "เจ้าหน้าที่จะเลื่อนให้ตามตารางที่ว่าง", `
+    <div class="mcard"><h4>นัดเดิม</h4><div class="kv"><span>เลขที่นัด</span><b>${a.no || a.id}</b></div><div class="kv"><span>วันนัด</span><span>${a.date} ${a.time} น.</span></div><div class="kv"><span>คลินิก</span><span>${cl(a.clinic).name}</span></div><div class="kv"><span>แพทย์</span><span>${a.doctor}</span></div></div>
+    <div class="mcard"><div class="fl"><label for="f-why">เหตุผล <span class="r">*</span></label><select class="in" id="f-why"><option>ไม่สะดวกเดินทาง</option><option>ติดธุระ / ติดงาน</option><option>เจ็บป่วย มาไม่ได้</option><option>อื่น ๆ</option></select></div>
+      ${daysPicker(["จ.","พ."], "20/10/2569", "31/10/2569")}${fl("f-phone","เบอร์ติดต่อกลับ",pt.phone,1)}</div>
+    ${p.err ? `<div class="msg err">${p.err}</div>` : ""}
+    <button type="button" class="mbtn" id="f-submit" data-act="submit">ส่งคำขอเลื่อนนัด</button>`);
+ },
+ act(a, el){
+  const p = P();
+  if (a === "chip"){ el.setAttribute("aria-pressed", el.getAttribute("aria-pressed") === "true" ? "false" : "true"); return; }
+  if (a !== "submit") return;
+  const ap = db.appts.find(x => x.id === (p.token || "AP-501")), pt = db.patients.find(x => x.cid === ap.cid), d = readDays();
+  if (!d.days.length && !d.other){ p.err = "กรุณาเลือกวันที่มาได้"; return rerender(); }
+  const r = newReq(pt, {kind:"เลื่อนนัด", oldAppt:ap.id, clinic:ap.clinic, ...d, phone:val("f-phone"), symptom:"ขอเลื่อนนัด: " + val("f-why"), chronic:"", doctor:ap.doctor, attach:0});
+  navigate("m-request-done", {ref:r.ref}); emit("resched:submit");
+ }};
+
+SCR["m-notify"] = {kind:"phone", label:"Online · แจ้งผลทำบัตรทางหมอพร้อม (จำลอง)", render(){
+  let head = "", body = "";
+  {
+    const g = db.regs.find(x => x.ref === db.last.reg) || db.regs[db.regs.length - 1];
+    head = g.status === "ปฏิเสธ" ? "ผลการลงทะเบียนทำบัตร" : "ลงทะเบียนทำบัตรสำเร็จ";
+    body = g.status === "ปฏิเสธ" ? `<div class="kv"><span>เลขอ้างอิง</span><b>${g.ref}</b></div><div class="msg err">ไม่สามารถลงทะเบียนได้: ${g.reason}</div><span style="font-size:12.5px">ติดต่อเวชระเบียน โทร 0-0000-0000</span>`
+      : `<div class="kv"><span>ชื่อ</span><span>${g.title} ${g.first} ${g.last}</span></div><div class="kv"><span>HN</span><b style="font-size:20px">${g.hn}</b></div>${g.status === "ใช้ HN เดิม" ? '<span style="font-size:12.5px">ท่านมีประวัติที่โรงพยาบาลอยู่แล้ว ใช้ HN นี้ได้เลย</span>' : ""}<span style="font-size:12.5px">ครั้งแรกที่มา กรุณานำบัตรประชาชนตัวจริงมายืนยันตัวตนที่เวชระเบียน</span>`;
+  }
+  return `<div class="phone"><div class="scr"><div class="mh"><span class="mlogo">รพ.</span><div><b>แจ้งผล</b><span>จำลอง · ช่องทางจริงคือหมอพร้อม (IT ดูแล)</span></div></div>
+    <div class="chat"><div class="bubble"><div class="bh">${head} · ${HOSP}</div><div class="bb">${body}</div></div></div><div class="mfoot">ส่งตามเลขบัตรประชาชนทางหมอพร้อม · คนไข้ไม่ต้องมีลิงก์</div></div></div>`;
+}};
+
+/* ---------- printed ticket samples ---------- */
+SCR["s-samples"] = {kind:"doc", label:"ตัวอย่างบัตรคิว Walk-in", render(){
+  const mk = o => ({at:"07:42", right:"หลักประกันสุขภาพ (บัตรทอง)", ...o});
+  const ex = [
+    [mk({type:"V", no:"V014", clinic:"ME01", name:"นาง สมศรี มีสุข", hn:"880/69", cid:"1100000000022"}), "V มี HN · ไปเปิด Visit (ได้เลขคิวตอนเปิด Visit ตามปกติ)"],
+    [mk({type:"V", no:"V015", clinic:"PE00", name:"ด.ช. ใจดี มาใหม่", hn:null, cid:"3100000000033"}), "V ไม่มี HN · ลงทะเบียน HN แล้วเปิด Visit"],
+    [mk({type:"V", no:"V016", clinic:"GP00", name:"", hn:null, cid:"3100000000077", right:null, noCard:true}), "V ไม่ได้นำบัตรมา · ไม่มีชื่อ ไม่มีสิทธิ"],
+    [mk({type:"P", no:"P006", clinic:"ME02", name:"นาย มานะ ใจงาม", hn:"125/69", cid:"1100000000011"}), "P · ให้เวชระเบียนพิจารณาเปิด Visit หรือทำนัด"],
+    [mk({type:"N", no:"N003", clinic:"SU00", name:"นาย กล้า หาญยิ่ง", hn:null, cid:"3100000000044"}), "N · ไปลงทะเบียน HN ใหม่และทำนัด"]
+  ];
+  const q = (no, clinic, kind, doc, room) => `<div class="qrow"><div><span class="muted">${kind}</span><br><b class="q">${no}</b><br><span>${clinic}${doc ? " · " + doc : ""}</span>${room ? `<br><span class="muted">${room}</span>` : ""}</div><span class="qr" aria-hidden="true"></span></div>`;
+  return `<div class="doc"><h2>ตัวอย่างบัตรคิว Walk-in</h2>
+    <p class="muted" style="margin:0">บัตรจากจุดออกบัตร ก่อนถึงเวชระเบียน · พิมพ์อย่างเดียว ไม่จับคู่และไม่เก็บประวัติ · เลขคิวจริงได้ตอนเปิด Visit และพิมพ์บัตรคิวเดิม (QueueCard) ตามปกติ ใบละ 1 คิว</p>
+    <div class="samples">${ex.map(([t, cap]) => `<figure><div class="tkt ${t.type}">${ticketBody(t)}</div><figcaption>${cap}</figcaption></figure>`).join("")}</div></div>`;
+}};
+
+/* ---------- summary of changes to existing parts ---------- */
+SCR["doc"] = {kind:"doc", label:"สรุป · ของเดิมที่ต้องปรับ", render(){
+  const G = [
+    ["Counter · หน้าจอ HA.OS (WebClient)", [
+      ["เมนู / สิทธิ์เมนู (menu.config)","เพิ่มเมนูเวชระเบียน: จองคิว Walk-in, คำขอทำบัตรออนไลน์, คำขอนัดออนไลน์ (ไม่มีหน้าเรียกคิวเวชระเบียน คนไข้ถือบัตรไปยื่นเอง)","ใหม่"],
+      ["หน้าจอนัดหมาย","รับค่าตั้งต้นจากคำขอนัดออนไลน์ แล้วคืน AppointmentId","แก้"],
+      ["ทะเบียนประวัติ / เปิด Visit (หน้าเดิม)","ไม่แก้ ช่องเวชระเบียนใช้ตามปกติ","เดิม"],
+      ["เรียกคิวคัดแยก/ซักประวัติ","แก้เล็กน้อย: ป้ายอาการผิดปกติ / แพ้ยาใหม่ / กลุ่มคิว และเรียงกลุ่มด่วนก่อน · Vital Sign และ CC มาจาก Visit แล้ว","แก้"]]],
+    ["WebAPI / ฐานข้อมูล", [
+      ["ตารางใหม่","ชุดคลินิกต่อจุดออกบัตร (ไม่มีตารางบัตรคิว), คำขอทำบัตร, คำขอนัด + ไฟล์แนบ, โทเคนนัด, ข้อมูลเช็กอิน (Vital Sign)","ใหม่"],
+      ["Controller สาธารณะ","แยกจาก KioskController: AllowAnonymous + ยืนยันเลขบัตร/วันเกิด + จำกัดจำนวนครั้ง","ใหม่"],
+      ["สเปก Limit ห้องตรวจ","Dashboard อ่านยอดระดับคลินิกจาก Limit ชุดเดียวกัน และนับเฉพาะจุดที่มีแพทย์ออกตรวจวันนี้","แก้"],
+      ["เมนูสรุปจุดบริการ (ใหม่ · สเปก Limit)","ตั้ง Limit Walk-in ต่อจุด · Limit นัดอ่านจาก LimitCase ของตารางแพทย์ · ค่ารวมส่งไปที่ Dashboard จุดออกบัตร","ใหม่"],
+      ["AddVisit (Walk-in)","ไม่แก้ · Dashboard ไม่ได้นับจาก Visit แต่นับ Walk-in ที่เรียกเข้าห้องตรวจแล้วจากคิวห้องตรวจ (ยอดชุดเดียวกับสรุปจุดบริการ)","เดิม"],
+      ["PrivilegeService.AddVisitFormAppointment","เปิด Visit นัดสำเร็จแล้ว ถ้ามีข้อมูลเช็กอินของนัดนั้น บันทึกเข้า TB_VITAL_SIGNS ของ Visit (วิธีเดียวกับ VitalSignsPublicService.AddVitalSigns) · ใช้ทั้งตู้ Kiosk และเคาน์เตอร์ โดยหน้าจอไม่แก้","แก้"],
+      ["AppointmentService","สร้างโทเคนต่อนัด · เลื่อน/ยกเลิก = โทเคนใช้ไม่ได้","แก้"],
+      ["RegisterService.AddPatient / CheckDuplicateIdcardPatient","ใช้ตามเดิมจากคำขอทำบัตรออนไลน์","เดิม"]]],
+    ["Kiosk", [
+      ["ตู้ Kiosk","เปิด Visit ได้เฉพาะนัดหมาย · ปิดทาง Walk-in (เลือกประเภท Walk-in / เลือกห้องตรวจ) ไม่มีนัดวันนี้ = แจ้งให้ไปจุดออกบัตรคิว Walk-in · ตอนเปิด Visit นัด API นำข้อมูลเช็กอินเข้า Visit ให้เอง","แก้"]]],
+    ["Online", [
+      ["แอป Mobile คิว","เพิ่ม Route ทำบัตร (หน้ากลาง → ลงทะเบียน / ตรวจสอบ HN), ขอนัด, เช็กอิน ไม่มีหน้าหลัก ไม่มีหน้าตรวจสถานะ แต่ละหน้าเข้าจากลิงก์/QR ของตัวเอง · ใช้ Layout เดิม ไม่ต้อง Login · หน้าติดตามคิวเดิมไม่แตะ","แก้"],
+      ["Proxy ของ Mobile คิว","เปิด Path API สาธารณะชุดใหม่","แก้"],
+      ["หมอพร้อม (IT)","รับข้อมูลจาก HA.OS แล้วส่ง: ผลทำบัตร (HN / ใช้ HN เดิม / ปฏิเสธ) · เตือนนัด + ลิงก์เช็กอิน · ผลคำขอนัดไม่ต้องส่ง นัดขึ้นในหมอพร้อมเอง (ปฏิเสธ = เจ้าหน้าที่โทรแจ้ง) · ไม่มีหน้าตรวจสถานะ","IT"]]]
+  ];
+  return `<div class="doc"><h2>ของเดิมที่ต้องปรับ</h2><p class="muted" style="margin:0">รวมจากแผงด้านขวาของทุกหน้าจอ</p>
+    <div class="tw"><table><thead><tr><th style="width:28%">ส่วน</th><th>ต้องทำอะไร</th><th style="width:12%">ประเภท</th></tr></thead><tbody>
+    ${G.map(([g, rows]) => `<tr class="grp2"><td colspan="3">${g}</td></tr>${rows.map(r => `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}`).join("")}</tbody></table></div></div>`;
+}};
+
+/* ======================= engine ======================= */
+let cur = {screen:"s-ticket", params:{}}, scIdx = 0, si = 0, free = false;
+const scen = () => free ? null : SC[scIdx];
+const sample = () => scen()?.who || SAMPLE_DEFAULT;
+const stage = $("#stage");
+
+function navigate(screen, params = {}, silent){
+  cur = {screen, params:{...params}};
+  render();
+  if (!silent) emit("go:" + screen);
+}
+function rerender(){ render(); }
+function render(){
+  const s = SCR[cur.screen];
+  stage.innerHTML = `<div class="stage-label">${s.label}</div>` + s.render();
+  renderChg(); renderGuide();
+}
+function emit(ev){
+  const sc = scen(); if (!sc) return;
+  const st = sc.steps[si]; if (!st || st.on !== ev) return;
+  si++; afterStep();
+}
+function afterStep(){
+  const st = scen().steps[si];
+  st?.enter?.();
+  if (st && st.scr !== cur.screen) navigate(st.scr, st.p || {}, true);
+  else if (st?.enter) render();
+  else renderGuide();
+}
+function startScenario(i){
+  free = false; scIdx = i; si = 0; db = seed(); SC[i].setup?.(db);
+  $("#modal-root").innerHTML = "";
+  const st = SC[i].steps[0];
+  navigate(st.scr, st.p || {}, true); renderNav();
+  window.scrollTo({top:0});
+}
+function startFree(screen){ free = true; $("#modal-root").innerHTML = ""; navigate(screen || "s-ticket", {}, true); renderNav(); }
+
+function renderGuide(){
+  const g = $("#guide");
+  document.querySelectorAll(".hl").forEach(e => e.classList.remove("hl"));
+  if (free){
+    g.innerHTML = `<div class="gh"><b>เล่นอิสระ · ${SCR[cur.screen].label}</b></div>
+      <p>กดเมนูและปุ่มในหน้าจอได้เลย ข้อมูลเชื่อมกันทุกหน้า เลือกหน้าจอได้จากแถบซ้าย</p>
+      <div class="samples"><span>มี HN: 1-1000-00000-01-1 · 12/03/2508 (มีนัดวันนี้)</span><span>1-1000-00000-02-2 · 05/08/2501</span><span>ไม่มี HN: 3-1000-00000-03-3 · 20/01/2540</span></div>
+      <div class="gbar"><span style="flex:1"></span><button type="button" class="gb" id="g-reset">ล้างข้อมูลตัวอย่าง</button></div>`;
+    $("#g-reset").onclick = () => { db = seed(); cur.params = {}; render(); toast("ล้างข้อมูลแล้ว"); };
+    return;
+  }
+  const sc = scen(), n = sc.steps.length, st = sc.steps[Math.min(si, n - 1)], last = si >= n - 1 && !st.on;
+  const chName = CHANNELS.find(c => c[0] === sc.ch)[1];
+  g.innerHTML = `<div class="gh"><span class="ch c-${sc.ch}">${chName}</span><b>${sc.id} · ${sc.title}</b><span class="gstep">ขั้น ${Math.min(si + 1, n)}/${n}</span></div>
+    <p>${st.t}</p>
+    <div class="gbar"><div class="dots">${sc.steps.map((_, i) => `<i class="${i < si ? "done" : i === si ? "now" : ""}"></i>`).join("")}</div>
+      <button type="button" class="gb" id="g-restart">เริ่มเคสนี้ใหม่</button>
+      <button type="button" class="gb primary" id="g-next">${last ? (scIdx < SC.length - 1 ? "เคสถัดไป ›" : "ดูสรุปของเดิมที่ต้องปรับ ›") : st.on ? "ทำให้ ›" : "ถัดไป ›"}</button></div>`;
+  $("#g-restart").onclick = () => startScenario(scIdx);
+  $("#g-next").onclick = () => {
+    if (last){ if (scIdx < SC.length - 1) startScenario(scIdx + 1); else startFree("doc"); return; }
+    if (st.on){ st.prep?.(); if (scen() !== sc || si !== sc.steps.indexOf(st)) return; const el = st.hl && document.querySelector(st.hl); if (el) el.click(); else toast("ทำตามขั้นตอนบนหน้าจอ"); return; }
+    si++; afterStep();
+  };
+  if (st.hl && (!last || !st.on)){
+    const el = document.querySelector(st.hl);
+    if (el){ el.classList.add("hl"); const r = el.getBoundingClientRect(); if (r.top < 160 || r.bottom > innerHeight) el.scrollIntoView({block:"center", behavior:matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}); }
+  }
+}
+function renderChg(){
+  const items = CH[cur.screen] || [], lab = {new:"ใหม่", mod:"แก้ของเดิม", reuse:"ใช้ของเดิม"};
+  $("#chg").innerHTML = `<h3>หน้านี้ต้องทำอะไร</h3><span class="sub">${SCR[cur.screen].label}</span>
+    <div class="legend"><span class="pill new">ใหม่</span><span class="pill mod">แก้ของเดิม</span><span class="pill reuse">ใช้ของเดิม</span></div>
+    ${items.map(([k, t]) => `<div class="ci"><span class="pill ${k}">${lab[k]}</span><span>${t}</span></div>`).join("")}
+    <button type="button" class="nb doc" data-free="doc">ดูสรุปของเดิมที่ต้องปรับทั้งหมด ›</button>`;
+}
+function htheme(){ return document.documentElement.dataset.ht || "black"; }
+function setTheme(t){ document.documentElement.dataset.ht = t; try { localStorage.setItem("haos-theme", t); } catch (_) {} renderNav(); }
+try { const t = localStorage.getItem("haos-theme"); if (t) document.documentElement.dataset.ht = t; } catch (_) {}
+function renderNav(){
+  const screens = [["counter",[["s-ticket","จองคิว Walk-in"],["s-reg-req","คำขอทำบัตรออนไลน์"],["s-requests","คำขอนัดออนไลน์"],["s-screen","คัดแยก/ซักประวัติ"],["s-limit","สรุปจุดบริการ (ตั้ง Limit)"],["s-samples","ตัวอย่างบัตรคิว Walk-in"]]],["online",[["m-reg-entry","ทำบัตร (หน้ากลาง)"],["m-hn-check","ตรวจสอบ HN"],["m-register","ลงทะเบียนทำบัตร"],["m-request","ขอนัดออนไลน์"],["m-msg","ข้อความเตือนนัด"],["m-checkin","เช็กอินออนไลน์"],["m-resched","แจ้งเลื่อนนัด"],["m-notify","แจ้งผลทางหมอพร้อม (จำลอง)"]]]];
+  $("#nav").innerHTML = `<div class="brand"><span class="blogo">HA.OS</span><div><b>ต้นแบบคิวออนไลน์</b><span>ข้อมูลสมมติ · กดได้จริง</span></div></div>
+    <div class="themebar">ธีม HA.OS: <button type="button" data-theme-set="black" aria-pressed="${htheme() !== "green"}">ดำ</button><button type="button" class="g" data-theme-set="green" aria-pressed="${htheme() === "green"}">เขียว (ค่าเริ่มต้น NPH)</button></div>
+    ${CHANNELS.map(([k, name]) => `<div class="ngrp"><h4><span class="ch c-${k}">${name.split(" · ")[0]}</span>${name.split(" · ")[1]}</h4>${SC.map((s, i) => s.ch === k ? `<button type="button" class="nb ${!free && i === scIdx ? "on" : ""}" data-sc="${i}"><span class="k">${s.id}</span>${s.title}</button>` : "").join("")}</div>`).join("")}
+    <div class="sep"></div>
+    <div class="ngrp"><h4>เล่นอิสระ · เลือกหน้าจอ</h4>${screens.map(([k, list]) => list.map(([s, n]) => `<button type="button" class="nb ${free && cur.screen === s ? "on" : ""}" data-free="${s}"><span class="k">${k === "counter" ? "จนท." : k === "kiosk" ? "ตู้" : "มือถือ"}</span>${n}</button>`).join("")).join("")}</div>
+    <div class="sep"></div>
+    <button type="button" class="nb doc ${free && cur.screen === "doc" ? "on" : ""}" data-free="doc">สรุป: ของเดิมที่ต้องปรับ</button>`;
+}
+
+/* event delegation */
+stage.addEventListener("click", e => {
+  const g = e.target.closest("[data-go]");
+  if (g && !g.disabled){ let p = {}; try { p = g.dataset.p ? JSON.parse(g.dataset.p) : {}; } catch (_) {} navigate(g.dataset.go, p); if (free) renderNav(); return; }
+  const a = e.target.closest("[data-act]");
+  if (a && !a.disabled) SCR[cur.screen].act?.(a.dataset.act, a, e);
+});
+stage.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.matches("tr[data-act]")){ e.preventDefault(); e.target.click(); } });
+stage.addEventListener("change", e => SCR[cur.screen].change?.(e.target));
+stage.addEventListener("input", e => SCR[cur.screen].input?.(e.target));
+document.addEventListener("click", e => {
+  const th = e.target.closest("[data-theme-set]"); if (th) return setTheme(th.dataset.themeSet);
+  const s = e.target.closest("[data-sc]"); if (s) return startScenario(+s.dataset.sc);
+  const f = e.target.closest("[data-free]"); if (f) return startFree(f.dataset.free);
+});
+
+startScenario(0);
+</script>
+</body>
+</html>
