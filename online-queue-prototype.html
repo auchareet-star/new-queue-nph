@@ -30,7 +30,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 h1,h2,h3,h4{margin:0;color:var(--ink);line-height:1.3;text-wrap:balance}
 .app{display:grid;grid-template-columns:260px minmax(0,1fr) 300px;min-height:100vh}
 @media (max-width:1500px){.app{grid-template-columns:240px minmax(0,1fr)}.chg{grid-column:2}}
-@media (max-width:820px){.app{grid-template-columns:minmax(0,1fr)}.chg{grid-column:1}.nav{position:static!important;height:auto!important}}
+@media (max-width:820px){.app{grid-template-columns:minmax(0,1fr)}.chg{grid-column:1}.nav{position:static!important;height:auto!important}.nav:not(.open)>:not(.brand):not(.navtog){display:none!important}.navtog{display:flex!important}}
+.navtog{display:none;justify-content:space-between;align-items:center;border:1px solid var(--line);background:#fff;border-radius:6px;padding:8px 12px;font:600 14px var(--f);color:var(--ink)}
 
 /* ---------- prototype nav (white, HA.OS-like) ---------- */
 .nav{background:var(--paper);border-right:1px solid var(--line);padding:16px 12px 24px max(12px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px;position:sticky;top:0;height:100vh;overflow:auto}
@@ -84,7 +85,7 @@ h1,h2,h3,h4{margin:0;color:var(--ink);line-height:1.3;text-wrap:balance}
 .legend{display:flex;gap:6px;flex-wrap:wrap}
 
 /* ---------- Mobile คิว (patient) ---------- */
-.phone{width:370px;max-width:100%;background:#1c1f24;border-radius:38px;padding:11px;box-shadow:0 14px 40px rgba(0,0,0,.18)}
+.phone{box-sizing:border-box;width:370px;max-width:100%;background:#1c1f24;border-radius:38px;padding:11px;box-shadow:0 14px 40px rgba(0,0,0,.18)}
 .scr{background:#fff;border-radius:28px;overflow:hidden;min-height:660px;display:flex;flex-direction:column;color:#4D4D4D}
 .mh{padding:18px 16px 10px;display:flex;gap:10px;align-items:center}
 .mlogo{width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid var(--kgreen);display:grid;place-items:center;color:var(--kgreen);font-weight:800;font-size:11px;flex-shrink:0}
@@ -557,7 +558,7 @@ const SC = [
   {scr:"m-register", t:"ฟอร์มมี<b>ข้อมูลผู้ป่วย · ที่อยู่แยกช่อง · ผู้ติดต่อฉุกเฉิน</b> และข้อมูลเพิ่มเติมที่ไม่บังคับ ติ๊ก<b>ยินยอม PDPA</b> แล้วกดส่ง", hl:"#f-submit", on:"reg:submit", prep:tick},
   {scr:"m-register-done", t:"ข้อมูล<b>ยังไม่เข้าตารางผู้ป่วย</b> หน้านี้บอกว่า<b>ผลจะส่งไปที่ไหน</b> (หมอพร้อมของเลขบัตร) คนไข้ปิดหน้าได้เลย กด <b>ถัดไป</b>"},
   {scr:"s-reg-req", t:"เจ้าหน้าที่เข้าเมนู <b>คำขอทำบัตรออนไลน์</b> เจอหน้ารายการก่อน (แท็บรอยืนยัน) กดที่คำขอของคนไข้เพื่อเปิดดู", hl:"tr.is-last", on:"rr:open"},
-  {scr:"s-reg-req", t:"หน้ารายละเอียดมี<b>ข้อมูลครบทุกช่องและแก้ได้</b> ผล<b>ตรวจซ้ำ</b> และ<b>ช่องทางแจ้งผล</b>ที่คนไข้เลือก ตรวจแล้วกด <b>ยืนยันและสร้าง HN</b> ระบบเรียก AddPatient เดิม แล้วส่งแจ้งผลทันที", hl:"#rr-confirm", on:"rr:confirm"},
+  {scr:"s-reg-req", t:"หน้ารายละเอียดมี<b>ข้อมูลครบทุกช่องและแก้ได้</b> ผล<b>ตรวจซ้ำ</b> ตรวจแล้วกด <b>ยืนยันและสร้าง HN</b> ระบบเรียก AddPatient เดิม แล้วส่งแจ้งผลทันที", hl:"#rr-confirm", on:"rr:confirm"},
   {scr:"m-notify", t:"ผลส่งไปตาม<b>เลขบัตรประชาชน</b> เพราะหมอพร้อมผูกกับเลขบัตร คนไข้จึง<b>ไม่ต้องมี URL หรือเปิดหน้าค้างไว้</b> ถ้าส่งไม่ถึง (เช่น ยังไม่เคยใช้หมอพร้อม) เจ้าหน้าที่โทรแจ้งตามเบอร์ที่กรอก"}
  ]},
  {id:"O2", ch:"online", title:"ตรวจสอบ HN (ไม่แน่ใจว่าเคยมีหรือยัง)", who:"1100000000011", steps:[
@@ -899,14 +900,14 @@ SCR["s-requests"] = {kind:"staff", label:"เจ้าหน้าที่ · �
   const p = P(), list = db.reqs.slice().reverse(), pend = db.reqs.filter(r => /รอ/.test(r.status));
   const rows = list.map(r => {
     const ap = r.apptId ? db.appts.find(x => x.id === r.apptId) : null;
-    return `<tr class="${r.ref === db.last.req ? "is-last" : ""}"><td><b>${r.ref}</b>${r.ex ? ' <span class="muted">(ตัวอย่าง)</span>' : ""}</td><td>${r.at}</td><td>${r.name}<br><span class="muted">HN ${r.hn}</span></td><td>${cl(r.clinic).name}${r.kind ? `<br><span class="st info">${r.kind} ${r.oldAppt}</span>` : ""}</td><td>${daysText(r)}</td><td>${esc(r.symptom)}<br><span class="muted">โรคประจำตัว: ${esc(r.chronic || "-")}</span></td><td>${r.attach ? '<span class="thumb">รูปแนบ</span>' : "-"}</td>
+    return `<tr class="${r.ref === db.last.req ? "is-last" : ""}"><td style="white-space:nowrap"><b>${r.ref}</b>${r.ex ? ' <span class="muted">(ตัวอย่าง)</span>' : ""}<br><span class="muted">${r.at}</span></td><td style="min-width:120px">${r.name}<br><span class="muted">HN ${r.hn}</span></td><td style="min-width:100px">${cl(r.clinic).name}${r.kind ? `<br><span class="st info">${r.kind} ${r.oldAppt}</span>` : ""}</td><td>${daysText(r)}</td><td style="min-width:150px">${esc(r.symptom)}<br><span class="muted">โรคประจำตัว: ${esc(r.chronic || "-")}</span>${r.attach ? '<br><span class="st info">รูปแนบ 1</span>' : ""}</td>
       <td>${stPill(r.status)}${ap ? `<br><span class="muted">${ap.id} · ${ap.date}</span>` : ""}${r.reason ? `<br><span class="muted">${r.reason}</span>` : ""}${r.sent ? `<br><span class="muted">${r.sent}</span>` : ""}</td>
-      <td>${/รอ/.test(r.status) ? `<div class="acts"><button type="button" class="b green" data-act="appoint" data-ref="${r.ref}">ลงนัด</button><button type="button" class="b out" data-act="rej" data-ref="${r.ref}">ปฏิเสธ</button></div>` : ""}</td></tr>
-      ${p.rej === r.ref ? `<tr><td colspan="9" style="background:#fff8f3"><div class="acts">เหตุผล: <select class="in" id="rej-why" style="width:auto;border-radius:4px"><option>ตารางเต็มทุกวันในช่วงที่ขอ · โทรแจ้งแล้ว</option><option>ไม่ใช่คลินิกที่ถูกต้อง · แนะนำให้มาตรวจ Walk-in</option><option>ติดต่อคนไข้ไม่ได้</option></select><button type="button" class="b red" data-act="rejok" data-ref="${r.ref}">ยืนยันปฏิเสธ</button></div></td></tr>` : ""}`;
+      <td style="width:1%;padding-right:12px">${/รอ/.test(r.status) ? `<div class="acts" style="flex-direction:column;align-items:stretch;gap:6px"><button type="button" class="b green" data-act="appoint" data-ref="${r.ref}">ลงนัด</button><button type="button" class="b out" data-act="rej" data-ref="${r.ref}">ปฏิเสธ</button></div>` : ""}</td></tr>
+      ${p.rej === r.ref ? `<tr><td colspan="7" style="background:#fff8f3"><div class="acts">เหตุผล: <select class="in" id="rej-why" style="width:auto;border-radius:4px"><option>ตารางเต็มทุกวันในช่วงที่ขอ · โทรแจ้งแล้ว</option><option>ไม่ใช่คลินิกที่ถูกต้อง · แนะนำให้มาตรวจ Walk-in</option><option>ติดต่อคนไข้ไม่ได้</option></select><button type="button" class="b red" data-act="rejok" data-ref="${r.ref}">ยืนยันปฏิเสธ</button></div></td></tr>` : ""}`;
   }).join("");
   return shell("s-requests", "คำขอนัดออนไลน์", "เวชระเบียน • คำขอนัดออนไลน์", `<div class="port">
     <div class="ph2"><h2>คำขอนัดออนไลน์ ${T("new")}</h2><span class="muted" style="font-size:13px">รอ ${pend.length} รายการ${pend[0] ? ` · รอนานสุดตั้งแต่ ${pend[0].at}` : ""}</span></div>
-    <div class="tw"><table style="min-width:900px"><thead><tr><th>เลขอ้างอิง</th><th>ส่งเมื่อ</th><th>ผู้ป่วย</th><th>คลินิก</th><th>วันที่มาได้</th><th>อาการ</th><th>รูป</th><th>สถานะ</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="tw"><table style="min-width:760px"><thead><tr><th>เลขอ้างอิง / ส่งเมื่อ</th><th>ผู้ป่วย</th><th>คลินิก</th><th>วันที่มาได้</th><th>อาการ / รูปแนบ</th><th>สถานะ</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
     <span class="muted" style="font-size:12.5px">คำขอที่เลยวันสุดท้ายของช่วงวันที่ จะเปลี่ยนเป็น "หมดอายุ" อัตโนมัติ · ผู้ที่เข้าเมนูนี้ได้คือผู้ที่อนุมัติได้</span></div>`);
  },
  act(a, el){
@@ -924,9 +925,9 @@ SCR["s-reg-req"] = {kind:"staff", label:"เจ้าหน้าที่ · �
     const tab = p.tab || "wait", rows = list.filter(x => tab === "wait" ? x.status === "รอยืนยัน" : x.status !== "รอยืนยัน");
     return shell("s-reg-req", "คำขอทำบัตรออนไลน์", "เวชระเบียน • คำขอทำบัตรออนไลน์", `<div class="port"><div class="ph2"><h2>คำขอทำบัตรออนไลน์ ${T("new")}</h2><span class="muted" style="font-size:13px">กดที่รายการเพื่อดู แก้ไข และยืนยันสร้าง HN</span></div>
       <div class="tabs"><button type="button" class="tab ${tab === "wait" ? "on" : ""}" data-act="tab" data-t="wait">รอยืนยัน <span class="badge">${list.filter(x => x.status === "รอยืนยัน").length}</span></button><button type="button" class="tab ${tab === "done" ? "on" : ""}" data-act="tab" data-t="done">ดำเนินการแล้ว <span class="badge">${list.filter(x => x.status !== "รอยืนยัน").length}</span></button></div>
-      <div class="tw"><table><thead><tr><th>เลขอ้างอิง</th><th>ส่งเมื่อ</th><th>ชื่อ-นามสกุล</th><th>เลขบัตร</th><th>วันเกิด</th><th>ตรวจซ้ำ</th><th>แจ้งผลทาง</th><th>สถานะ</th><th></th></tr></thead><tbody>
+      <div class="tw"><table><thead><tr><th>เลขอ้างอิง</th><th>ส่งเมื่อ</th><th>ชื่อ-นามสกุล</th><th>เลขบัตร</th><th>วันเกิด</th><th>ตรวจซ้ำ</th><th>สถานะ</th><th></th></tr></thead><tbody>
       ${rows.map(x => `<tr class="click ${x.ref === db.last.reg ? "is-last" : ""}" data-act="open" data-ref="${x.ref}" tabindex="0"><td><b>${x.ref}</b>${x.ex ? ' <span class="muted">(ตัวอย่าง)</span>' : ""}</td><td>${x.at}</td><td>${x.title} ${x.first} ${x.last}</td><td>${fmtCid(x.cid)}</td><td>${x.dob}</td>
-        <td>${x.status === "รอยืนยัน" && dupOf(x).length ? '<span class="st bad">อาจซ้ำ</span>' : '<span class="muted">-</span>'}</td><td>${chan(x)}</td><td>${stPill(x.status)}${x.hn ? `<br><b>HN ${x.hn}</b>` : ""}</td><td><span class="b out" style="padding:3px 10px">เปิด ›</span></td></tr>`).join("") || `<tr><td colspan="9" class="empty">ไม่มีรายการ</td></tr>`}</tbody></table></div></div>`);
+        <td>${x.status === "รอยืนยัน" && dupOf(x).length ? '<span class="st bad">อาจซ้ำ</span>' : '<span class="muted">-</span>'}</td><td>${stPill(x.status)}${x.hn ? `<br><b>HN ${x.hn}</b>` : ""}</td><td><span class="b out" style="padding:3px 10px">เปิด ›</span></td></tr>`).join("") || `<tr><td colspan="8" class="empty">ไม่มีรายการ</td></tr>`}</tbody></table></div></div>`);
   }
   const g = db.regs.find(x => x.ref === p.sel);
   const inp = (id, label, v) => `<div class="fl"><label for="${id}">${label}</label><input class="in" id="${id}" value="${esc(v || "")}"></div>`;
@@ -1229,7 +1230,7 @@ SCR["doc"] = {kind:"doc", label:"สรุป · ของเดิมที่�
       ["เมนู / สิทธิ์เมนู (menu.config)","เพิ่มเมนูเวชระเบียน: จองคิว Walk-in, คำขอทำบัตรออนไลน์, คำขอนัดออนไลน์ (ไม่มีหน้าเรียกคิวเวชระเบียน คนไข้ถือบัตรไปยื่นเอง)","ใหม่"],
       ["หน้าจอนัดหมาย","รับค่าตั้งต้นจากคำขอนัดออนไลน์ แล้วคืน AppointmentId","แก้"],
       ["ทะเบียนประวัติ / เปิด Visit (หน้าเดิม)","ไม่แก้ ช่องเวชระเบียนใช้ตามปกติ","เดิม"],
-      ["เรียกคิวคัดแยก/ซักประวัติ","แก้เล็กน้อย: ป้ายอาการผิดปกติ / แพ้ยาใหม่ / กลุ่มคิว และเรียงกลุ่มด่วนก่อน · Vital Sign และ CC มาจาก Visit แล้ว","แก้"]]],
+      ["เรียกคิวคัดแยก/ซักประวัติ","แก้เล็กน้อย: ป้ายอาการผิดปกติ / แพ้ยาใหม่ จากเช็กอินออนไลน์ · Vital Sign และ CC มาจาก Visit แล้ว","แก้"]]],
     ["WebAPI / ฐานข้อมูล", [
       ["ตารางใหม่","ชุดคลินิกต่อจุดออกบัตร (ไม่มีตารางบัตรคิว), คำขอทำบัตร, คำขอนัด + ไฟล์แนบ, โทเคนนัด, ข้อมูลเช็กอิน (Vital Sign)","ใหม่"],
       ["Controller สาธารณะ","แยกจาก KioskController: AllowAnonymous + ยืนยันเลขบัตร/วันเกิด + จำกัดจำนวนครั้ง","ใหม่"],
@@ -1328,9 +1329,10 @@ function renderChg(){
 function htheme(){ return document.documentElement.dataset.ht || "black"; }
 function setTheme(t){ document.documentElement.dataset.ht = t; try { localStorage.setItem("haos-theme", t); } catch (_) {} renderNav(); }
 try { const t = localStorage.getItem("haos-theme"); if (t) document.documentElement.dataset.ht = t; } catch (_) {}
+function toggleNav(force){ const n = $("#nav"); n.classList.toggle("open", force ?? !n.classList.contains("open")); }
 function renderNav(){
   const screens = [["counter",[["s-ticket","จองคิว Walk-in"],["s-reg-req","คำขอทำบัตรออนไลน์"],["s-requests","คำขอนัดออนไลน์"],["s-screen","คัดแยก/ซักประวัติ"],["s-limit","สรุปจุดบริการ (ตั้ง Limit)"],["s-samples","ตัวอย่างบัตรคิว Walk-in"]]],["online",[["m-reg-entry","ทำบัตร (หน้ากลาง)"],["m-hn-check","ตรวจสอบ HN"],["m-register","ลงทะเบียนทำบัตร"],["m-request","ขอนัดออนไลน์"],["m-msg","ข้อความเตือนนัด"],["m-checkin","เช็กอินออนไลน์"],["m-resched","แจ้งเลื่อนนัด"],["m-notify","แจ้งผลทางหมอพร้อม (จำลอง)"]]]];
-  $("#nav").innerHTML = `<div class="brand"><span class="blogo">HA.OS</span><div><b>ต้นแบบคิวออนไลน์</b><span>ข้อมูลสมมติ · กดได้จริง</span></div></div>
+  $("#nav").innerHTML = `<button type="button" class="navtog" data-navtog>${free ? "เล่นอิสระ · " + (SCR[cur.screen]?.label || "") : scen().id + " · " + scen().title} <span>เลือกเคส ▾</span></button><div class="brand"><span class="blogo">HA.OS</span><div><b>ต้นแบบคิวออนไลน์</b><span>ข้อมูลสมมติ · กดได้จริง</span></div></div>
     <div class="themebar">ธีม HA.OS: <button type="button" data-theme-set="black" aria-pressed="${htheme() !== "green"}">ดำ</button><button type="button" class="g" data-theme-set="green" aria-pressed="${htheme() === "green"}">เขียว (ค่าเริ่มต้น NPH)</button></div>
     ${CHANNELS.map(([k, name]) => `<div class="ngrp"><h4><span class="ch c-${k}">${name.split(" · ")[0]}</span>${name.split(" · ")[1]}</h4>${SC.map((s, i) => s.ch === k ? `<button type="button" class="nb ${!free && i === scIdx ? "on" : ""}" data-sc="${i}"><span class="k">${s.id}</span>${s.title}</button>` : "").join("")}</div>`).join("")}
     <div class="sep"></div>
@@ -1350,7 +1352,9 @@ stage.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " "
 stage.addEventListener("change", e => SCR[cur.screen].change?.(e.target));
 stage.addEventListener("input", e => SCR[cur.screen].input?.(e.target));
 document.addEventListener("click", e => {
+  if (e.target.closest("[data-navtog]")) return toggleNav();
   const th = e.target.closest("[data-theme-set]"); if (th) return setTheme(th.dataset.themeSet);
+  if (e.target.closest("[data-sc],[data-free]")) toggleNav(false);
   const s = e.target.closest("[data-sc]"); if (s) return startScenario(+s.dataset.sc);
   const f = e.target.closest("[data-free]"); if (f) return startFree(f.dataset.free);
 });
