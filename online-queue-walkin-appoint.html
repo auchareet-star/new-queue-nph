@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Flow Walk-in และนัดหมาย</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+/* Light only, same family as the To-Be flow page. Swimlane: one column per role, one row per step,
+   boxes placed by grid-column / grid-row so a step sits in the lane of whoever does it. */
+:root{
+  color-scheme:light;
+  --bg:#f5f6f8; --paper:#ffffff; --ink:#16233a; --fg:#2c3546; --muted:#667085; --line:#dfe3ea; --soft:#eef1f6;
+  --accent:#c77a0a; --accent-soft:#fdf1dc;
+  --pt:#0f6b45; --pt-soft:#e2f3ea;
+  --mr:#b26a00; --mr-soft:#fff2db;
+  --ns:#7a3fb8; --ns-soft:#f1e8fb;
+  --ks:#0f7c8a; --ks-soft:#ddf2f4;
+  --dr:#a0306a; --dr-soft:#fbe7f1;
+  --sys:#3d4a60; --sys-soft:#e6ebf4;
+  --it:#2c5fa8; --it-soft:#e4ecf8;
+  --bad:#c23b32; --bad-soft:#fbe6e4;
+  --tv:#0f6b45; --tp:#b26a00; --tn:#7a3fb8;
+  --f-display:"Anuphan","Noto Sans Thai",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Noto Sans Thai",Tahoma,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:44px}
+h1,h2,h3{font-family:var(--f-display);color:var(--ink);text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:clamp(28px,4.4vw,40px);font-weight:700}
+h2{font-size:24px;font-weight:700}
+h3{font-size:17px;font-weight:600}
+p{margin:0}
+header{padding-top:40px;display:grid;gap:12px}
+.eyebrow{font:600 13px var(--f-display);letter-spacing:.06em;color:var(--accent)}
+.lead{max-width:72ch}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:8px 20px}
+.links a{color:var(--accent);font-weight:600}
+section{display:grid;gap:14px}
+.sub{color:var(--muted);max-width:76ch}
+
+/* swimlane */
+.sx{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px}
+.sw{display:grid;grid-template-columns:repeat(var(--n),minmax(150px,1fr));grid-template-rows:auto repeat(var(--r),auto);
+  gap:10px 12px;min-width:calc(var(--n) * 162px);position:relative}
+.lane{grid-row:1 / -1;border-radius:8px;background:var(--soft);opacity:.55}
+.lane:nth-child(even){background:#f7f8fb;opacity:1}
+.lh{grid-row:1;align-self:end;padding:8px 10px 6px;font:700 13.5px var(--f-display);text-align:center;border-bottom:3px solid currentColor;z-index:1}
+.lh small{display:block;font:500 12px var(--f-body);color:var(--muted)}
+.b{z-index:1;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--c,var(--sys));border-radius:8px;padding:8px 10px;display:grid;gap:3px;font-size:14px;align-self:start;min-width:0}
+.b .t{display:flex;gap:7px;align-items:baseline;font-weight:600;color:var(--ink)}
+.b .no{flex:none;width:22px;height:22px;border-radius:50%;background:var(--c,var(--sys));color:#fff;display:grid;place-items:center;font:700 12px var(--f-display);transform:translateY(3px)}
+.b .s{font-size:13px;color:var(--muted)}
+.b .go{font-size:12.5px;color:var(--c,var(--sys));font-weight:600}
+.b.dec{background:var(--accent-soft);border-style:dashed;border-left-style:solid}
+.b.end{background:var(--soft)}
+.qq{display:inline-block;font:600 11.5px var(--f-display);color:var(--bad);border:1px solid var(--bad);border-radius:4px;padding:0 5px;margin-left:2px;text-decoration:none;white-space:nowrap}
+.c-pt{--c:var(--pt)} .c-ks{--c:var(--ks)} .c-ns{--c:var(--ns)} .c-mr{--c:var(--mr)} .c-dr{--c:var(--dr)}
+.c-v{--c:var(--tv)} .c-p{--c:var(--tp)} .c-n{--c:var(--tn)}
+.tk{display:inline-block;font:700 12px var(--f-display);color:#fff;border-radius:4px;padding:0 6px;margin-right:2px}
+.tk.v{background:var(--tv)} .tk.p{background:var(--tp)} .tk.n{background:var(--tn)}
+.lh.pt{color:var(--pt)} .lh.ks{color:var(--ks)} .lh.ns{color:var(--ns)} .lh.mr{color:var(--mr)} .lh.dr{color:var(--dr)}
+
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:12px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:6px;align-content:start;min-width:0}
+.card ul{margin:0;padding-left:18px;font-size:14.5px;display:grid;gap:2px}
+.card .big{font:700 22px var(--f-display);color:var(--ink);letter-spacing:.02em}
+.card .s{font-size:13.5px;color:var(--muted)}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;padding:8px 12px;font-size:14.5px;color:var(--ink)}
+.tw{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:640px}
+th{font:600 13.5px var(--f-display);color:var(--ink);text-align:left;background:var(--soft);padding:9px 12px;border-bottom:1px solid var(--line)}
+td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+td:first-child{font-weight:600;color:var(--ink)}
+footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">HA.OS · คิว Walk-in และบริการออนไลน์</span>
+  <h1>Flow Walk-in และนัดหมาย (To-Be)</h1>
+  <p class="lead">ภาพรวมทีละขั้นตาม Flow ที่หน้างานเล่าเมื่อ 28 ต.ค. 2569 แต่ละคอลัมน์คือคนหรือจุดที่ทำงานนั้น อ่านจากบนลงล่างตามเลขขั้น ป้ายแดงคือข้อที่ยังต้องถาม กดแล้วไปที่คำถามในหน้า To-Be</p>
+  <div class="meta"><span>28 ต.ค. 2569</span><span>ภาษาหน้างาน</span></div>
+  <div class="links"><a href="online-queue-flow.html">รายละเอียดและคำถาม (To-Be) →</a><a href="online-queue-asis.html">ระบบเดิม (As-Is) →</a></div>
+</header>
+
+<section>
+  <h2>ก่อนเริ่ม: ตั้งค่าเช้าทุกวัน</h2>
+  <div class="cards">
+    <div class="card"><h3>1. จับคู่แพทย์กับห้อง</h3><p>พยาบาลตั้งว่าแพทย์ที่ออกตรวจวันนี้แต่ละคนอยู่ห้องไหน ต้องทำเองทุกวัน</p><p class="s">ถ้ายังไม่ตั้ง ออกบัตรคิวห้องตรวจไม่ได้ <a class="qq" href="online-queue-flow.html#j6">6.1</a></p></div>
+    <div class="card"><h3>2. ตั้งจำนวน Walk-in</h3><p>พยาบาลตั้งที่ Dashboard ต่อคลินิกหลัก ประเมินจากตารางออกตรวจและนัดที่ลงไว้</p><p class="s">ตั้งได้แค่จำนวน Walk-in <a class="qq" href="online-queue-flow.html#j6">6.2</a></p></div>
+    <div class="card"><h3>เลขคิวห้องตรวจ</h3><span class="big">{ห้อง}-{ประเภท}{ลำดับ}</span><p class="s">เลขห้อง 2 หลัก · ตัวอักษรประเภทคิว (ปกติ / ด่วน) · เลขรัน 3 หลัก <a class="qq" href="online-queue-flow.html#j1">1.6</a></p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Walk-in</h2>
+  <p class="sub">ไม่มีนัด มาถึงโรงพยาบาล · บัตร <span class="tk v">V</span> คลินิกยังว่าง · <span class="tk p">P</span> เต็ม มี HN · <span class="tk n">N</span> เต็ม ไม่มี HN</p>
+  <div class="sx">
+    <div class="sw" style="--n:6;--r:9">
+      <div class="lane" style="grid-column:1"></div><div class="lane" style="grid-column:2"></div><div class="lane" style="grid-column:3"></div>
+      <div class="lane" style="grid-column:4"></div><div class="lane" style="grid-column:5"></div><div class="lane" style="grid-column:6"></div>
+      <div class="lh pt" style="grid-column:1">คนไข้<small>เครื่องกดบัตรคิว</small></div>
+      <div class="lh ks" style="grid-column:2">ตู้ Kiosk<small>ตรวจสิทธิ</small></div>
+      <div class="lh ns" style="grid-column:3">พยาบาลคัดกรองเบื้องต้น<small>จองคิว Walk-in + Dashboard</small></div>
+      <div class="lh mr" style="grid-column:4">ช่องเวชระเบียน<small>หน้าเดิม</small></div>
+      <div class="lh ns" style="grid-column:5">พยาบาลหน้าห้องตรวจ<small>ซักประวัติ / เปิด Visit / นัด</small></div>
+      <div class="lh dr" style="grid-column:6">แพทย์<small>จอ TV คิว</small></div>
+
+      <div class="b c-pt" style="grid-column:1;grid-row:2"><span class="t"><span class="no">1</span>มาถึง กดบัตรคิวเอง</span><span class="s">เลขรันตามลำดับกด ไม่เชื่อม HA.OS</span><span class="go">→ ตู้ตรวจสิทธิ</span></div>
+      <div class="b c-ks" style="grid-column:2;grid-row:3"><span class="t"><span class="no">2</span>ตรวจสิทธิ พิมพ์ใบสิทธิ</span><span class="s">ตู้ไม่เปิด Visit ให้ Walk-in <a class="qq" href="online-queue-flow.html#j1">1.1 ลำดับ</a></span><span class="go">→ รอพยาบาลเรียกตามเลข</span></div>
+      <div class="b c-ns" style="grid-column:3;grid-row:4"><span class="t"><span class="no">3</span>ซักประวัติเบื้องต้น</span><span class="s">มาทำอะไร ต้องไปคลินิกไหน · เสียบบัตร / ค้น HN <a class="qq" href="online-queue-flow.html#j1">1.4</a></span></div>
+      <div class="b c-ns dec" style="grid-column:3;grid-row:5"><span class="t"><span class="no">4</span>ดู Dashboard คลินิกหลัก</span><span class="s">มีนัดวันนี้ → ไปตู้ เปิด Visit นัด<br>ว่าง → <span class="tk v">V</span> · เต็ม มี HN → <span class="tk p">P</span> · เต็ม ไม่มี HN → <span class="tk n">N</span> <a class="qq" href="online-queue-flow.html#j1">1.2</a></span><span class="go">พิมพ์บัตร ยื่นให้คนไข้</span></div>
+
+      <div class="b c-v" style="grid-column:4;grid-row:6"><span class="t"><span class="no">5</span><span><span class="tk v">V</span> เปิด Visit</span></span><span class="s">ไม่มี HN ลงทะเบียนก่อน · พิมพ์ใบนำทาง · บัตรมีเวลาจาก Slot <a class="qq" href="online-queue-flow.html#j1">1.3</a></span><span class="go">→ ยื่นใบนำทางที่หน้าห้องตรวจ</span></div>
+      <div class="b c-p" style="grid-column:5;grid-row:6"><span class="t"><span class="no">5</span><span><span class="tk p">P</span> ไปหน้าห้องตรวจเลย</span></span><span class="s">มี HN แล้ว รอพยาบาลพิจารณา</span></div>
+      <div class="b c-n" style="grid-column:4;grid-row:7"><span class="t"><span class="no">5</span><span><span class="tk n">N</span> ทำ HN ใหม่</span></span><span class="s">ทำบัตรแล้วไปแบบเดียวกับ P</span><span class="go">→ หน้าห้องตรวจ</span></div>
+      <div class="b c-ns dec" style="grid-column:5;grid-row:7"><span class="t"><span class="no">6</span><span><span class="tk p">P</span><span class="tk n">N</span> พิจารณา</span></span><span class="s">ตรวจวันนี้ → พยาบาลเปิด Visit เอง (นับเป็น Walk-in เกิน)<br>ไม่ตรวจวันนี้ → นัดวันอื่น จบ <a class="qq" href="online-queue-flow.html#j1">1.5</a></span></div>
+
+      <div class="b c-ns" style="grid-column:5;grid-row:8"><span class="t"><span class="no">7</span>จัดแถว แทรก Walk-in กับนัด</span><span class="s">4:1 หรือ 8:2 พยาบาลจัดเองหน้างาน · คนไข้นัดมาเข้าแถวนี้ด้วย</span></div>
+      <div class="b c-ns" style="grid-column:5;grid-row:9"><span class="t"><span class="no">8</span>ซักประวัติละเอียด ออกบัตรคิวห้องตรวจ</span><span class="s">ลงข้อมูล · เลือกแพทย์ (รายชื่อมีเฉพาะแพทย์ที่ตั้งห้องวันนี้) · ได้เลข {ห้อง}-{ประเภท}{ลำดับ}</span><span class="go">→ รอหน้าห้อง</span></div>
+      <div class="b c-dr end" style="grid-column:6;grid-row:10"><span class="t"><span class="no">9</span>แพทย์เรียกคิวเข้าห้องเอง</span><span class="s">ขึ้นจอ TV คิว</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>คนไข้นัด (วันนัด)</h2>
+  <p class="sub">มีนัดในระบบ · ไม่ผ่านพยาบาลเบื้องต้นและช่องเวชระเบียน</p>
+  <div class="sx">
+    <div class="sw" style="--n:4;--r:6">
+      <div class="lane" style="grid-column:1"></div><div class="lane" style="grid-column:2"></div><div class="lane" style="grid-column:3"></div><div class="lane" style="grid-column:4"></div>
+      <div class="lh pt" style="grid-column:1">คนไข้</div>
+      <div class="lh ks" style="grid-column:2">ตู้ Kiosk<small>หน้าจอตู้เดิม</small></div>
+      <div class="lh ns" style="grid-column:3">พยาบาลหน้าห้องตรวจ<small>หน้าเรียกคิวคัดแยก/ซักประวัติ</small></div>
+      <div class="lh dr" style="grid-column:4">แพทย์<small>จอ TV คิว</small></div>
+
+      <div class="b c-pt" style="grid-column:1;grid-row:2"><span class="t"><span class="no">1</span>มาถึงวันนัด</span><span class="s">เช็กอินได้ตั้งแต่ 06.00 <a class="qq" href="online-queue-flow.html#j2">2.2</a></span><span class="go">→ ตู้ Kiosk</span></div>
+      <div class="b c-ks" style="grid-column:2;grid-row:3"><span class="t"><span class="no">2</span>ตรวจสิทธิ เปิด Visit จากนัด</span><span class="s">เปิด Visit นัดที่ตู้เท่านั้น · พิมพ์บัตรคิว<br>ตู้เปิดไม่ได้ → ไปไหน <a class="qq" href="online-queue-flow.html#j2">2.1</a> · หลายนัด <a class="qq" href="online-queue-flow.html#j2">2.3</a></span></div>
+      <div class="b c-pt" style="grid-column:1;grid-row:4"><span class="t"><span class="no">3</span>ยื่นบัตรคิวที่หน้าห้องตรวจ</span><span class="go">→ พยาบาลหน้าห้องตรวจ</span></div>
+      <div class="b c-ns dec" style="grid-column:3;grid-row:5"><span class="t"><span class="no">4</span>ต่อแถว ซักประวัติละเอียด</span><span class="s">แถวเดียวกับ Walk-in (4:1 หรือ 8:2) · ลงข้อมูล<br>เคสด่วน → เปลี่ยนเป็นคิวด่วน (Prefix ต่าง) <a class="qq" href="online-queue-flow.html#j2">2.4</a></span></div>
+      <div class="b c-ns" style="grid-column:3;grid-row:6"><span class="t"><span class="no">5</span>ออกบัตรคิวห้องตรวจ</span><span class="s">แพทย์ในนัดมีห้องวันนี้ → ระบบเลือกให้<br>แพทย์กลาง (เช่น 10001) → พยาบาลเลือกแพทย์จริง</span><span class="go">→ รอหน้าห้อง</span></div>
+      <div class="b c-dr end" style="grid-column:4;grid-row:7"><span class="t"><span class="no">6</span>แพทย์เรียกคิวเข้าห้องเอง</span><span class="s">ขึ้นจอ TV คิว</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>สองทางมาเจอกันที่หน้าห้องตรวจ</h2>
+  <div class="tw"><table>
+    <thead><tr><th>เรื่อง</th><th>Walk-in</th><th>คนไข้นัด</th></tr></thead>
+    <tbody>
+      <tr><td>บัตรใบแรก</td><td>เครื่องกดบัตร (เลขรัน) แล้วได้บัตร V / P / N จากพยาบาลเบื้องต้น</td><td>บัตรคิวจากตู้ Kiosk</td></tr>
+      <tr><td>เปิด Visit</td><td>V: ช่องเวชระเบียน · P / N: พยาบาลหน้าห้องตรวจ</td><td>ตู้ Kiosk เท่านั้น</td></tr>
+      <tr><td>ถูกจำกัดจำนวนไหม</td><td>ใช่ ตามจำนวน Walk-in ที่ตั้งที่ Dashboard</td><td>จำกัดตอนลงนัด ตามตารางออกตรวจ</td></tr>
+      <tr><td>ซักประวัติ</td><td>2 รอบ: เบื้องต้น และละเอียดที่หน้าห้องตรวจ</td><td>รอบเดียว ละเอียดที่หน้าห้องตรวจ</td></tr>
+      <tr><td>เลขคิวห้องตรวจ</td><td colspan="2">พยาบาลหน้าห้องตรวจออกให้ แทรก Walk-in กับนัด 4:1 หรือ 8:2 · แพทย์เรียกเอง ขึ้นจอ TV</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">เลือกแพทย์ตอนออกบัตรคิวห้องตรวจ เพราะเลขคิวต้องมีเลขห้อง และห้องมาจากการจับคู่แพทย์กับห้องตอนเช้า ถ้าทั้งคลินิกยังไม่ได้ตั้งห้อง ระบบออกบัตรไม่ได้ และพาไปหน้าตั้งค่า</p>
+</section>
+
+<footer>รายละเอียดทีละขั้นและคำถามทั้งหมด: <a href="online-queue-flow.html">online-queue-flow.html</a> · ระบบเดิม: <a href="online-queue-asis.html">online-queue-asis.html</a></footer>
+</div>
+</body>
+</html>

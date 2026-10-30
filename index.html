@@ -59,7 +59,7 @@ h2{font-size:20px;margin:0 0 4px}
       <div>
         <h2>ต้นแบบที่กดได้</h2>
         <p class="desc">15 เคส แยกตามช่องทาง มีแถบนำทางทีละขั้น และแผงบอกว่าแต่ละหน้าต้องทำใหม่ แก้ของเดิม หรือใช้ของเดิม หน้าตาเหมือน HA.OS และ Mobile คิว</p>
-        <div class="chips"><span class="chip ask">เริ่มที่นี่</span><span class="chip">Counter C1–C8</span><span class="chip">Online O1–O7</span><span class="chip">สรุปของเดิมที่ต้องปรับ</span></div>
+        <div class="chips"><span class="chip ask">เริ่มที่นี่</span><span class="chip">Counter C1–C11</span><span class="chip">Online O1–O7</span><span class="chip">สรุปของเดิมที่ต้องปรับ</span></div>
       </div>
       <span class="go">เปิด →</span>
     </a>
@@ -72,21 +72,48 @@ h2{font-size:20px;margin:0 0 4px}
       </div>
       <span class="go">เปิด →</span>
     </a>
-    <a class="deck" href="online-queue-flow.html">
+    <a class="deck" href="online-queue-asis.html">
       <div class="num">3</div>
       <div>
-        <h2>Flow การใช้งานภาพรวม</h2>
-        <p class="desc">ใครทำอะไร ที่จุดไหน และข้อมูลอะไรส่งต่อไปที่ใคร ครบ 5 งาน (Walk-in · ทำบัตร · ขอนัด/เลื่อนนัด · เช็กอิน · ตั้งจำนวน Walk-in) พร้อมตารางข้อมูลที่วิ่งในระบบ</p>
-        <div class="chips"><span class="chip">5 งาน</span><span class="chip">8 บทบาท</span><span class="chip">ภาษาหน้างาน</span></div>
+        <h2>ระบบเดิม (As-Is)</h2>
+        <p class="desc">ตอนนี้คนไข้เข้าโรงพยาบาลทางไหน ใช้หน้าจอไหน ตารางเทียบเดิมกับใหม่ว่าแต่ละเรื่องเหมือนเดิม ปรับเล็กน้อย หรือเป็นของใหม่ พร้อมตัวเลขจากระบบจริงและคำถามให้หน้างานยืนยัน</p>
+        <div class="chips"><span class="chip">เทียบ 12 เรื่อง</span><span class="chip">5 เส้นทางเดิม</span><span class="chip ask">ถามยืนยัน</span></div>
+      </div>
+      <span class="go">เปิด →</span>
+    </a>
+    <a class="deck" href="online-queue-flow.html">
+      <div class="num">4</div>
+      <div>
+        <h2>Flow ระบบใหม่ (To-Be)</h2>
+        <p class="desc">ใครทำอะไร ที่จุดไหน และข้อมูลอะไรส่งต่อไปที่ใคร ครบ 6 งาน ปรับตามที่หน้างานเล่า 28 ต.ค. มีสรุปเรื่องที่ได้คำตอบแล้ว และคำถามท้ายแต่ละงาน</p>
+        <div class="chips"><span class="chip">6 งาน</span><span class="chip">คำถาม 30 ข้อ · ตอบก่อนเริ่ม 6</span><span class="chip">เช็กอินออนไลน์พักไว้</span></div>
+      </div>
+      <span class="go">เปิด →</span>
+    </a>
+    <a class="deck" href="online-queue-walkin-appoint.html">
+      <div class="num">5</div>
+      <div>
+        <h2>ภาพ Flow Walk-in และนัดหมาย</h2>
+        <p class="desc">Swimlane ทีละขั้น แยกคอลัมน์ตามคนทำ ตั้งแต่กดบัตรคิวจนแพทย์เรียกเข้าห้อง บัตร V / P / N การแทรก 4:1 หรือ 8:2 และการตั้งค่าเช้าทุกวัน</p>
+        <div class="chips"><span class="chip">Walk-in 9 ขั้น</span><span class="chip">คนไข้นัด 6 ขั้น</span><span class="chip ask">ป้ายแดง = ยังต้องถาม</span></div>
       </div>
       <span class="go">เปิด →</span>
     </a>
     <a class="deck" href="online-queue-req-gap.xlsx">
-      <div class="num">4</div>
+      <div class="num">6</div>
       <div>
         <h2>Requirement และ Gap (Excel)</h2>
-        <p class="desc">แท็บ Req 46 ข้อ (ประเภท สถานะ และ Gap ที่เกี่ยวข้อง) · แท็บ Gap 37 ข้อ แยกความรุนแรง ข้อเสนอ ผู้ตัดสินใจ และช่องความเห็น User · ฉบับที่ใช้ทำงานอยู่บน Google Sheet</p>
-        <div class="chips"><span class="chip">Req 46</span><span class="chip">Gap 37 · สูง 8</span></div>
+        <p class="desc">แท็บ Req 46 ข้อ (ประเภท สถานะ และ Gap ที่เกี่ยวข้อง) · แท็บ Gap 46 ข้อ แยกความรุนแรง ข้อเสนอ ผู้ตัดสินใจ และช่องความเห็น User · ฉบับที่ใช้ทำงานอยู่บน Google Sheet</p>
+        <div class="chips"><span class="chip">Req 46</span><span class="chip">Gap 46 · สูง 9 · อัปเดต 28 ต.ค.</span></div>
+      </div>
+      <span class="go">เปิด →</span>
+    </a>
+    <a class="deck" href="online-queue-exec-summary.html">
+      <div class="num">7</div>
+      <div>
+        <h2>สไลด์สรุปสำหรับ ผอ.</h2>
+        <p class="desc">สรุปการปรับปรุงระบบคิว 10 หน้า: นโยบายที่รองรับ เส้นทางคนไข้ใหม่ บัตร V/P/N สิ่งที่หน้างานต้องทำเพิ่ม อะไรเหมือนเดิม แผนเวลา ผลที่คาด และเรื่องที่ขอให้ตัดสินใจ</p>
+        <div class="chips"><span class="chip">10 หน้า</span><span class="chip">ไม่มีเรื่องเทคนิค</span><span class="chip ask">ขอตัดสินใจ 5 เรื่อง</span></div>
       </div>
       <span class="go">เปิด →</span>
     </a>

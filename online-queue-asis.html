@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ระบบคิวเดิม As-Is</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+/* As-Is companion of online-queue-flow.html (same styles). Light only (requested). Layout: same document family as the plan (ink + queue-ticket amber). Each journey is a numbered step list:
+   who (coloured by role) → what they do → which screen → what data moves and to whom. */
+:root{
+  color-scheme:light;
+  --bg:#f5f6f8; --paper:#ffffff; --ink:#16233a; --fg:#2c3546; --muted:#667085; --line:#dfe3ea; --soft:#eef1f6;
+  --accent:#c77a0a; --accent-soft:#fdf1dc;
+  --pt:#0f6b45; --pt-soft:#e2f3ea;      /* คนไข้ */
+  --it:#2c5fa8; --it-soft:#e4ecf8;      /* หมอพร้อม / IT */
+  --mr:#b26a00; --mr-soft:#fff2db;      /* เวชระเบียน */
+  --ns:#7a3fb8; --ns-soft:#f1e8fb;      /* พยาบาล */
+  --ks:#0f7c8a; --ks-soft:#ddf2f4;      /* ตู้ Kiosk */
+  --sys:#3d4a60; --sys-soft:#e6ebf4;    /* ระบบ HA.OS */
+  --bad:#c23b32; --bad-soft:#fbe6e4;
+  --f-display:"Anuphan","Noto Sans Thai",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Noto Sans Thai",Tahoma,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:48px}
+h1,h2,h3{font-family:var(--f-display);color:var(--ink);text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:clamp(28px,4.4vw,40px);font-weight:700}
+h2{font-size:24px;font-weight:700}
+h3{font-size:18px;font-weight:600}
+p{margin:0}
+header{padding-top:40px;display:grid;gap:12px}
+.eyebrow{font:600 13px var(--f-display);letter-spacing:.06em;color:var(--accent)}
+.lead{max-width:70ch;color:var(--fg)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--muted)}
+section{display:grid;gap:16px}
+.sub{color:var(--muted);max-width:72ch}
+
+/* role chips */
+.who{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 11px;font:600 13.5px var(--f-display);white-space:nowrap}
+.who::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.pt{color:var(--pt);background:var(--pt-soft)} .it{color:var(--it);background:var(--it-soft)}
+.mr{color:var(--mr);background:var(--mr-soft)} .ns{color:var(--ns);background:var(--ns-soft)}
+.ks{color:var(--ks);background:var(--ks-soft)} .sys{color:var(--sys);background:var(--sys-soft)}
+.legend{display:flex;flex-wrap:wrap;gap:8px}
+
+/* roles grid */
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:12px}
+.role{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:6px;align-content:start;min-width:0}
+.role .who{justify-self:start}
+.role .pg{font-size:13.5px;color:var(--muted)}
+.role ul{margin:0;padding-left:18px;font-size:14.5px}
+
+/* overview strip */
+.ov{display:grid;gap:10px}
+.ovrow{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 16px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:12px;align-items:center}
+@media (max-width:720px){.ovrow{grid-template-columns:minmax(0,1fr)}}
+.ovrow b{font-family:var(--f-display);color:var(--ink)}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.arr{color:var(--muted);font-size:14px}
+.ovrow a{color:inherit;text-decoration:none}
+.ovrow a:hover b{color:var(--accent)}
+
+/* journey steps */
+.journey{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px 22px;display:grid;gap:14px;scroll-margin-top:16px}
+.jh{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline}
+.jh .tag{font:600 12.5px var(--f-display);color:var(--accent);background:var(--accent-soft);border-radius:4px;padding:1px 8px}
+.steps{display:grid;gap:0}
+.step{display:grid;grid-template-columns:34px 190px minmax(0,1fr) minmax(0,1.05fr);gap:6px 16px;padding:12px 0;border-top:1px solid var(--line);align-items:start}
+.step:first-child{border-top:0}
+.n{width:28px;height:28px;border-radius:50%;background:var(--soft);color:var(--ink);display:grid;place-items:center;font:700 14px var(--f-display)}
+.do{display:grid;gap:2px;min-width:0}
+.do .scr{font-size:13px;color:var(--muted)}
+.data{display:grid;gap:4px;font-size:14px;min-width:0}
+.flow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px;align-items:start}
+.flow .k{font-size:12px;font-weight:600;color:var(--muted);padding-top:2px;white-space:nowrap}
+.pill{display:inline-block;background:var(--soft);border-radius:4px;padding:0 7px;margin:1px 2px 1px 0;font-size:13.5px}
+.to{font-size:13px;color:var(--muted)}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;padding:8px 12px;font-size:14px;color:var(--ink)}
+.warn{border-left-color:var(--bad);background:var(--bad-soft)}
+@media (max-width:820px){
+  .step{grid-template-columns:34px minmax(0,1fr)}
+  .step .who-cell,.step .do,.step .data{grid-column:2}
+}
+
+/* data table */
+.tw{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:820px}
+th{font:600 13.5px var(--f-display);color:var(--ink);text-align:left;background:var(--soft);padding:10px 12px;border-bottom:1px solid var(--line)}
+td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+td:first-child{font-weight:600;color:var(--ink)}
+.keep{font-size:13.5px}
+footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+a.top{color:var(--accent)}
+
+/* questions to confirm with the floor staff */
+.ask{border:1px solid var(--line);border-radius:10px;background:#fbfcfe;display:grid;overflow:hidden}
+.ask h3{font-size:15.5px;padding:10px 14px;background:var(--soft);display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline}
+.ask h3 small{font:500 13px var(--f-body);color:var(--muted)}
+.q{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:4px 12px;padding:10px 14px;border-top:1px solid var(--line);align-items:start}
+.ask h3 + .q{border-top:0}
+.qn{font:700 13px var(--f-display);color:var(--accent);padding-top:2px}
+.qt{display:grid;gap:2px;min-width:0}
+.qt b{font-weight:600;color:var(--ink)}
+.qt span{font-size:13.5px;color:var(--muted)}
+.qto{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end}
+.tagq{font:600 12px var(--f-display);border-radius:4px;padding:1px 7px;white-space:nowrap;background:var(--soft);color:var(--sys)}
+.tagq.must{background:var(--bad-soft);color:var(--bad)}
+.tagq.gid{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.case{font-size:14px}
+.case b{color:var(--ink)}
+@media (max-width:640px){.q{grid-template-columns:28px minmax(0,1fr)}.qto{grid-column:2;justify-content:flex-start}}
+.keyq{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--bad);border-radius:10px;padding:16px 18px}
+.keyq ol{margin:0;padding-left:22px;display:grid;gap:6px}
+.keyq li span{color:var(--muted);font-size:14px}
+.asis-link{justify-self:start;color:var(--accent);font-weight:600}
+
+.chg{display:inline-block;font:600 12.5px var(--f-display);border-radius:4px;padding:1px 8px;white-space:nowrap}
+.chg.same{background:var(--pt-soft);color:var(--pt)} .chg.small{background:var(--accent-soft);color:var(--accent)} .chg.new{background:var(--it-soft);color:var(--it)}
+.cf{display:inline-block;font:600 11.5px var(--f-display);color:var(--bad);border:1px solid var(--bad);border-radius:4px;padding:0 5px;margin-left:4px;white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:12px}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:4px;min-width:0}
+.stat b{font:700 28px var(--f-display);color:var(--ink)}
+.stat span{font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">HA.OS · คิว Walk-in และบริการออนไลน์</span>
+  <h1>ระบบเดิม (As-Is)</h1>
+  <p class="lead">ตอนนี้คนไข้เข้าโรงพยาบาลทางไหน ใครทำอะไร และใช้หน้าจอไหน ใช้คู่กับหน้า To-Be เพื่อดูว่าแต่ละจุดเปลี่ยนมากน้อยแค่ไหน หลายจุดใช้หน้าจอเดิมต่อได้เลย</p>
+  <div class="meta"><span>ปรับ 28 ต.ค. 2569 ตามที่หน้างานเล่า</span><span>สรุปจากระบบที่ใช้อยู่และข้อมูลในระบบ · จุดที่มีป้าย "ยืนยัน" ขอให้หน้างานช่วยตรวจว่าตรงไหม</span></div>
+  <a class="asis-link" href="online-queue-flow.html">ดูระบบใหม่ (To-Be) →</a>
+</header>
+
+<section>
+  <h2>เทียบเดิมกับใหม่</h2>
+  <p class="sub">เหมือนเดิม = ไม่แก้ · ปรับเล็กน้อย = หน้าจอเดิมเพิ่มบางส่วน · ของใหม่ = หน้าจอหรือขั้นตอนใหม่</p>
+  <div class="tw"><table>
+    <thead><tr><th style="width:17%">เรื่อง</th><th>ตอนนี้ (As-Is)</th><th>หลังปรับ (To-Be)</th><th style="width:13%">เปลี่ยนแค่ไหน</th></tr></thead>
+    <tbody>
+      <tr><td>Walk-in มาถึง</td><td>เปิด Visit ได้เลยที่ตู้ Kiosk หรือช่องเวชระเบียน ไม่มีตัวเลขว่าคลินิกรับได้อีกกี่คน <span class="cf">ยืนยัน</span></td><td>กดบัตรที่เครื่องกดบัตร → ตู้ตรวจสิทธิ → พยาบาลคัดกรองเบื้องต้นดู Dashboard แล้วออกบัตร V / P / N</td><td><span class="chg new">ของใหม่</span></td></tr>
+      <tr><td>ทะเบียนประวัติ / เปิด Visit</td><td>ช่องเวชระเบียนใช้หน้าทะเบียนประวัติและหน้าเปิด Visit</td><td>บัตร V / N ใช้หน้าเดิมที่ช่องเวชระเบียน + ใบนำทาง · บัตร P / N ที่ให้ตรวจวันนี้ พยาบาลหน้าห้องตรวจเปิด Visit เอง</td><td><span class="chg small">ปรับเล็กน้อย</span></td></tr>
+      <tr><td>บัตรคิวห้องตรวจ</td><td>เลขคิวแบบ {ห้อง 2 หลัก}-{ประเภท}{ลำดับ 3 หลัก} <span class="cf">ยืนยัน</span></td><td>พยาบาลหน้าห้องตรวจออกให้หลังซักประวัติละเอียด เลือกแพทย์จากรายชื่อที่ตั้งห้องวันนี้แล้ว</td><td><span class="chg small">ปรับเล็กน้อย</span></td></tr>
+      <tr><td>คัดกรอง / ซักประวัติ</td><td>พยาบาลวัด Vital Sign และซักอาการที่โรงพยาบาล</td><td>Walk-in ซัก 2 รอบ (เบื้องต้น + ละเอียดหน้าห้องตรวจ) · คนไข้นัดรอบเดียว · ข้อมูลเช็กอินออนไลน์พักไว้รอหมอพร้อม</td><td><span class="chg small">ปรับเล็กน้อย</span></td></tr>
+      <tr><td>เรียกเข้าห้องตรวจ</td><td>แพทย์กดเรียกคิวเองจากหน้าตรวจ ขึ้นจอ TV คิว (ระบบแสดงคิวตามแพทย์ที่ล็อกอิน)</td><td>เหมือนเดิม · พยาบาลแทรก Walk-in กับนัด 4:1 หรือ 8:2 ตอนออกเลขคิว</td><td><span class="chg same">เหมือนเดิม</span></td></tr>
+      <tr><td>ห้องของแพทย์รายวัน</td><td>พยาบาลจับคู่แพทย์กับห้องเองทุกวัน คิวจึงขึ้นห้องถูก</td><td>เหมือนเดิม และใช้เป็นรายชื่อแพทย์ตอนออกบัตรคิวห้องตรวจ</td><td><span class="chg same">เหมือนเดิม</span></td></tr>
+      <tr><td>จำนวนรับ Walk-in</td><td>ไม่มีในระบบ หน้างานประเมินเองว่าคลินิกเต็มหรือยัง</td><td>พยาบาลตั้งที่ Dashboard ต่อคลินิกหลัก ประเมินจากตารางออกตรวจและนัด</td><td><span class="chg new">ของใหม่</span></td></tr>
+      <tr><td>จำนวนรับนัด</td><td>ตั้งในตารางออกตรวจแพทย์ ระบบนับต่อช่อง 30 นาที</td><td>ใช้ตารางออกตรวจเหมือนเดิม แต่ต้องกรอกตัวเลขใหม่ให้ตรงจริง</td><td><span class="chg small">ข้อมูลต้องแก้</span></td></tr>
+      <tr><td>ทำบัตรใหม่</td><td>มาทำที่ช่องเวชระเบียนเท่านั้น</td><td>เพิ่มทางออนไลน์ ห้องบัตรยืนยันก่อนออก HN ทางเดิมยังใช้ได้</td><td><span class="chg new">ของใหม่</span></td></tr>
+      <tr><td>ขอนัด / เลื่อนนัด</td><td>เจ้าหน้าที่ลงนัดในหน้านัดหมาย คนไข้ติดต่อเองนอกระบบ <span class="cf">ยืนยัน</span></td><td>คนไข้ส่งคำขอออนไลน์ เจ้าหน้าที่ลงนัดด้วยหน้านัดหมายเดิม</td><td><span class="chg new">ของใหม่</span> + หน้าเดิม</td></tr>
+      <tr><td>เตือนนัด</td><td>HA.OS ยังไม่ได้เชื่อมหมอพร้อม ไม่มีการเตือนนัดจากระบบ <span class="cf">ยืนยัน</span></td><td>หมอพร้อมส่งข้อความเตือน 1 วันก่อนนัด พร้อมลิงก์เช็กอิน (พักไว้ รอหมอพร้อม)</td><td><span class="chg new">ของใหม่ (IT)</span></td></tr>
+      <tr><td>วันนัด</td><td>เปิด Visit นัดที่ตู้ หรือเคาน์เตอร์ ตู้ไม่ให้เปิดก่อนเวลานัดเกิน 1 ชั่วโมง เคาน์เตอร์แค่เตือน</td><td>เปิด Visit นัดที่ตู้เท่านั้น ได้ตั้งแต่ 06.00 แล้วยื่นบัตรคิวที่พยาบาลหน้าห้องตรวจ · พยาบาลเปลี่ยนเป็นคิวด่วนได้</td><td><span class="chg small">ปรับเล็กน้อย</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="journey" id="a1">
+  <div class="jh"><h2>ก. Walk-in วันนี้</h2><span class="tag">ไม่มีนัด มาถึงโรงพยาบาล</span></div>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><div class="who-cell"><span class="who pt">คนไข้</span></div>
+      <div class="do"><span>ไปที่ตู้ Kiosk หรือช่องเวชระเบียน</span><span class="scr">ไม่มีจุดคัดก่อน</span></div>
+      <div class="data"><div class="flow"><span class="k">ส่ง</span><span><span class="pill">บัตรประชาชน</span> <span class="to">→ ตู้ / เจ้าหน้าที่</span></span></div></div></div>
+    <div class="step"><span class="n">2</span><div class="who-cell"><span class="who ks">ตู้ Kiosk</span></div>
+      <div class="do"><span>เลือกประเภทบริการ ตรวจสิทธิ แล้วเปิด Visit Walk-in เอง</span><span class="scr">หน้าจอตู้ (ทาง Walk-in)</span></div>
+      <div class="data"><div class="flow"><span class="k">ได้</span><span><span class="pill">Visit</span><span class="pill">บัตรคิว + QR</span></span></div></div></div>
+    <div class="step"><span class="n">3</span><div class="who-cell"><span class="who mr">ช่องเวชระเบียน</span></div>
+      <div class="do"><span>ไม่มี HN ลงทะเบียนก่อน แล้วเปิด Visit</span><span class="scr">หน้าทะเบียนประวัติ / หน้าเปิด Visit · มีช่อง "ฉุกเฉิน?" ให้ติ๊ก</span></div>
+      <div class="data"><div class="flow"><span class="k">ได้</span><span><span class="pill">Visit</span><span class="pill">บัตรคิว + QR</span></span></div></div></div>
+    <div class="step"><span class="n">4</span><div class="who-cell"><span class="who ns">พยาบาลคัดกรอง</span></div>
+      <div class="do"><span>วัด Vital Sign ซักอาการ แล้วส่งเข้าห้องตรวจ</span><span class="scr">หน้าเรียกคิวคัดแยก/ซักประวัติ · ปุ่มจัดคิวเข้าห้องตรวจ</span></div>
+      <div class="data"><div class="flow"><span class="k">ส่ง</span><span><span class="pill">คิวห้องตรวจ</span> <span class="to">→ ห้องตรวจ</span></span></div></div></div>
+    <div class="step"><span class="n">5</span><div class="who-cell"><span class="who ns">แพทย์</span></div>
+      <div class="do"><span>กดเรียกคิวเข้าห้องเอง ขึ้นจอ TV คิว</span><span class="scr">หน้าเรียกคิวเข้าห้องตรวจ · ห้องมาจากการจับคู่แพทย์กับห้องที่พยาบาลตั้งทุกวัน</span></div>
+      <div class="data"><span class="to">—</span></div></div>
+  </div>
+  <p class="note warn">ไม่มีตัวเลขว่าคลินิกรับ Walk-in ได้อีกกี่คน เปิด Visit ได้ไม่จำกัด ตัวอย่างอายุรกรรม: Walk-in ประมาณ 127 คนต่อวัน ในนั้นประมาณ 25 คนเปิด Visit แล้วไม่ได้พบแพทย์เลย (60 วัน 30 ก.ค.–28 ก.ย. 69)</p>
+  <div class="ask"><h3>ถามให้ยืนยันว่าตรงกับหน้างาน</h3>
+    <div class="q"><span class="qn">ก1</span><div class="qt"><b>Walk-in ส่วนใหญ่เปิด Visit ที่ตู้ หรือที่ช่องเวชระเบียน?</b></div><div class="qto"><span class="tagq">เวชระเบียน</span></div></div>
+    <div class="q"><span class="qn">ก2</span><div class="qt"><b>ตอนนี้รู้ได้อย่างไรว่าคลินิกเต็ม ใครเป็นคนบอก และปิดรับ Walk-in กี่โมง?</b><span>คำตอบนี้ใช้ตั้งจำนวน Walk-in สูงสุดของแต่ละจุดในระบบใหม่</span></div><div class="qto"><span class="tagq">OPD</span></div></div>
+    <div class="q"><span class="qn">ก3</span><div class="qt"><b>คนที่ถูกบอกว่าคลินิกเต็ม ตอนนี้ทำอย่างไรต่อ: นัดวันอื่น ส่งคลินิกอื่น หรือรอตรวจ?</b><span>เทียบกับบัตร P / N ในระบบใหม่</span></div><div class="qto"><span class="tagq">OPD / เวชระเบียน</span></div></div>
+    <div class="q"><span class="qn">ก4</span><div class="qt"><b>เครื่องกดบัตรคิว พยาบาลคัดกรองเบื้องต้น และตู้ตรวจสิทธิ มีใช้อยู่แล้วตอนนี้ หรือเป็นของใหม่?</b><span>หน้างานเล่าเมื่อ 28 ต.ค. ยังไม่ชัดว่าส่วนไหนทำอยู่แล้ว ถ้ามีอยู่แล้ว ส่วนที่เปลี่ยนจะเหลือแค่ Dashboard กับบัตร V / P / N</span></div><div class="qto"><span class="tagq">เวชระเบียน / OPD</span></div></div>
+  </div>
+</section>
+
+<section class="journey" id="a2">
+  <div class="jh"><h2>ข. คนไข้นัด (วันนัด)</h2><span class="tag">มีนัดในระบบ</span></div>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><div class="who-cell"><span class="who ks">ตู้ Kiosk / ช่องเวชระเบียน</span></div>
+      <div class="do"><span>เปิด Visit จากนัด</span><span class="scr">ตู้ไม่ให้เปิดก่อนเวลานัดเกิน 1 ชั่วโมง · เคาน์เตอร์แค่เตือน</span></div>
+      <div class="data"><div class="flow"><span class="k">ได้</span><span><span class="pill">Visit (มาตามนัด)</span><span class="pill">บัตรคิว + QR</span></span></div></div></div>
+    <div class="step"><span class="n">2</span><div class="who-cell"><span class="who ns">พยาบาลคัดกรอง</span></div>
+      <div class="do"><span>วัด Vital Sign ซักอาการ ส่งเข้าห้องตรวจ</span><span class="scr">ข้อมูลทั้งหมดเก็บที่โรงพยาบาลในวันนัด</span></div>
+      <div class="data"><span class="to">—</span></div></div>
+    <div class="step"><span class="n">3</span><div class="who-cell"><span class="who ns">แพทย์</span></div>
+      <div class="do"><span>กดเรียกคิวเข้าห้องเอง ขึ้นจอ TV คิว</span><span class="scr">นัดที่ผูกแพทย์กลาง (เช่น อายุรกรรม 10001) แพทย์ที่เวียนมาตรวจจะมองไม่เห็นคิว</span></div>
+      <div class="data"><span class="to">—</span></div></div>
+  </div>
+  <p class="note">ไม่มีการเตือนนัดหรือเช็กอินล่วงหน้าจาก HA.OS ในระบบใหม่ส่วนวันนัดยังเหมือนเดิม เพิ่มแค่ข้อมูลเช็กอินที่เข้า Visit ให้เอง</p>
+  <div class="ask"><h3>ถามให้ยืนยันว่าตรงกับหน้างาน</h3>
+    <div class="q"><span class="qn">ข1</span><div class="qt"><b>ตอนนี้มีการเตือนนัดอยู่แล้วไหม เช่น โทร SMS หรือหมอพร้อมที่ IT ส่งเอง?</b></div><div class="qto"><span class="tagq">เวชระเบียน / IT</span></div></div>
+    <div class="q"><span class="qn">ข2</span><div class="qt"><b>มีเครื่องวัดความดันที่ส่งค่าเข้าระบบเองไหม หรือพยาบาลพิมพ์เอง?</b><span>ระบบมีช่องทางรับค่าจากเครื่องวัดด้วยเลขบัตรอยู่แล้ว ยังไม่รู้ว่าใช้จริงที่จุดไหน</span></div><div class="qto"><span class="tagq">พยาบาล OPD</span></div></div>
+    <div class="q"><span class="qn">ข3</span><div class="qt"><b>คนไข้นัดที่มาแล้ว เคาน์เตอร์เลือกนัดตอนเปิด Visit ทุกครั้งไหม?</b><span>ข้อมูลอายุรกรรมพบว่า 38% มาแต่ไม่ได้เลือกนัด ถ้าไม่เลือกนัด ข้อมูลเช็กอินจะไม่เข้า Visit</span></div><div class="qto"><span class="tagq">เวชระเบียน</span></div></div>
+  </div>
+</section>
+
+<section class="journey" id="a3">
+  <div class="jh"><h2>ค. ทำบัตรใหม่</h2><span class="tag">ยังไม่มี HN</span></div>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><div class="who-cell"><span class="who pt">คนไข้</span></div>
+      <div class="do"><span>มาที่ช่องเวชระเบียนพร้อมบัตรประชาชน</span><span class="scr">ทำได้ที่โรงพยาบาลเท่านั้น</span></div>
+      <div class="data"><div class="flow"><span class="k">ส่ง</span><span><span class="pill">บัตรประชาชน</span> <span class="to">→ เจ้าหน้าที่</span></span></div></div></div>
+    <div class="step"><span class="n">2</span><div class="who-cell"><span class="who mr">ช่องเวชระเบียน</span></div>
+      <div class="do"><span>ค้นว่ามีประวัติไหม แล้วสร้าง HN</span><span class="scr">หน้าทะเบียนประวัติ · ระบบกันเลขบัตรซ้ำ</span></div>
+      <div class="data"><div class="flow"><span class="k">ได้</span><span><span class="pill">HN</span> <span class="to">→ เปิด Visit ต่อ</span></span></div></div></div>
+  </div>
+  <div class="ask"><h3>ถามให้ยืนยันว่าตรงกับหน้างาน</h3>
+    <div class="q"><span class="qn">ค1</span><div class="qt"><b>ทำบัตรใหม่วันละประมาณกี่คน และใช้เวลาคนละกี่นาที?</b><span>ใช้ประเมินว่าทำบัตรออนไลน์ช่วยลดงานหน้าช่องได้แค่ไหน</span></div><div class="qto"><span class="tagq">เวชระเบียน</span></div></div>
+  </div>
+</section>
+
+<section class="journey" id="a4">
+  <div class="jh"><h2>ง. ขอนัด / เลื่อนนัด</h2><span class="tag">เจ้าหน้าที่ลงในระบบ</span></div>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><div class="who-cell"><span class="who pt">คนไข้</span></div>
+      <div class="do"><span>ติดต่อโรงพยาบาลเอง หรือแพทย์นัดตอนตรวจ <span class="cf">ยืนยัน</span></span><span class="scr">ไม่มีช่องทางออนไลน์ใน HA.OS</span></div>
+      <div class="data"><span class="to">—</span></div></div>
+    <div class="step"><span class="n">2</span><div class="who-cell"><span class="who mr">เจ้าหน้าที่นัดหมาย</span></div>
+      <div class="do"><span>ลงนัด / เลื่อนนัดในหน้านัดหมาย</span><span class="scr">ห้องตรวจ แพทย์ วันที่ ปฏิทินแพทย์ · นัดเต็มตามตารางออกตรวจ</span></div>
+      <div class="data"><div class="flow"><span class="k">ส่ง</span><span><span class="pill">นัด</span> <span class="to">→ ตารางนัด</span></span></div></div></div>
+  </div>
+  <p class="note warn">อายุรกรรมเลื่อนนัดทางโทรศัพท์นอกระบบเป็นส่วนใหญ่: ใน 60 วัน (30 ก.ค.–28 ก.ย. 69) มีคนมาวันอื่นโดยไม่มีนัดในระบบ 281 ราย เทียบกับเลื่อนในระบบ 123 ราย</p>
+  <div class="ask"><h3>ถามให้ยืนยันว่าตรงกับหน้างาน</h3>
+    <div class="q"><span class="qn">ง1</span><div class="qt"><b>คนไข้ขอนัดหรือเลื่อนนัดตอนนี้ทางไหน: โทร มาเอง หรือ LINE? ใครรับเรื่อง?</b></div><div class="qto"><span class="tagq">เวชระเบียน / OPD</span></div></div>
+    <div class="q"><span class="qn">ง2</span><div class="qt"><b>เลื่อนนัดทางโทรศัพท์แล้ว ทำไมไม่ได้แก้ในระบบ?</b><span>ถ้าเลื่อนนอกระบบ ลิงก์เช็กอินและข้อความเตือนในระบบใหม่จะยังชี้ไปที่นัดเดิม</span></div><div class="qto"><span class="tagq">OPD</span></div></div>
+  </div>
+</section>
+
+<section class="journey" id="a5">
+  <div class="jh"><h2>จ. จำนวนรับนัดและ Walk-in</h2><span class="tag">ตัวเลขในระบบตอนนี้</span></div>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><div class="who-cell"><span class="who sys">ตารางออกตรวจ</span></div>
+      <div class="do"><span>จำนวนรับนัดตั้งต่อช่อง 30 นาที หน้านัดหมายขึ้นว่าเต็มเมื่อช่องนั้นนัดครบ</span><span class="scr">ปฏิทินนัดรวมทุกช่องเป็นยอดของวัน</span></div>
+      <div class="data"><span class="to">—</span></div></div>
+    <div class="step"><span class="n">2</span><div class="who-cell"><span class="who sys">Walk-in</span></div>
+      <div class="do"><span>ไม่มีจำนวนสูงสุด และไม่มีหน้าแสดงที่ว่าง</span><span class="scr">สเปก Limit ห้องตรวจ (14 ต.ค. 69) ยังไม่ได้ทำ</span></div>
+      <div class="data"><span class="to">—</span></div></div>
+  </div>
+  <p class="note warn">ตารางออกตรวจในระบบตอนนี้ (ดึงวันที่ 22 ต.ค. 69): 8,535 ช่วง มีห้อง แพทย์ตัวจริง และเวลาครบแค่ประมาณ 5% ไม่มีห้อง 89% และบางคลินิกตั้งไว้ช่องละ 50 คน ทั้งวันจึงรับนัดได้ถึง 800 คน ตอนนี้ส่งแบบฟอร์มให้พยาบาลกรอกตารางใหม่แล้ว</p>
+</section>
+
+<section>
+  <h2>ตัวเลขจากระบบจริง</h2>
+  <p class="sub">อายุรกรรม 60 วัน (30 ก.ค.–28 ก.ย. 2569) ใช้ดูว่าปัญหาเดิมอยู่ตรงไหน</p>
+  <div class="stats">
+    <div class="stat"><b>70</b><span>นัดต่อวัน ผูกกับแพทย์กลาง 10001 แต่แพทย์ตัวจริงเวียนกันตรวจ</span></div>
+    <div class="stat"><b>42%</b><span>มาตามนัดและเปิด Visit จากนัด</span></div>
+    <div class="stat"><b>38%</b><span>มาแต่ไม่ได้เลือกนัดตอนเปิด Visit</span></div>
+    <div class="stat"><b>20%</b><span>ไม่มาตามนัด</span></div>
+    <div class="stat"><b>~127</b><span>Walk-in ต่อวัน</span></div>
+  </div>
+</section>
+
+<footer>อ้างอิง: ระบบใหม่ online-queue-flow.html · แผนคิวออนไลน์ ฉบับที่ 23 · ข้อมูลจากฐานข้อมูลสำรองของ HA.OS · <a class="top" href="#">กลับด้านบน</a></footer>
+</div>
+</body>
+</html>
