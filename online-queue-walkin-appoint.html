@@ -128,7 +128,7 @@ footer a{color:var(--accent)}
 
       <div class="b c-ns" style="grid-column:5;grid-row:8"><span class="t"><span class="no">7</span>จัดแถว แทรก Walk-in กับนัด</span><span class="s">4:1 หรือ 8:2 พยาบาลจัดเองหน้างาน · คนไข้นัดมาเข้าแถวนี้ด้วย</span></div>
       <div class="b c-ns" style="grid-column:5;grid-row:9"><span class="t"><span class="no">8</span>ซักประวัติละเอียด ออกบัตรคิวห้องตรวจ</span><span class="s">ลงข้อมูล · เลือกแพทย์ (รายชื่อมีเฉพาะแพทย์ที่ตั้งห้องวันนี้) · ได้เลข {ห้อง}-{ประเภท}{ลำดับ}</span><span class="go">→ รอหน้าห้อง</span></div>
-      <div class="b c-dr end" style="grid-column:6;grid-row:10"><span class="t"><span class="no">9</span>แพทย์เรียกคิวเข้าห้องเอง</span><span class="s">ขึ้นจอ TV คิว</span></div>
+      <div class="b c-ns end" style="grid-column:5;grid-row:10"><span class="t"><span class="no">9</span>พยาบาลเรียกคิวให้แพทย์</span><span class="s">ระบบรองรับแพทย์เรียกเอง · ขึ้นจอ TV คิว</span></div>
     </div>
   </div>
 </section>
@@ -144,12 +144,12 @@ footer a{color:var(--accent)}
       <div class="lh ns" style="grid-column:3">พยาบาลหน้าห้องตรวจ<small>หน้าเรียกคิวคัดแยก/ซักประวัติ</small></div>
       <div class="lh dr" style="grid-column:4">แพทย์<small>จอ TV คิว</small></div>
 
-      <div class="b c-pt" style="grid-column:1;grid-row:2"><span class="t"><span class="no">1</span>มาถึงวันนัด</span><span class="s">เช็กอินได้ตั้งแต่ 06.00 <a class="qq" href="online-queue-flow.html#j2">2.2</a></span><span class="go">→ ตู้ Kiosk</span></div>
+      <div class="b c-pt" style="grid-column:1;grid-row:2"><span class="t"><span class="no">1</span>มาถึงวันนัด</span><span class="s">เปิด Visit ได้ตั้งแต่ 30 นาทีก่อนเวลานัด <a class="qq" href="online-queue-flow.html#j2">2.2</a></span><span class="go">→ ตู้ Kiosk</span></div>
       <div class="b c-ks" style="grid-column:2;grid-row:3"><span class="t"><span class="no">2</span>ตรวจสิทธิ เปิด Visit จากนัด</span><span class="s">เปิด Visit นัดที่ตู้เท่านั้น · พิมพ์บัตรคิว<br>ตู้เปิดไม่ได้ → ไปไหน <a class="qq" href="online-queue-flow.html#j2">2.1</a> · หลายนัด <a class="qq" href="online-queue-flow.html#j2">2.3</a></span></div>
       <div class="b c-pt" style="grid-column:1;grid-row:4"><span class="t"><span class="no">3</span>ยื่นบัตรคิวที่หน้าห้องตรวจ</span><span class="go">→ พยาบาลหน้าห้องตรวจ</span></div>
       <div class="b c-ns dec" style="grid-column:3;grid-row:5"><span class="t"><span class="no">4</span>ต่อแถว ซักประวัติละเอียด</span><span class="s">แถวเดียวกับ Walk-in (4:1 หรือ 8:2) · ลงข้อมูล<br>เคสด่วน → เปลี่ยนเป็นคิวด่วน (Prefix ต่าง) <a class="qq" href="online-queue-flow.html#j2">2.4</a></span></div>
       <div class="b c-ns" style="grid-column:3;grid-row:6"><span class="t"><span class="no">5</span>ออกบัตรคิวห้องตรวจ</span><span class="s">แพทย์ในนัดมีห้องวันนี้ → ระบบเลือกให้<br>แพทย์กลาง (เช่น 10001) → พยาบาลเลือกแพทย์จริง</span><span class="go">→ รอหน้าห้อง</span></div>
-      <div class="b c-dr end" style="grid-column:4;grid-row:7"><span class="t"><span class="no">6</span>แพทย์เรียกคิวเข้าห้องเอง</span><span class="s">ขึ้นจอ TV คิว</span></div>
+      <div class="b c-ns end" style="grid-column:3;grid-row:7"><span class="t"><span class="no">6</span>พยาบาลเรียกคิวให้แพทย์</span><span class="s">ระบบรองรับแพทย์เรียกเอง · ขึ้นจอ TV คิว</span></div>
     </div>
   </div>
 </section>
@@ -163,7 +163,7 @@ footer a{color:var(--accent)}
       <tr><td>เปิด Visit</td><td>V: ช่องเวชระเบียน · P / N: พยาบาลหน้าห้องตรวจ</td><td>ตู้ Kiosk เท่านั้น</td></tr>
       <tr><td>ถูกจำกัดจำนวนไหม</td><td>ใช่ ตามจำนวน Walk-in ที่ตั้งที่ Dashboard</td><td>จำกัดตอนลงนัด ตามตารางออกตรวจ</td></tr>
       <tr><td>ซักประวัติ</td><td>2 รอบ: เบื้องต้น และละเอียดที่หน้าห้องตรวจ</td><td>รอบเดียว ละเอียดที่หน้าห้องตรวจ</td></tr>
-      <tr><td>เลขคิวห้องตรวจ</td><td colspan="2">พยาบาลหน้าห้องตรวจออกให้ แทรก Walk-in กับนัด 4:1 หรือ 8:2 · แพทย์เรียกเอง ขึ้นจอ TV</td></tr>
+      <tr><td>เลขคิวห้องตรวจ</td><td colspan="2">พยาบาลหน้าห้องตรวจออกให้ แทรก Walk-in กับนัด 4:1 หรือ 8:2 · ระบบให้แพทย์เรียกเองได้ แต่ปัจจุบันพยาบาลกดเรียกให้ · ขึ้นจอ TV</td></tr>
     </tbody>
   </table></div>
   <p class="note">เลือกแพทย์ตอนออกบัตรคิวห้องตรวจ เพราะเลขคิวต้องมีเลขห้อง และห้องมาจากการจับคู่แพทย์กับห้องตอนเช้า ถ้าทั้งคลินิกยังไม่ได้ตั้งห้อง ระบบออกบัตรไม่ได้ และพาไปหน้าตั้งค่า</p>

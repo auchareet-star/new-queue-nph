@@ -544,7 +544,7 @@ const SC = [
  {id:"C5", ch:"counter", title:"มีนัดวันนี้ แต่มาขอ Walk-in", who:"1100000000011", steps:[
   {scr:"s-ticket", t:"คนไข้คนนี้<b>มีนัดวันนี้</b> แต่มาต่อแถว Walk-in <b>เสียบบัตร</b>", hl:"#tk-insert", on:"tk:read"},
   {scr:"s-ticket", t:"ระบบขึ้นแถบเตือนว่ามีนัดวันนี้ ลองเลือก <b>อายุรกรรม ชั้นบน</b> ซึ่งอยู่ใต้คลินิกหลักเดียวกับที่นัดไว้", hl:'[data-cl="ME01"]', on:"tk:clinic"},
-  {scr:"s-ticket", t:"ระบบ<b>ดักไว้</b>: ออกบัตร Walk-in ไม่ได้ ให้ไปเปิด Visit นัดที่<b>ตู้ Kiosk</b> (เปิดได้ตั้งแต่ 06.00) ดูเคส C11", hl:"#tk-block"}
+  {scr:"s-ticket", t:"ระบบ<b>ดักไว้</b>: ออกบัตร Walk-in ไม่ได้ ให้ไปเปิด Visit นัดที่<b>ตู้ Kiosk</b> (เปิดได้ก่อนเวลานัด 30 นาที) ดูเคส C11", hl:"#tk-block"}
  ]},
  {id:"C6", ch:"counter", title:"เลือกให้เห็นเฉพาะคลินิกที่เกี่ยวข้อง", who:"1100000000022", steps:[
   {scr:"s-ticket", t:"Dashboard แสดงเฉพาะ<b>ชุดคลินิกที่จุดคัดกรองนี้ดูแล</b> (ตั้งครั้งเดียวต่อจุด) กด <b>⚙ คลินิกที่จุดนี้ดูแล</b>", hl:"#tk-cfg", on:"cfg:open"},
@@ -577,7 +577,7 @@ const SC = [
   {scr:"s-front", t:"ระบบ<b>ออกบัตรไม่ได้</b> เพราะเลขคิวต้องมีเลขห้อง ให้ไปตั้งห้องแพทย์ก่อน (หน้าจอเดิมที่ใช้อยู่) · ไม่ออกเลขกลางไว้ก่อน เพราะเลขจะเปลี่ยนทีหลังและไม่ตรงกับจอ TV · ตั้งทันก่อนคนไข้คนแรกไหม รอยืนยันข้อ 6.1", hl:"#fr-noroom-msg"}
  ]},
  {id:"C11", ch:"counter", title:"คนไข้นัด · เปิด Visit ที่ตู้ Kiosk", who:"1100000000011", steps:[
-  {scr:"k-appt", t:"06.12 น. คนไข้นัดมาถึง เปิด Visit นัดได้ตั้งแต่ <b>06.00</b> ที่<b>ตู้ Kiosk เท่านั้น</b> กด <b>เสียบบัตรประชาชน</b>", hl:"#ks-insert", on:"ks:insert"},
+  {scr:"k-appt", t:"09.32 น. คนไข้นัด 10.00 น. มาถึงก่อนนัด 28 นาที เปิด Visit ได้ที่<b>ตู้ Kiosk เท่านั้น</b> กด <b>เสียบบัตรประชาชน</b>", hl:"#ks-insert", on:"ks:insert"},
   {scr:"k-appt", t:"ตู้ตรวจสิทธิและเจอนัดวันนี้ (อายุรกรรม 10.00 น.) กด <b>เปิด Visit นัด</b> ตู้เปิดจากนัดเสมอ จึงไม่เกิดกรณีมาแต่ไม่ได้เลือกนัด (อายุรกรรมเดิม 38%)", hl:"#ks-open", on:"ks:open"},
   {scr:"k-appt", t:"ตู้พิมพ์บัตรคิว ให้ยื่นที่<b>พยาบาลหน้าห้องตรวจ</b> ไม่ต้องผ่านพยาบาลเบื้องต้นและช่องเวชระเบียน · ตู้เปิดไม่ได้ไปไหน รอยืนยันข้อ 2.1 · กด <b>ถัดไป</b>", hl:"#ks-slip"},
   {scr:"s-front", p:{m:"ME00", fresh:true}, t:"คนไข้นัดเข้ารายการรอของพยาบาลหน้าห้องตรวจ ต่อแถวร่วมกับ Walk-in แล้วซักประวัติละเอียดและออกบัตรคิวห้องตรวจแบบเคส C10 · เคสด่วนติ๊กคิวด่วนได้", hl:"tr.is-last"}
@@ -649,7 +649,7 @@ function openApptVisit(){
 const CH = {
  "s-ticket":[["new","เมนูใหม่ \"จองคิว Walk-in\" สำหรับพยาบาลคัดกรองเบื้องต้น: เรียกตามเลขเครื่องกดบัตร (เครื่องแยก ไม่เชื่อม HA.OS) · ซักเบื้องต้น · อ่านบัตร / ค้น HN · เลือกคลินิก · ออกบัตร"],["new","Dashboard นัด / Walk-in ต่อคลินิกหลัก คลินิกย่อยใช้ยอดรวม · ปุ่มตั้งจำนวน Walk-in วันนี้ (พยาบาลประเมินเอง เก็บว่าใครแก้เมื่อไร)"],["new","ตั้งค่าชุดคลินิกต่อจุด + ค้นหา + กรองใกล้เต็ม/เต็ม + พับกลุ่ม"],["new","ตัดสินบัตร: ว่าง = V · เต็ม มี HN = P · เต็ม ไม่มี HN = N · พยาบาลเปลี่ยนได้พร้อมเหตุผล"],["new","บัตรบอกปลายทาง: V ช่องเวชระเบียนเปิด Visit + ใบนำทาง · P พยาบาลหน้าห้องตรวจ · N ทำ HN แล้วไปพยาบาลหน้าห้องตรวจ · V มีเวลาจาก Slot (วิธีคิดรอยืนยัน)"],["new","ดักคนที่มีนัดวันนี้ที่คลินิกหลักเดียวกัน → ไปเปิด Visit นัดที่ตู้"],["reuse","เสียบบัตร: อ่านชื่อ เลขบัตร วันเกิด จากชิป (ReadSmartCardService) · หน้านี้ไม่ตรวจสิทธิ (ตรวจที่ตู้ Kiosk แล้ว)"],["reuse","ช่องเวชระเบียนใช้หน้าทะเบียนประวัติ เปิด Visit และนัด เดิม"]],
  "s-front":[["new","หน้าใหม่ของพยาบาลหน้าห้องตรวจ: รายการบัตร V (ใบนำทาง) / P / N / บัตรคิวนัดจากตู้"],["new","P / N: ตรวจวันนี้ (เปิด Visit เอง นับเป็น Walk-in เกิน) หรือนัดวันอื่น"],["new","ออกบัตรคิวห้องตรวจ: เลือกแพทย์จากรายชื่อที่ตั้งห้องวันนี้ (แพทย์ในนัดมีห้อง = เลือกให้) · เลข {ห้อง 2 หลัก}-{Q/U}{ลำดับ 3 หลัก} · ยังไม่ตั้งห้อง = ออกไม่ได้"],["reuse","หน้าซักประวัติ เปิด Visit นัดหมาย และจอ TV / หน้าเรียกคิวของแพทย์ เดิม"],["mod","ระบบคิว: เลขคิวตามห้องของแพทย์ที่เลือก + ตัวอักษร Q / U"]],
- "k-appt":[["mod","ตู้ Kiosk: เปิด Visit ได้เฉพาะนัด ตั้งแต่ 06.00 ของวันนัด (แทนกติกาเดิม ก่อนเวลานัดไม่เกิน 1 ชั่วโมง)"],["reuse","ตรวจสิทธิ และพิมพ์บัตรคิว ด้วยหน้าจอตู้เดิม"],["new","ไม่มีนัด: บอกให้กดบัตรที่เครื่องกดบัตร แล้วรอพยาบาลคัดกรองเบื้องต้น"]],
+ "k-appt":[["mod","ตู้ Kiosk: เปิด Visit ได้เฉพาะนัด ตั้งแต่ 30 นาทีก่อนเวลานัด (ปรับจากกติกาเดิมที่เปิดได้ล่วงหน้าไม่เกิน 1 ชั่วโมง)"],["reuse","ตรวจสิทธิ และพิมพ์บัตรคิว ด้วยหน้าจอตู้เดิม"],["new","ไม่มีนัด: บอกให้กดบัตรที่เครื่องกดบัตร แล้วรอพยาบาลคัดกรองเบื้องต้น"]],
   "s-limit":[["new","เมนูใหม่ \"สรุปจุดบริการ\" (สเปก Limit ห้องตรวจ) งานพยาบาล • ห้องตรวจผู้ป่วยนอก: คลินิกหลัก + คลินิกย่อย แยกตามจุด"],["new","ตั้ง Limit Walk-in ต่อจุด ตั้งครั้งเดียวใช้ทุกวัน ไม่ใส่ = ไม่จำกัด · เก็บว่าใครแก้เมื่อไร"],["reuse","Limit นัด แสดงจาก LimitCase ของตารางแพทย์เดิม (ข้อเสนอ Gap G-41)"],["new","ค่ารวมระดับคลินิก (เฉพาะจุดที่มีแพทย์วันนี้) ส่งไปที่ Dashboard จุดออกบัตร และใช้ตัดสินบัตร V/P/N"],["mod","TbmWorkRooms เพิ่มคอลัมน์ Limit Walk-in (ยังไม่มี)"]],
  "s-appoint":[["mod","หน้านัดหมายเดิม (appointment-index): รับค่าตั้งต้นจากคำขอ ได้แก่ ผู้ป่วย ห้องตรวจ แพทย์ วันที่ และหมายเหตุ"],["new","ปฏิทินแพทย์เดิม เพิ่มวงบอกวันที่คนไข้มาได้ (จ.–อา. / ช่วงวันที่)"],["mod","หลังบันทึก คืน AppointmentId ไปผูกกับคำขอหรือบัตร"],["reuse","ตารางแพทย์และช่องว่างของนัดเดิม"]],
  "s-requests":[["new","เมนูใหม่ \"คำขอนัดออนไลน์\""],["mod","menu.config / สิทธิ์เมนู: คนที่เข้าเมนูได้คือคนที่อนุมัติได้"],["new","คำขอที่เลยวันสุดท้ายของช่วงวันที่ เปลี่ยนเป็น \"หมดอายุ\" อัตโนมัติ"]],
@@ -771,7 +771,7 @@ SCR["s-ticket"] = {kind:"staff", label:"Counter · พยาบาลคัด�
       ${p.read ? (typed && who.unknown ? `<div class="msg err"><b>ไม่พบ HN และไม่มีชื่อคนไข้</b> เพราะไม่ได้เสียบบัตร มีแค่เลขที่พิมพ์ · บัตรคิวจะพิมพ์ได้แค่เลขบัตร ให้คนไข้นำบัตรประชาชนไปที่เวชระเบียน</div>`
         : `<div class="msg ${hasHn ? "ok" : "warn"}">${pname(who)} · ${hasHn ? `<b>HN ${who.hn}</b>` : "<b>ไม่พบ HN (คนไข้ใหม่)</b>"} · วันเกิด ${who.dob} <span class="src">${typed ? "จากระบบ HA.OS" : "จากชิปบัตรประชาชน"}</span></div>`)
         + `<div class="msg info" id="tk-right" style="font-size:13px">สิทธิการรักษา<b>ตรวจที่ตู้ Kiosk</b> แล้ว (คนไข้ถือใบสิทธิมา) หน้านี้ไม่ตรวจสิทธิซ้ำ${canRight ? "" : " · ไม่ได้เสียบบัตร ได้แค่ข้อมูลจาก HN"}</div>` : ""}
-      ${aps.length ? `<div class="msg err"><b>มีนัดวันนี้</b> ${aps.map(a => `${cl(a.clinic).name} ${a.time} น.`).join(", ")} · ให้ไปเปิด Visit นัดที่<b>ตู้ Kiosk</b> (เปิดได้ตั้งแต่ 06.00)</div>` : ""}
+      ${aps.length ? `<div class="msg err"><b>มีนัดวันนี้</b> ${aps.map(a => `${cl(a.clinic).name} ${a.time} น.`).join(", ")} · ให้ไปเปิด Visit นัดที่<b>ตู้ Kiosk</b> ได้ตั้งแต่ 30 นาทีก่อนเวลานัด</div>` : ""}
       ${p.cl ? `<div class="kv"><span>คลินิกที่เลือก</span><b>${cl(p.cl).name}${cl(p.cl).main ? ` <span class="muted" style="font-weight:400">(Visit = ${cl(cl(p.cl).main).name})</span>` : ""}</b></div>` : ""}</div>
     <div class="port"><h3 style="font-size:16px"><span class="stepno">3</span>ออกบัตรคิว</h3>${blocked ? `<div class="sugg X" id="tk-block"><span class="big">✕</span><div><b>ออกบัตร Walk-in ไม่ได้</b><br><span style="font-size:13.5px">มีนัดวันนี้ที่${cl(blocked.clinic).name} ${blocked.time} น. ซึ่งอยู่ใต้คลินิกหลักเดียวกัน</span></div></div><button type="button" class="b black" disabled>ออกบัตร</button>`
       : type ? `<div class="sugg ${type}"><span class="big">${type}</span><div><b>${type === sug ? "ระบบเสนอ" : "เจ้าหน้าที่เปลี่ยนเป็น"} บัตร ${type}</b><br><span style="font-size:13.5px">${why[type]}</span></div></div>
@@ -874,7 +874,7 @@ SCR["s-front"] = {kind:"staff", label:"พยาบาลหน้าห้อ�
           <label style="display:flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="fr-urgent"> คิวด่วน (ตัวอักษร U)</label>
           <button type="button" class="b green" id="fr-issue" data-act="issue">ออกบัตรคิวห้องตรวจ</button>`
         : `<div class="msg err" id="fr-noroom-msg"><b>ยังไม่ได้ตั้งห้องแพทย์วันนี้</b> ออกบัตรคิวห้องตรวจไม่ได้ เพราะเลขคิวต้องมีเลขห้อง · ไม่ออกเลขกลางไว้ก่อน</div><button type="button" class="b out" data-act="norooms">ไปตั้งห้องแพทย์ (หน้าจอเดิม)</button>`}`}
-      ${p.last ? `<div class="tkt V" id="fr-ticket"><span class="tkh">${HOSP} · บัตรคิวห้องตรวจ</span><span class="muted">${p.last.kind === "นัด" ? "มาตามนัด" : "Walk-in"}${p.last.u ? " · คิวด่วน" : ""}</span><span class="tno">${p.last.q}</span><b>${p.last.room} · ${p.last.doc}</b><span>${p.last.name}</span><span class="muted">แพทย์เรียกเข้าห้องเอง · ดูเลขบนจอ TV</span></div>` : ""}
+      ${p.last ? `<div class="tkt V" id="fr-ticket"><span class="tkh">${HOSP} · บัตรคิวห้องตรวจ</span><span class="muted">${p.last.kind === "นัด" ? "มาตามนัด" : "Walk-in"}${p.last.u ? " · คิวด่วน" : ""}</span><span class="tno">${p.last.q}</span><b>${p.last.room} · ${p.last.doc}</b><span>${p.last.name}</span><span class="muted">พยาบาลเรียกคิวให้แพทย์ · ดูเลขบนจอ TV</span></div>` : ""}
     </div></div>
     <div class="port"><div class="ph2"><h2>แถวรอเข้าห้องตรวจ</h2><span class="muted" style="font-size:13px">เลข {ห้อง 2 หลัก}-{Q ปกติ / U ด่วน}{ลำดับ 3 หลัก} · ลำดับตามที่ออกบัตร</span></div>
       <div class="tw"><table><thead><tr><th>เลขคิว</th><th>คนไข้</th><th>ประเภท</th><th>ห้อง · แพทย์</th></tr></thead><tbody>${db.exq.filter(x => x.m === m).map(x => `<tr><td><b>${x.q}</b></td><td>${x.name}</td><td>${x.kind === "นัด" ? "นัด" : "Walk-in"}${x.u ? ' <span class="st bad">ด่วน</span>' : ""}</td><td>${x.room} · ${x.doc}</td></tr>`).join("") || `<tr><td colspan="4" class="empty">ยังไม่มีคิว</td></tr>`}</tbody></table></div></div>`);
@@ -898,10 +898,10 @@ SCR["s-front"] = {kind:"staff", label:"พยาบาลหน้าห้อ�
   p.pick = null; rerender(); toast(`พิมพ์บัตรคิวห้องตรวจ ${q}`); emit("fr:issue");
  }};
 
-/* ---------- kiosk: appointment visit only, from 06:00 ---------- */
+/* ---------- kiosk: appointment Visit only, 30 minutes before appointment ---------- */
 SCR["k-appt"] = {kind:"kiosk", label:"ตู้ Kiosk · เปิด Visit นัด (หน้าจอตู้เดิม)", render(){
   const p = P(), cid = sample(), pt = db.patients.find(x => x.cid === cid), aps = apptsToday(cid);
-  const body = !p.k ? `<h2 style="margin:0">เปิด Visit นัด</h2><span>เปิดได้ตั้งแต่ <b>06.00 น.</b> ของวันนัด · ตอนนี้ 06.12 น.</span><button type="button" class="b green" id="ks-insert" data-act="insert" style="font-size:18px;padding:12px 28px">เสียบบัตรประชาชน</button><span class="muted">ไม่มีนัด: กดบัตรคิวที่เครื่องกดบัตร แล้วรอพยาบาลคัดกรองเบื้องต้น</span>`
+  const body = !p.k ? `<h2 style="margin:0">เปิด Visit นัด</h2><span>เปิดได้ตั้งแต่ <b>30 นาทีก่อนเวลานัด</b> · ตอนนี้ 09.32 น.</span><button type="button" class="b green" id="ks-insert" data-act="insert" style="font-size:18px;padding:12px 28px">เสียบบัตรประชาชน</button><span class="muted">ไม่มีนัด: กดบัตรคิวที่เครื่องกดบัตร แล้วรอพยาบาลคัดกรองเบื้องต้น</span>`
     : p.k === 1 ? (aps.length ? `<h2 style="margin:0">${pname(pt)}</h2><span>สิทธิ: ${pt.right}</span>${aps.map(a => `<div class="box" style="text-align:left;width:100%"><b>${cl(a.clinic).name} · ${a.time}–${a.end} น.</b><span>${a.doctor} · ${a.reason}</span></div>`).join("")}<button type="button" class="b green" id="ks-open" data-act="open" style="font-size:18px;padding:12px 28px">เปิด Visit นัด</button>`
       : `<div class="msg err">ไม่มีนัดวันนี้ · กดบัตรคิวที่เครื่องกดบัตร แล้วรอพยาบาลคัดกรองเบื้องต้น</div>`)
     : `<h2 style="margin:0">เปิด Visit แล้ว</h2><div class="tkt V" id="ks-slip" style="text-align:left"><span class="tkh">${HOSP} · บัตรคิว มาตามนัด</span><span class="tno">${p.slip}</span><b>${cl(aps[0]?.clinic || "ME00").name}</b><span>${pname(pt)} · HN ${pt.hn}</span><b style="font-size:15px">ยื่นบัตรนี้ที่พยาบาลหน้าห้องตรวจ</b></div>`;
