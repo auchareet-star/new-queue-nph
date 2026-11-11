@@ -147,7 +147,7 @@ a.top{color:var(--accent)}
   <div class="legend"><span class="who pt">คนไข้</span><span class="who ks">เครื่องกดบัตร / ตู้ Kiosk</span><span class="who ns">พยาบาล</span><span class="who mr">เวชระเบียน</span><span class="who dr">แพทย์</span><span class="who it">หมอพร้อม (IT โรงพยาบาล)</span><span class="who sys">ระบบ HA.OS</span></div>
   <div class="roles">
     <div class="role"><span class="who pt">คนไข้</span><span class="pg">หน้าโรงพยาบาล · มือถือ (แอป Mobile คิว)</span>
-      <ul><li>Walk-in: กดบัตรคิว ตรวจสิทธิที่ตู้</li><li>มีนัด: เปิด Visit ที่ตู้ได้ตั้งแต่ 30 นาทีก่อนเวลานัด</li><li>ทำบัตร / ขอนัด / เลื่อนนัด ออนไลน์</li></ul></div>
+      <ul><li>Walk-in: กดบัตรคิว ตรวจสิทธิที่ตู้</li><li>มีนัด: เปิด Visit ที่ตู้ได้ตั้งแต่ 06.00 ของวันนัด</li><li>ทำบัตร / ขอนัด / เลื่อนนัด ออนไลน์</li></ul></div>
     <div class="role"><span class="who ks">เครื่องกดบัตรคิว</span><span class="pg">อุปกรณ์แยก ไม่เชื่อม HA.OS</span>
       <ul><li>ออกเลขรันตามลำดับที่กด</li><li>ใช้เรียงลำดับรอพยาบาลคัดกรองเบื้องต้น</li></ul></div>
     <div class="role"><span class="who ks">ตู้ Kiosk</span><span class="pg">หน้าจอตู้เดิม</span>
@@ -174,7 +174,7 @@ a.top{color:var(--accent)}
   <p class="sub">กดชื่องานเพื่อดูทีละขั้น · งาน 1 และ 2 มีภาพ Flow แยกในหน้า <a class="top" href="online-queue-walkin-appoint.html">Flow Walk-in / นัดหมาย</a></p>
   <div class="ov">
     <div class="ovrow"><a href="#j1"><b>1. Walk-in</b></a><div class="chain"><span class="who ks">เครื่องกดบัตร</span><span class="arr">→</span><span class="who ks">ตู้ตรวจสิทธิ</span><span class="arr">→</span><span class="who ns">พยาบาลเบื้องต้น ออก V/P/N</span><span class="arr">→</span><span class="who mr">เวชระเบียน (V, N)</span><span class="arr">→</span><span class="who ns">พยาบาลหน้าห้องตรวจ</span><span class="arr">→</span><span class="who ns">พยาบาลเรียกคิวให้แพทย์</span></div></div>
-    <div class="ovrow"><a href="#j2"><b>2. คนไข้นัด วันนัด</b></a><div class="chain"><span class="who ks">ตู้ Kiosk เปิด Visit ก่อนนัด 30 นาที</span><span class="arr">→</span><span class="who ns">พยาบาลหน้าห้องตรวจ</span><span class="arr">→</span><span class="who ns">พยาบาลเรียกคิวให้แพทย์</span></div></div>
+    <div class="ovrow"><a href="#j2"><b>2. คนไข้นัด วันนัด</b></a><div class="chain"><span class="who ks">ตู้ Kiosk เปิด Visit ตั้งแต่ 06.00</span><span class="arr">→</span><span class="who ns">พยาบาลหน้าห้องตรวจ</span><span class="arr">→</span><span class="who ns">พยาบาลเรียกคิวให้แพทย์</span></div></div>
     <div class="ovrow"><a href="#j3"><b>3. ทำบัตรออนไลน์</b></a><div class="chain"><span class="who pt">คนไข้</span><span class="arr">→</span><span class="who sys">HA.OS พักคำขอ</span><span class="arr">→</span><span class="who mr">ห้องบัตร</span><span class="arr">→</span><span class="who it">หมอพร้อม</span><span class="arr">→</span><span class="who pt">คนไข้</span></div></div>
     <div class="ovrow"><a href="#j4"><b>4. ขอนัด / เลื่อนนัด</b></a><div class="chain"><span class="who pt">คนไข้</span><span class="arr">→</span><span class="who sys">HA.OS พักคำขอ</span><span class="arr">→</span><span class="who mr">เจ้าหน้าที่นัดหมาย</span><span class="arr">→</span><span class="who it">นัดขึ้นในหมอพร้อม</span></div></div>
     <div class="ovrow"><a href="#j5"><b>5. เช็กอินออนไลน์ (พักไว้)</b></a><div class="chain"><span class="who it">หมอพร้อม เตือนนัด</span><span class="arr">→</span><span class="who pt">คนไข้กรอก</span><span class="arr">→</span><span class="who ks">เปิด Visit นัดที่ตู้</span><span class="arr">→</span><span class="who ns">พยาบาลหน้าห้องตรวจ</span></div></div>
@@ -190,7 +190,7 @@ a.top{color:var(--accent)}
     <li><b>ลำดับแทรก 4:1 หรือ 8:2:</b> พยาบาลจัดเองหน้างาน ระบบไม่ต้องคำนวณ</li>
     <li><b>เครื่องกดบัตรคิว:</b> ไม่เชื่อม HA.OS เป็นเลขรันตามลำดับที่กด</li>
     <li><b>เวลาบนบัตร V:</b> มาจากการซอย Slot ของตารางออกตรวจ ไม่ใช่เวลาออกบัตร + 30 นาที <span>· เดิมข้อ 1.6 (G-09)</span></li>
-    <li><b>คนไข้นัด:</b> เปิด Visit ที่ตู้ Kiosk ได้ตั้งแต่ 30 นาทีก่อนเวลานัด · พยาบาลเปลี่ยนเป็นคิวด่วนได้</li>
+    <li><b>คนไข้นัด:</b> เปิด Visit ที่ตู้ Kiosk ได้ตั้งแต่ 06.00 ของวันนัด · พยาบาลเปลี่ยนเป็นคิวด่วนได้</li>
     <li><b>เรียกเข้าห้องตรวจ:</b> ระบบรองรับแพทย์เรียกเองและแสดงจอ TV คิว · แต่ปัจจุบันพยาบาลเป็นผู้กดเรียกให้แพทย์</li>
     <li><b>เช็กอินออนไลน์:</b> พักไว้ก่อน เพราะขึ้นกับหมอพร้อม</li>
   </ul></div>
@@ -275,10 +275,10 @@ a.top{color:var(--accent)}
   <div class="jh"><h2>2. คนไข้นัด วันนัด</h2><span class="tag">มีนัดในระบบ</span></div>
   <div class="steps">
     <div class="step"><span class="n">1</span><div class="who-cell"><span class="who pt">คนไข้</span></div>
-      <div class="do"><span>มาถึงวันนัด ไปที่ตู้ Kiosk</span><span class="scr">เปิด Visit ได้ตั้งแต่ 30 นาทีก่อนเวลานัด</span></div>
+      <div class="do"><span>มาถึงวันนัด ไปที่ตู้ Kiosk</span><span class="scr">เปิด Visit ได้ตั้งแต่ 06.00 ของวันนัด</span></div>
       <div class="data"><div class="flow"><span class="k">ส่ง</span><span><span class="pill">บัตรประชาชน</span> <span class="to">→ ตู้ Kiosk</span></span></div></div></div>
     <div class="step"><span class="n">2</span><div class="who-cell"><span class="who ks">ตู้ Kiosk</span></div>
-      <div class="do"><span>ตรวจสิทธิ เปิด Visit จากนัด พิมพ์บัตรคิว</span><span class="scr">เปิด Visit นัดที่ตู้เท่านั้น · หน้าจอตู้เดิม · เปิดได้ตั้งแต่ 30 นาทีก่อนเวลานัด</span></div>
+      <div class="do"><span>ตรวจสิทธิ เปิด Visit จากนัด พิมพ์บัตรคิว</span><span class="scr">เปิด Visit นัดที่ตู้เท่านั้น · หน้าจอตู้เดิม · เปิดได้ตั้งแต่ 06.00 ของวันนัด</span></div>
       <div class="data"><div class="flow"><span class="k">ได้</span><span><span class="pill">Visit (มาตามนัด)</span><span class="pill">บัตรคิว</span> <span class="to">→ คนไข้</span></span></div></div></div>
     <div class="step"><span class="n">3</span><div class="who-cell"><span class="who pt">คนไข้</span></div>
       <div class="do"><span>ยื่นบัตรคิวที่พยาบาลหน้าห้องตรวจ</span><span class="scr">ไม่ต้องผ่านพยาบาลเบื้องต้นและช่องเวชระเบียน</span></div>
@@ -433,7 +433,7 @@ a.top{color:var(--accent)}
       <tr><td>แพทย์ ↔ ห้อง วันนี้</td><td>พยาบาล</td><td>HA.OS ตอนออกบัตรคิวห้องตรวจ</td><td>เช้าทุกวัน</td><td class="keep">HA.OS</td></tr>
       <tr><td>จำนวน Walk-in ของคลินิกหลัก</td><td>พยาบาล (Dashboard)</td><td>Dashboard</td><td>ตั้งหรือแก้เมื่อไรก็ได้</td><td class="keep">HA.OS</td></tr>
       <tr><td>เลขคิวห้องตรวจ</td><td>พยาบาลหน้าห้องตรวจ</td><td>คนไข้ · แพทย์ · จอ TV คิว</td><td>ซักประวัติละเอียดเสร็จ</td><td class="keep">HA.OS (คิว)</td></tr>
-      <tr><td>Visit นัด + บัตรคิว</td><td>ตู้ Kiosk</td><td>คนไข้ → พยาบาลหน้าห้องตรวจ</td><td>ก่อนเวลานัด 30 นาที</td><td class="keep">Visit</td></tr>
+      <tr><td>Visit นัด + บัตรคิว</td><td>ตู้ Kiosk</td><td>คนไข้ → พยาบาลหน้าห้องตรวจ</td><td>ตั้งแต่ 06.00 ของวันนัด</td><td class="keep">Visit</td></tr>
       <tr><td>คำขอทำบัตร</td><td>คนไข้</td><td>ห้องบัตร</td><td>ส่งฟอร์ม</td><td class="keep">ที่พักคำขอ → ทะเบียนผู้ป่วยเมื่อยืนยัน</td></tr>
       <tr><td>ผลทำบัตร</td><td>HA.OS</td><td>หมอพร้อม → คนไข้</td><td>ห้องบัตรกดยืนยัน / ปฏิเสธ</td><td class="keep">สถานะการส่ง</td></tr>
       <tr><td>คำขอนัด / คำขอเลื่อนนัด</td><td>คนไข้</td><td>เจ้าหน้าที่นัดหมาย</td><td>ส่งฟอร์ม</td><td class="keep">ที่พักคำขอ → ตารางนัดเมื่อลงนัด</td></tr>

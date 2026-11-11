@@ -627,9 +627,6 @@ th,td{text-align:left;vertical-align:top}
     else if (e.key === 'Home') show(0);
     else if (e.key === 'End') show(total - 1);
   });
-  document.getElementById('viewport').addEventListener('click', function(e){
-    show(e.clientX > window.innerWidth / 2 ? i + 1 : i - 1);
-  });
   var x0 = null;
   document.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; }, {passive:true});
   document.addEventListener('touchend', function(e){
