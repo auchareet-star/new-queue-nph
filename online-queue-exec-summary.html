@@ -412,6 +412,54 @@ th,td{text-align:left;vertical-align:top}
 .pq .n{width:40px;height:40px;border-radius:10px;background:var(--navy);color:#fff;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center}
 .pq .t{font-weight:700;font-size:16.5px;line-height:1.4;color:var(--ink)}
 .pq .hint{display:block;font-weight:400;font-size:13.5px;line-height:1.45;color:var(--ink-2);margin-top:4px}
+/* ---------- patient flow (slide 5) ---------- */
+svg.fl .flane{fill:var(--slate-soft)}
+svg.fl .fzone{fill:var(--blue-soft);fill-opacity:.55;stroke:var(--blue);stroke-opacity:.35;stroke-width:1.2;stroke-dasharray:5 4}
+svg.fl .ftag{fill:#fff;stroke:var(--rule)}
+svg.fl .ftag.z{stroke:var(--blue);stroke-opacity:.45}
+svg.fl .fl-tag{font:700 12.5px var(--f-body);fill:var(--navy)}
+svg.fl .fbx{fill:#fff;stroke:#CBD5E1;stroke-width:1.3}
+svg.fl .fnw{fill:var(--blue-soft);stroke:var(--blue);stroke-width:1.6}
+svg.fl .fhost{fill:#fff;stroke:var(--navy);stroke-width:2}
+svg.fl .fex{fill:var(--indigo-soft);stroke:var(--indigo);stroke-width:1.4}
+svg.fl .fnote{fill:#fff;stroke:var(--rule)}
+svg.fl .fpill{fill:#fff;stroke:var(--rule)}
+svg.fl .fsep{stroke:var(--rule);stroke-width:1}
+svg.fl .tt{font-weight:700;font-size:15px;fill:var(--ink)}
+svg.fl .ss{font-size:12.5px;fill:var(--muted)}
+svg.fl .fl-l{font:800 20px var(--f-body);fill:#fff}
+svg.fl .fl-b{font:700 13px var(--f-body)}
+svg.fl .fln{fill:none;stroke:#94A3B8;stroke-width:1.6}
+svg.fl .fln.fdash{stroke-dasharray:6 4}
+svg.fl .fah{fill:#94A3B8}
+svg.fl .ftbd{fill:#fff;stroke:var(--faint);stroke-width:1.3;stroke-dasharray:5 4}
+svg.fl .fsoon{fill:var(--slate-soft);stroke:var(--faint)}
+svg.fl .fl-soon{font:700 11px var(--f-body);fill:var(--muted)}
+svg.fl .fpill.r{stroke:var(--red);stroke-opacity:.4}
+svg.fl .fln.fred{stroke:var(--red);stroke-opacity:.7}
+.tbl.duty th{padding:8px 10px;font-size:13px}
+.tbl.duty td{font-size:13.5px;padding:7px 10px;line-height:1.42;vertical-align:top;color:var(--ink-2)}
+.tbl.duty td.k{width:170px;font-size:14px;color:var(--navy);white-space:nowrap}
+.tbl.duty b.nw{font-weight:700;color:var(--ink)}
+.tbl.duty .rl{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:7px;vertical-align:1px}
+.tbl.duty .rl.ns{background:var(--indigo)} .tbl.duty .rl.mr{background:var(--amber)} .tbl.duty .rl.pt{background:var(--teal)} .tbl.duty .rl.it{background:var(--blue)}
+.tbl.duty .tbc{display:inline-block;font-size:12px;font-weight:600;color:var(--amber-ink);background:var(--amber-soft);border-radius:5px;padding:0 6px}
+.tbl.duty .when{font-size:12px;color:var(--muted)}
+svg.sw text{font-family:var(--f-body)}
+svg.sw .slane{fill:#fff} svg.sw .slane.a{fill:var(--slate-soft)}
+svg.sw .slab{font-weight:700;font-size:13px;fill:var(--navy)}
+svg.sw .sph{fill:var(--navy)} svg.sw .spht{font-weight:700;font-size:12.5px;fill:#fff}
+svg.sw .sgrid{stroke:var(--rule);stroke-dasharray:3 4}
+svg.sw .sb{stroke-width:1.3}
+svg.sw .sb.new{fill:var(--blue-soft);stroke:var(--blue)}
+svg.sw .sb.old{fill:#fff;stroke:#CBD5E1}
+svg.sw .sb.tbc{fill:var(--amber-soft);stroke:var(--amber);stroke-dasharray:5 3}
+svg.sw .sb.tbd{fill:#fff;stroke:var(--faint);stroke-dasharray:5 4}
+svg.sw .st{font-weight:700;font-size:13px;fill:var(--ink)}
+svg.sw .ss2{font-size:11.5px;fill:var(--muted)} svg.sw .ss2.tb{fill:var(--amber-ink);font-weight:600}
+svg.sw .sl{fill:none;stroke:#94A3B8;stroke-width:1.5} svg.sw .sl.sd{stroke-dasharray:5 4}
+svg.sw .sah{fill:#94A3B8}
+svg.sw .sal{font-size:11.5px;font-weight:600;fill:var(--ink-2)}
 </style>
 </head>
 <body>
@@ -423,13 +471,14 @@ th,td{text-align:left;vertical-align:top}
   <div class="who"><div><b>นำเสนอ</b>ผู้อำนวยการโรงพยาบาล</div><div><b>จัดทำโดย</b>บริษัท อโยเดีย จำกัด</div><div><b>วันที่</b>พฤศจิกายน 2569</div></div>
 </section>
 <section class="slide">
-  <div class="head"><div><h2>หัวข้อ</h2><p class="sub">ใช้เวลาประมาณ 20 นาที · 2 หน้าสุดท้ายคือเรื่องที่ขอให้ท่านพิจารณาและอนุมัติ</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><h2>หัวข้อ</h2><p class="sub">ใช้เวลาประมาณ 22 นาที · 2 หน้าสุดท้ายคือเรื่องที่ขอให้ท่านพิจารณาและอนุมัติ</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><ol class="agenda a11">
     <li class="card"><b>สิ่งที่เราเข้าใจจาก รพ.</b><span>ตัวเลขอายุรกรรม · สิ่งที่หน้างานยืนยัน · ข้อจำกัด</span><em class="mins">2 นาที</em></li>
     <li class="card"><b>นโยบายที่ระบบรองรับ</b><span>สลับนัดกับ Walk-in · เปิด Visit ก่อนนัด · จำกัดจำนวน</span><em class="mins">2 นาที</em></li>
     <li class="card"><b>เส้นทางคนไข้แบบใหม่</b><span>Walk-in และคนไข้นัด มาเจอกันที่หน้าห้องตรวจ</span><em class="mins">3 นาที</em></li>
     <li class="card"><b>บัตร V / P / N</b><span>คนไข้ Walk-in ได้บัตรแบบไหน แล้วไปไหนต่อ</span><em class="mins">2 นาที</em></li>
     <li class="card"><b>สิ่งที่หน้างานต้องทำเพิ่ม</b><span>งานใหม่ทุกเช้า และจุดที่ต้องมีคน</span><em class="mins">2 นาที</em></li>
+    <li class="card"><b>ใครทำอะไร ตอนไหน</b><span>หน้าที่รายวันของแต่ละจุด ตั้งแต่เช้าถึงท้ายวัน</span><em class="mins">2 นาที</em></li>
     <li class="card"><b>อะไรเหมือนเดิม อะไรใหม่</b><span>ส่วนใหญ่ใช้หน้าจอเดิม เปลี่ยนที่จุดรับคนไข้</span><em class="mins">1 นาที</em></li>
     <li class="card"><b>แผนเวลา</b><span>ขึ้นระบบ 20 ม.ค. · ออนไลน์ มี.ค. · ครบทุกคลินิก เม.ย.</span><em class="mins">2 นาที</em></li>
     <li class="card"><b>ความเสี่ยงและวิธีรับมือ</b><span>อะไรทำให้แผนเลื่อน และเตรียมรับมืออย่างไร</span><em class="mins">2 นาที</em></li>
@@ -461,37 +510,61 @@ th,td{text-align:left;vertical-align:top}
 <section class="slide">
   <div class="head"><div><div class="sec">2 · นโยบาย</div><h2>นโยบายคิวที่ระบบใหม่รองรับ</h2><p class="sub">ตามแนวทางที่โรงพยาบาลกำหนดไว้ ระบบทำให้ 2 เรื่องแรกเกิดขึ้นได้จริงที่หน้างาน และเพิ่มเรื่องที่ 3</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="pol">
-    <div class="card"><div class="q">นโยบาย 1</div><h4>สลับคนไข้นัดกับ Walk-in ตามสัดส่วน เช่น 8 : 2</h4><p>วันนี้ระบบเรียกคนไข้นัดให้หมดก่อน Walk-in จึงรอนาน</p><div class="ans"><b>ระบบใหม่:</b> พยาบาลหน้าห้องตรวจเป็นคนออกเลขคิวเข้าห้อง จึงจัดลำดับแทรกได้ตามสัดส่วนที่คลินิกกำหนด</div></div>
+    <div class="card"><div class="q">นโยบาย 1</div><h4>สลับคนไข้นัดกับ Walk-in ตามสัดส่วน เช่น 8 : 2 หรือ 4 : 1</h4><p>วันนี้ระบบเรียกคนไข้นัดให้หมดก่อน Walk-in จึงรอนาน</p><div class="ans"><b>ระบบใหม่:</b> พยาบาลหน้าห้องตรวจเป็นคนออกเลขคิวเข้าห้อง จึงจัดลำดับแทรกได้ตามสัดส่วนที่คลินิกกำหนด</div></div>
     <div class="card"><div class="q">นโยบาย 2</div><h4>คนไข้นัดเปิด Visit ได้ก่อนเวลานัด</h4><p>กติกาเดิมเปิดที่ตู้หรือเคาน์เตอร์ได้ล่วงหน้าไม่เกิน 1 ชั่วโมง</p><div class="ans"><b>ระบบใหม่:</b> เปิด Visit นัดที่ตู้ Kiosk ได้ก่อนเวลานัด 1 ชั่วโมงเท่าเดิม แล้วถือบัตรไปหน้าห้องตรวจได้เลย</div></div>
     <div class="card"><div class="q">เพิ่มใหม่</div><h4>จำกัดจำนวน Walk-in ต่อคลินิกต่อวัน</h4><p>วันนี้ไม่มีตัวเลขว่าคลินิกรับได้อีกกี่คน เปิด Visit ได้ไม่จำกัด บางคนรอจนไม่ได้ตรวจ</p><div class="ans"><b>ระบบใหม่:</b> พยาบาลตั้งจำนวนรับของแต่ละคลินิกทุกเช้า จุดคัดกรองเห็นที่ว่างบนจอ และออกบัตรตามนั้น</div></div>
   </div></div>
 </section>
 <section class="slide">
   <div class="head"><div><div class="sec">3 · เส้นทางคนไข้</div><h2>เส้นทางคนไข้แบบใหม่</h2><p class="sub">Walk-in ผ่านจุดคัดกรองก่อนเปิด Visit · คนไข้นัดเปิด Visit ที่ตู้แล้วไปหน้าห้องตรวจได้เลย · ทั้งสองทางมาเจอกันที่พยาบาลหน้าห้องตรวจ</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
-  <div class="body"><div class="card flowcard diagram"><svg viewBox="0 0 1180 470" role="img" aria-label="เส้นทางคนไข้">
-<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path class="ah" d="M0 0 L9 4.5 L0 9z"/></marker></defs>
-<text class="lbl" x="0" y="18" style="font-weight:700;fill:#1E3A5F;font-size:15px">Walk-in (ไม่มีนัด)</text>
-<rect class="box" x="0" y="30" width="150" height="64" rx="9"/><text class="t" x="75.0" y="56" text-anchor="middle">กดบัตรคิว</text><text class="s" x="75.0" y="77" text-anchor="middle">เครื่องกดบัตร</text><path class="ln" d="M150 62 L180 62" marker-end="url(#ah)"/>
-<rect class="box" x="180" y="30" width="150" height="64" rx="9"/><text class="t" x="255.0" y="56" text-anchor="middle">ตรวจสิทธิ</text><text class="s" x="255.0" y="77" text-anchor="middle">ตู้ Kiosk · ได้ใบสิทธิ</text><path class="ln" d="M330 62 L360 62" marker-end="url(#ah)"/>
-<rect class="vm" x="360" y="30" width="190" height="64" rx="9"/><text class="t" x="455.0" y="56" text-anchor="middle">พยาบาลคัดกรองเบื้องต้น</text><text class="s" x="455.0" y="77" text-anchor="middle">ดู Dashboard · ออกบัตร</text>
-<path class="ln" d="M550 48 L600 48" marker-end="url(#ah)"/><path class="ln" d="M550 62 L600 130" marker-end="url(#ah)"/><path class="ln" d="M550 76 L600 212" marker-end="url(#ah)"/>
-<rect class="box" x="600" y="22" width="200" height="52" rx="9"/><text class="t" x="700.0" y="54.0" text-anchor="middle">V  ว่าง · ตรวจวันนี้</text><rect x="600" y="22" width="8" height="52" rx="3" fill="#0D9488"/>
-<rect class="box" x="600" y="104" width="200" height="52" rx="9"/><text class="t" x="700.0" y="136.0" text-anchor="middle">P  เต็ม · มีประวัติ</text><rect x="600" y="104" width="8" height="52" rx="3" fill="#F59E0B"/>
-<rect class="box" x="600" y="186" width="200" height="52" rx="9"/><text class="t" x="700.0" y="218.0" text-anchor="middle">N  เต็ม · ไม่มีประวัติ</text><rect x="600" y="186" width="8" height="52" rx="3" fill="#6366F1"/>
-<path class="ln" d="M800 48 L850 48" marker-end="url(#ah)"/><rect class="box" x="850" y="22" width="170" height="52" rx="9"/><text class="t" x="935.0" y="48" text-anchor="middle">เวชระเบียน</text><text class="s" x="935.0" y="69" text-anchor="middle">เปิด Visit + ใบนำทาง</text>
-<path class="ln" d="M800 212 L850 212" marker-end="url(#ah)"/><rect class="box" x="850" y="186" width="170" height="52" rx="9"/><text class="t" x="935.0" y="212" text-anchor="middle">เวชระเบียน</text><text class="s" x="935.0" y="233" text-anchor="middle">ทำประวัติใหม่</text>
-<path class="ln" d="M1020 48 H1032 Q1040 48 1040 56 V270" marker-end="url(#ah)"/><path class="ln" d="M800 130 H812 Q824 130 824 142 V298 Q824 310 836 310 H850" marker-end="url(#ah)"/><path class="ln" d="M935 238 V270" marker-end="url(#ah)"/>
-<text class="lbl" x="0" y="318" style="font-weight:700;fill:#1E3A5F;font-size:15px">คนไข้นัด (วันนัด)</text>
-<rect class="box" x="0" y="330" width="150" height="64" rx="9"/><text class="t" x="75.0" y="356" text-anchor="middle">มาถึงวันนัด</text><text class="s" x="75.0" y="377" text-anchor="middle">ก่อนนัด 1 ชม.</text><path class="ln" d="M150 362 L180 362" marker-end="url(#ah)"/>
-<rect class="vm" x="180" y="330" width="220" height="64" rx="9"/><text class="t" x="290.0" y="356" text-anchor="middle">ตู้ Kiosk เปิด Visit นัด</text><text class="s" x="290.0" y="377" text-anchor="middle">ก่อนนัด 1 ชม. · ได้บัตรคิว</text>
-<path class="ln" d="M400 362 H826 Q838 362 838 350 H850" marker-end="url(#ah)"/>
-<rect class="host" x="850" y="270" width="200" height="110" rx="9"/>
-<text class="t" x="950" y="302" text-anchor="middle">พยาบาล</text><text class="t" x="950" y="324" text-anchor="middle">หน้าห้องตรวจ</text>
-<text class="s" x="950" y="348" text-anchor="middle">P / N: ตรวจวันนี้หรือนัด</text><text class="s" x="950" y="366" text-anchor="middle">ซักประวัติ · ออกเลขคิว</text>
-<path class="ln" d="M950 380 V400" marker-end="url(#ah)"/>
-<rect class="ext" x="850" y="400" width="200" height="58" rx="9"/><text class="t" x="950" y="426" text-anchor="middle">พยาบาลเรียกคิวให้แพทย์</text><text class="s" x="950" y="447" text-anchor="middle">ระบบขึ้นจอทีวีหน้าห้อง</text>
-<text class="s" x="0" y="430">แทรก Walk-in กับคนไข้นัดตามสัดส่วน เช่น 8 : 2 พยาบาลหน้าห้องตรวจจัดเอง</text>
-<text class="s" x="0" y="452">สิ่งที่พยาบาลต้องตั้งทุกเช้า: ห้องของแพทย์แต่ละคน และจำนวน Walk-in ที่คลินิกรับได้</text>
+  <div class="body"><div class="card flowcard diagram"><svg class="fl" viewBox="0 0 1180 470" role="img" aria-label="เส้นทางคนไข้">
+<defs><marker id="fa" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path class="fah" d="M0 0 L8 4 L0 8z"/></marker><marker id="far" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" style="fill:var(--red);fill-opacity:.7"/></marker><filter id="fsh" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#1E3A5F" flood-opacity=".10"/></filter></defs>
+<rect class="flane" x="0" y="0" width="950" height="258" rx="14"/>
+<rect class="flane" x="0" y="272" width="950" height="112" rx="14"/>
+<rect class="fzone" x="962" y="0" width="218" height="470" rx="14"/>
+<rect class="ftag" x="14" y="14" width="150" height="26" rx="13"/><text class="fl-tag" x="89.0" y="32" text-anchor="middle">Walk-in (ไม่มีนัด)</text>
+<rect class="ftag" x="14" y="286" width="150" height="26" rx="13"/><text class="fl-tag" x="89.0" y="304" text-anchor="middle">คนไข้นัด (วันนัด)</text>
+<rect class="ftag z" x="983" y="14" width="176" height="26" rx="13"/><text class="fl-tag" x="1071.0" y="32" text-anchor="middle">จุดรวมของทั้งสองทาง</text>
+<rect class="fbx" x="16" y="84" width="128" height="64" rx="10"/><text class="tt" x="80.0" y="113.0" text-anchor="middle">กดบัตรคิว</text><text class="ss" x="80.0" y="132.0" text-anchor="middle">เครื่องกดบัตร</text>
+<path class="fln" d="M144 116 H166" marker-end="url(#fa)"/>
+<rect class="fbx" x="168" y="84" width="140" height="64" rx="10"/><text class="tt" x="238.0" y="113.0" text-anchor="middle">ตรวจสิทธิ</text><text class="ss" x="238.0" y="132.0" text-anchor="middle">ตู้ Kiosk · ใบสิทธิ</text>
+<path class="fln" d="M308 116 H330" marker-end="url(#fa)"/>
+<rect class="fnw" x="332" y="84" width="182" height="64" rx="10"/><text class="tt" x="423.0" y="113.0" text-anchor="middle">พยาบาลคัดกรองเบื้องต้น</text><text class="ss" x="423.0" y="132.0" text-anchor="middle">ดูที่ว่าง · ออกบัตร</text>
+<path class="fln" d="M514 116 H523 Q531 116 531 108 V78 Q531 70 539 70 H548" marker-end="url(#fa)"/>
+<path class="fln" d="M514 116 H523 Q531 116 531 124 V128 Q531 136 539 136 H548" marker-end="url(#fa)"/>
+<path class="fln" d="M514 116 H523 Q531 116 531 124 V194 Q531 202 539 202 H548" marker-end="url(#fa)"/>
+<rect class="fbx" x="548" y="46" width="190" height="48" rx="10"/><rect x="548" y="46" width="44" height="48" rx="10" style="fill:var(--teal)"/><rect x="580" y="46" width="12" height="48" style="fill:var(--teal)"/><text class="fl-l" x="570" y="77" text-anchor="middle">V</text><text class="tt" x="604" y="67" style="font-size:14px">ว่าง · ตรวจวันนี้</text><text class="ss" x="604" y="85" style="font-size:12px">เปิด Visit ที่เวชระเบียน</text>
+<rect class="fbx" x="548" y="112" width="190" height="48" rx="10"/><rect x="548" y="112" width="44" height="48" rx="10" style="fill:var(--amber)"/><rect x="580" y="112" width="12" height="48" style="fill:var(--amber)"/><text class="fl-l" x="570" y="143" text-anchor="middle">P</text><text class="tt" x="604" y="133" style="font-size:14px">เต็ม · มีประวัติ</text><text class="ss" x="604" y="151" style="font-size:12px">ไปหน้าห้องตรวจเลย</text>
+<rect class="fbx" x="548" y="178" width="190" height="48" rx="10"/><rect x="548" y="178" width="44" height="48" rx="10" style="fill:var(--indigo)"/><rect x="580" y="178" width="12" height="48" style="fill:var(--indigo)"/><text class="fl-l" x="570" y="209" text-anchor="middle">N</text><text class="tt" x="604" y="199" style="font-size:14px">เต็ม · ไม่มีประวัติ</text><text class="ss" x="604" y="217" style="font-size:12px">ทำประวัติใหม่ก่อน</text>
+<path class="fln" d="M738 70 H772" marker-end="url(#fa)"/>
+<rect class="fbx" x="772" y="46" width="150" height="48" rx="10"/><text class="tt" x="847.0" y="67.0" text-anchor="middle">เวชระเบียน</text><text class="ss" x="847.0" y="86.0" text-anchor="middle">เปิด Visit + ใบนำทาง</text>
+<path class="fln" d="M738 202 H772" marker-end="url(#fa)"/>
+<rect class="fbx" x="772" y="178" width="150" height="48" rx="10"/><text class="tt" x="847.0" y="199.0" text-anchor="middle">เวชระเบียน</text><text class="ss" x="847.0" y="218.0" text-anchor="middle">ทำประวัติใหม่</text>
+<path class="fln" d="M922 70 H1060 Q1072 70 1072 82 V110" marker-end="url(#fa)"/>
+<path class="fln" d="M738 136 H975" marker-end="url(#fa)"/>
+<path class="fln" d="M922 202 H975" marker-end="url(#fa)"/>
+<rect class="ftbd" x="16" y="317" width="146" height="56" rx="10"/><text class="tt" x="89.0" y="342.0" text-anchor="middle">เช็กอินผ่านลิงก์</text><text class="ss" x="89.0" y="361.0" text-anchor="middle">หมอพร้อม · 06.00 น.</text>
+<path class="fln fdash" d="M162 345 H184" marker-end="url(#fa)"/>
+<rect class="fbx" x="186" y="317" width="130" height="56" rx="10"/><text class="tt" x="251.0" y="342.0" text-anchor="middle">มาถึงวันนัด</text><text class="ss" x="251.0" y="361.0" text-anchor="middle">ก่อนนัดไม่เกิน 1 ชม.</text>
+<path class="fln" d="M316 345 H338" marker-end="url(#fa)"/>
+<rect class="fnw" x="340" y="317" width="206" height="56" rx="10"/><text class="tt" x="443.0" y="342.0" text-anchor="middle">ตู้ Kiosk เปิด Visit นัด</text><text class="ss" x="443.0" y="361.0" text-anchor="middle">ได้บัตรคิว ไปหน้าห้องตรวจเลย</text>
+<path class="fln fdash" d="M546 345 H935 Q947 345 947 333 V292 Q947 280 959 280 H975" marker-end="url(#fa)"/>
+<rect x="640" y="333" width="200" height="24" rx="12" class="fpill"/><text class="ss" x="740" y="349" text-anchor="middle" style="font-size:12px">ไม่ต้องผ่านเวชระเบียน</text>
+<rect class="fsoon" x="172" y="289" width="66" height="20" rx="10"/><text class="fl-soon" x="205" y="303" text-anchor="middle">รอ IT</text>
+<path class="fln fdash fred" d="M380 148 V317" marker-end="url(#far)"/>
+<rect x="222" y="186" width="150" height="24" rx="12" class="fpill r"/><text class="ss" x="297" y="202" text-anchor="middle" style="font-size:12px;fill:var(--red)">มีนัดวันนี้ → ไปตู้</text>
+<rect class="fhost" x="975" y="110" width="195" height="190" rx="12" filter="url(#fsh)"/>
+<text class="tt" x="1072.5" y="150" text-anchor="middle" style="font-size:16.5px">พยาบาล</text><text class="tt" x="1072.5" y="172" text-anchor="middle" style="font-size:16.5px">หน้าห้องตรวจ</text>
+<line x1="995" y1="188" x2="1150" y2="188" class="fsep"/>
+<text class="ss" x="1072.5" y="210" text-anchor="middle">ซักประวัติ · ออกเลขคิวเข้าห้อง</text>
+<text class="ss" x="1072.5" y="230" text-anchor="middle">P / N: ตรวจวันนี้ หรือนัดวันอื่น</text>
+<text class="ss" x="1072.5" y="250" text-anchor="middle">เลือกแพทย์ที่ตรวจจริง</text>
+<path class="fln" d="M1060 300 V324" marker-end="url(#fa)"/>
+<rect class="fex" x="975" y="324" width="170" height="60" rx="10"/><text class="tt" x="1060.0" y="351.0" text-anchor="middle">เรียกคิวให้แพทย์</text><text class="ss" x="1060.0" y="370.0" text-anchor="middle">พยาบาลเรียก · ขึ้นจอทีวี</text>
+<path class="fln fdash" d="M1158 300 V419 Q1158 427 1150 427 H1145" marker-end="url(#fa)"/>
+<rect class="fbx" x="975" y="404" width="170" height="48" rx="10"/><text class="tt" x="1060.0" y="425.0" text-anchor="middle">นัดวันอื่น</text><text class="ss" x="1060.0" y="444.0" text-anchor="middle">P / N ที่รอได้</text>
+<rect class="fnote" x="0" y="404" width="466" height="58" rx="12"/><rect x="14" y="418" width="52" height="30" rx="8" style="fill:var(--amber-soft)"/><text class="fl-b" x="40" y="438" text-anchor="middle" style="fill:var(--amber-ink)">8 : 2</text><text class="ss" x="81" y="438" text-anchor="middle" style="font-size:12px">หรือ</text><rect x="96" y="418" width="52" height="30" rx="8" style="fill:var(--amber-soft)"/><text class="fl-b" x="122" y="438" text-anchor="middle" style="fill:var(--amber-ink)">4 : 1</text><text class="tt" x="162" y="428" style="font-size:13.5px">แทรก Walk-in กับคนไข้นัดตามสัดส่วน</text><text class="ss" x="162" y="447" style="font-size:12px">คลินิกเลือกสัดส่วนเอง · พยาบาลหน้าห้องตรวจจัดลำดับ</text>
+<rect class="fnote" x="484" y="404" width="466" height="58" rx="12"/><rect x="498" y="418" width="66" height="30" rx="8" style="fill:var(--teal-soft)"/><text class="fl-b" x="531" y="438" text-anchor="middle" style="fill:#0F6B63">ทุกเช้า</text><text class="tt" x="578" y="428" style="font-size:13.5px">พยาบาลตั้งค่าก่อนเริ่มตรวจ</text><text class="ss" x="578" y="447" style="font-size:12px">ห้องของแพทย์แต่ละคน · จำนวน Walk-in ที่คลินิกรับได้</text>
 </svg></div>
   <div class="legend"><span><i style="background:#EAF2FC;border-color:#2A78D6"></i>จุดที่มีหน้าจอใหม่</span><span><i style="background:#fff;border-color:#1E3A5F"></i>จุดที่งานเปลี่ยน ใช้หน้าจอเดิม</span><span><i style="background:#fff;border-color:#CBD5E1"></i>เหมือนเดิม</span></div></div>
 </section>
@@ -516,7 +589,69 @@ th,td{text-align:left;vertical-align:top}
   </div></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">6 · ขอบเขตการเปลี่ยนแปลง</div><h2>อะไรเหมือนเดิม อะไรใหม่</h2><p class="sub">ไม่ได้รื้อระบบ ส่วนที่เปลี่ยนอยู่ที่จุดรับคนไข้หน้าโรงพยาบาลและช่องทางออนไลน์</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">6 · ใครทำอะไร ตอนไหน</div><h2>หน้าที่รายวันของแต่ละจุด</h2><p class="sub">อ่านจากซ้ายไปขวาตามเวลาของวัน · ลูกศรคือคนไข้หรือข้อมูลที่ส่งต่อระหว่างจุด · ช่องสีส้มต้องตกลงกับหน้างานก่อน 14 พ.ย.</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="body"><div class="card diagram" style="padding:10px 14px"><svg class="sw" viewBox="0 0 1180 476" role="img" aria-label="ใครทำอะไร ตอนไหน">
+<defs><marker id="sa" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path class="sah" d="M0 0 L8 4 L0 8z"/></marker></defs>
+<rect class="slane a" x="0" y="32" width="1180" height="78" rx="10"/>
+<rect x="12" y="66.0" width="10" height="10" rx="3" style="fill:var(--teal)"/><text class="slab" x="30" y="76.0">คนไข้</text>
+<rect class="slane" x="0" y="114" width="1180" height="68" rx="10"/>
+<rect x="12" y="143.0" width="10" height="10" rx="3" style="fill:var(--indigo)"/><text class="slab" x="30" y="153.0">พยาบาลคัดกรอง</text>
+<rect class="slane a" x="0" y="186" width="1180" height="68" rx="10"/>
+<rect x="12" y="215.0" width="10" height="10" rx="3" style="fill:var(--amber)"/><text class="slab" x="30" y="225.0">ช่องเวชระเบียน</text>
+<rect class="slane" x="0" y="258" width="1180" height="78" rx="10"/>
+<rect x="12" y="292.0" width="10" height="10" rx="3" style="fill:var(--indigo)"/><text class="slab" x="30" y="302.0">พยาบาลหน้าห้องตรวจ</text>
+<rect class="slane a" x="0" y="340" width="1180" height="64" rx="10"/>
+<rect x="12" y="367.0" width="10" height="10" rx="3" style="fill:var(--amber)"/><text class="slab" x="30" y="377.0">ห้องบัตร / นัดหมาย</text>
+<rect class="slane" x="0" y="408" width="1180" height="64" rx="10"/>
+<rect x="12" y="435.0" width="10" height="10" rx="3" style="fill:var(--blue)"/><text class="slab" x="30" y="445.0">IT รพ.</text>
+<rect class="sph" x="160" y="0" width="245" height="26" rx="13"/><text class="spht" x="282.5" y="18" text-anchor="middle">ก่อนเริ่มออกบัตร (เช้า)</text>
+<line class="sgrid" x1="155" y1="30" x2="155" y2="474"/>
+<rect class="sph" x="415" y="0" width="245" height="26" rx="13"/><text class="spht" x="537.5" y="18" text-anchor="middle">ช่วงรับคนไข้</text>
+<line class="sgrid" x1="410" y1="30" x2="410" y2="474"/>
+<rect class="sph" x="670" y="0" width="245" height="26" rx="13"/><text class="spht" x="792.5" y="18" text-anchor="middle">ระหว่างวัน</text>
+<line class="sgrid" x1="665" y1="30" x2="665" y2="474"/>
+<rect class="sph" x="925" y="0" width="245" height="26" rx="13"/><text class="spht" x="1047.5" y="18" text-anchor="middle">ท้ายวัน</text>
+<line class="sgrid" x1="920" y1="30" x2="920" y2="474"/>
+<rect class="sb tbd" x="170" y="40" width="225" height="62" rx="9"/><text class="st" x="282.5" y="68.0" text-anchor="middle">นัด: เช็กอินผ่านลิงก์</text><text class="ss2" x="282.5" y="85.0" text-anchor="middle">ตั้งแต่ 06.00 · รอ IT</text>
+<rect class="sb old" x="425" y="40" width="108" height="62" rx="9"/><text class="st" x="479.0" y="68.0" text-anchor="middle">Walk-in</text><text class="ss2" x="479.0" y="85.0" text-anchor="middle">กดบัตร · ตรวจสิทธิ</text>
+<rect class="sb old" x="542" y="40" width="108" height="62" rx="9"/><text class="st" x="596.0" y="68.0" text-anchor="middle">คนไข้นัด</text><text class="ss2" x="596.0" y="85.0" text-anchor="middle">ตู้ก่อนนัด 1 ชม.</text>
+<rect class="sb old" x="680" y="40" width="225" height="62" rx="9"/><text class="st" x="792.5" y="68.0" text-anchor="middle">รอเรียกเข้าห้อง</text><text class="ss2" x="792.5" y="85.0" text-anchor="middle">ดูเลขคิวบนจอทีวี</text>
+<rect class="sb old" x="935" y="40" width="225" height="62" rx="9"/><text class="st" x="1047.5" y="68.0" text-anchor="middle">P / N ที่รอได้</text><text class="ss2" x="1047.5" y="85.0" text-anchor="middle">ได้นัดวันอื่นกลับไป</text>
+<rect class="sb new" x="170" y="122" width="225" height="52" rx="9"/><text class="st" x="282.5" y="145.0" text-anchor="middle">เปิด Dashboard</text><text class="ss2" x="282.5" y="162.0" text-anchor="middle">เช็กว่าทุกคลินิกตั้งค่าแล้ว</text>
+<rect class="sb new" x="425" y="122" width="172" height="52" rx="9"/><text class="st" x="511.0" y="145.0" text-anchor="middle">ถามอาการ ออกบัตร V/P/N</text><text class="ss2" x="511.0" y="162.0" text-anchor="middle">มีนัดวันนี้ → ส่งไปตู้</text>
+<rect class="sb new" x="680" y="122" width="172" height="52" rx="9"/><text class="st" x="766.0" y="145.0" text-anchor="middle">คลินิกเต็ม</text><text class="ss2" x="766.0" y="162.0" text-anchor="middle">ออกบัตร P / N แทน V</text>
+<rect class="sb tbc" x="935" y="122" width="172" height="52" rx="9"/><text class="st" x="1021.0" y="145.0" text-anchor="middle">ปิดจุดคัดกรอง</text><text class="ss2 tb" x="1021.0" y="162.0" text-anchor="middle">รอยืนยัน: กี่โมง</text>
+<rect class="sb new" x="425" y="194" width="172" height="52" rx="9"/><text class="st" x="511.0" y="217.0" text-anchor="middle">V: เปิด Visit + ใบนำทาง</text><text class="ss2" x="511.0" y="234.0" text-anchor="middle">N: ทำประวัติใหม่</text>
+<rect class="sb new" x="680" y="194" width="172" height="52" rx="9"/><text class="st" x="766.0" y="217.0" text-anchor="middle">ไม่ต้องเปิด Visit</text><text class="ss2" x="766.0" y="234.0" text-anchor="middle">ให้คนไข้นัดแล้ว</text>
+<rect class="sb new" x="170" y="266" width="225" height="62" rx="9"/><text class="st" x="282.5" y="294.0" text-anchor="middle">จับคู่แพทย์กับห้อง</text><text class="ss2" x="282.5" y="311.0" text-anchor="middle">ตั้งจำนวน Walk-in ของคลินิก</text>
+<rect class="sb new" x="425" y="266" width="225" height="62" rx="9"/><text class="st" x="537.5" y="294.0" text-anchor="middle">รับบัตร P / N</text><text class="ss2" x="537.5" y="311.0" text-anchor="middle">ตรวจวันนี้ หรือนัดวันอื่น</text>
+<rect class="sb new" x="680" y="266" width="225" height="62" rx="9"/><text class="st" x="792.5" y="294.0" text-anchor="middle">ซักประวัติ · เลือกแพทย์ · ออกเลขคิว</text><text class="ss2" x="792.5" y="311.0" text-anchor="middle">แทรก 8 : 2 หรือ 4 : 1 · เรียกคิว</text>
+<rect class="sb tbc" x="935" y="266" width="225" height="62" rx="9"/><text class="st" x="1047.5" y="294.0" text-anchor="middle">ลงนัดวันอื่นให้ P / N</text><text class="ss2 tb" x="1047.5" y="311.0" text-anchor="middle">รอยืนยัน: ใครลงนัด</text>
+<rect class="sb new" x="680" y="348" width="225" height="48" rx="9"/><text class="st" x="792.5" y="369.0" text-anchor="middle">ตรวจคำขอทำบัตร · ลงนัดจากคำขอ</text><text class="ss2" x="792.5" y="386.0" text-anchor="middle">หลังเปิดออนไลน์ 22 มี.ค.</text>
+<rect class="sb tbc" x="935" y="348" width="225" height="48" rx="9"/><text class="st" x="1047.5" y="369.0" text-anchor="middle">เคลียร์คำขอค้าง</text><text class="ss2 tb" x="1047.5" y="386.0" text-anchor="middle">รอยืนยัน: รอบไหน</text>
+<rect class="sb old" x="170" y="416" width="225" height="48" rx="9"/><text class="st" x="282.5" y="437.0" text-anchor="middle">เช็กตู้ · เครื่องอ่านบัตร</text><text class="ss2" x="282.5" y="454.0" text-anchor="middle">เครื่องพิมพ์ 2 จุด · ข้อเสนอ</text>
+<rect class="sb old" x="425" y="416" width="480" height="48" rx="9"/><text class="st" x="665.0" y="445.0" text-anchor="middle">แก้เมื่ออุปกรณ์ขัดข้อง</text>
+<path class="sl" d="M282 266 V174" marker-end="url(#sa)"/>
+<text class="sal" x="290" y="224" text-anchor="start">ที่ว่างขึ้น Dashboard</text>
+<path class="sl" d="M479 102 V122" marker-end="url(#sa)"/>
+<path class="sl" d="M511 174 V194" marker-end="url(#sa)"/>
+<text class="sal" x="518" y="188" text-anchor="start">V / N</text>
+<path class="sl" d="M511 246 V266" marker-end="url(#sa)"/>
+<path class="sl" d="M612 174 V266" marker-end="url(#sa)"/>
+<text class="sal" x="606" y="224" text-anchor="end">P</text>
+<path class="sl sd" d="M638 102 V266" marker-end="url(#sa)"/>
+<text class="sal" x="645" y="224" text-anchor="start">นัด</text>
+<path class="sl" d="M650 297 H680" marker-end="url(#sa)"/>
+<path class="sl" d="M905 297 H935" marker-end="url(#sa)"/>
+<path class="sl" d="M880 266 V102" marker-end="url(#sa)"/>
+<text class="sal" x="873" y="188" text-anchor="end">เรียกคิว</text>
+<path class="sl" d="M1135 266 V102" marker-end="url(#sa)"/>
+<text class="sal" x="1128" y="188" text-anchor="end">นัดวันอื่น</text>
+</svg></div>
+  <div class="legend"><span><i style="background:#EAF2FC;border-color:#2A78D6"></i>งานใหม่ หรืองานที่เปลี่ยน</span><span><i style="background:#fff;border-color:#CBD5E1"></i>งานเดิม</span><span><i style="background:#FEF3C7;border-color:#F59E0B;border-style:dashed"></i>รอยืนยันกับหน้างาน</span><span><i style="background:#fff;border-color:#94A3B8;border-style:dashed"></i>รอ IT</span></div></div>
+</section>
+<section class="slide">
+  <div class="head"><div><div class="sec">7 · ขอบเขตการเปลี่ยนแปลง</div><h2>อะไรเหมือนเดิม อะไรใหม่</h2><p class="sub">ไม่ได้รื้อระบบ ส่วนที่เปลี่ยนอยู่ที่จุดรับคนไข้หน้าโรงพยาบาลและช่องทางออนไลน์</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="card" style="overflow:hidden"><table class="tbl cmp">
     <thead><tr><th>เรื่อง</th><th>วันนี้</th><th>หลังปรับ</th><th>เปลี่ยนแค่ไหน</th></tr></thead><tbody>
     <tr><td class="k">Walk-in มาถึง</td><td>เปิด Visit ได้เลยที่ตู้หรือเวชระเบียน ไม่รู้ว่าคลินิกเต็มหรือยัง</td><td>กดบัตร → ตรวจสิทธิที่ตู้ → พยาบาลคัดกรองออกบัตร V / P / N ตามที่ว่าง</td><td><span class="chg new">ใหม่</span></td></tr>
@@ -531,13 +666,13 @@ th,td{text-align:left;vertical-align:top}
   </tbody></table></div></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">7 · แผนเวลา</div><h2>แผนเวลา: ขึ้นระบบ 20 ม.ค. 70 · นำร่องอายุรกรรม · ครบทุกคลินิก 30 เม.ย.</h2><p class="sub">ช่วงนี้วิเคราะห์ร่วมกับ รพ. และตกลงให้จบไม่เกิน 14 พ.ย. แล้วทำส่วนหน้าโรงพยาบาลก่อน · ส่วนออนไลน์ทำต่อช่วงนำร่อง</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">8 · แผนเวลา</div><h2>แผนเวลา: ขึ้นระบบ 20 ม.ค. 70 · นำร่องอายุรกรรม · ครบทุกคลินิก 30 เม.ย.</h2><p class="sub">ช่วงนี้วิเคราะห์ร่วมกับ รพ. และตกลงให้จบไม่เกิน 14 พ.ย. แล้วทำส่วนหน้าโรงพยาบาลก่อน · ส่วนออนไลน์ทำต่อช่วงนำร่อง</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="gantt card"><div class="gt-head"><div class="gt-l"></div><div class="gt-o">ผู้ทำ</div><div class="gt-t"><span style="left:0.00%;width:16.58%">พ.ย. 69</span><span style="left:16.58%;width:17.13%">ธ.ค. 69</span><span style="left:33.70%;width:17.13%">ม.ค. 70</span><span style="left:50.83%;width:15.47%">ก.พ. 70</span><span style="left:66.30%;width:17.13%">มี.ค. 70</span><span style="left:83.43%;width:16.57%">เม.ย. 70</span></div></div><div class="gt-grp"><div class="gt-l">0 · วิเคราะห์ร่วมกับ รพ. + เตรียมงาน</div><div></div><div></div></div><div class="gt-row o-joint"><div class="gt-l">วิเคราะห์ร่วมกับ รพ. → ตกลงไม่เกิน 14 พ.ย.</div><div class="gt-o"><em>ร่วมกัน</em></div><div class="gt-t"><i style="left:16.58%"></i><i style="left:33.70%"></i><i style="left:50.83%"></i><i style="left:66.30%"></i><i style="left:83.43%"></i><div class="gt-bar " style="left:0.55%;width:6.63%"><span>2–13</span></div><div class="gt-ms" style="left:7.18%"><b></b><span>14 พ.ย.</span></div></div></div><div class="gt-row o-joint"><div class="gt-l">สรุป Requirement + ออกแบบ (16–20 พ.ย.)</div><div class="gt-o"><em>ร่วมกัน</em></div><div class="gt-t"><i style="left:16.58%"></i><i style="left:33.70%"></i><i style="left:50.83%"></i><i style="left:66.30%"></i><i style="left:83.43%"></i><div class="gt-bar " style="left:8.28%;width:2.76%"><span></span></div></div></div><div class="gt-row o-hosp"><div class="gt-l">พยาบาลกรอกตารางออกตรวจใหม่ (ถึง 27 พ.ย.) → นำเข้าระบบ</div><div class="gt-o"><em>รพ.</em></div><div class="gt-t"><i style="left:16.58%"></i><i style="left:33.70%"></i><i style="left:50.83%"></i><i style="left:66.30%"></i><i style="left:83.43%"></i><div class="gt-bar " style="left:8.28%;width:6.63%"><span>กรอก</span></div><div class="gt-bar " style="left:16.03%;width:2.76%"><span></span></div></div></div><div class="gt-grp"><div class="gt-l">1 · Walk-in + คนไข้นัด (หน้าโรงพยาบาล)</div><div></div><div></div></div><div class="gt-row o-ayd"><div class="gt-l">พัฒนาระบบ</div><div class="gt-o"><em>อโยเดีย</em></div><div class="gt-t"><i style="left:16.58%"></i><i style="left:33.70%"></i><i style="left:50.83%"></i><i style="left:66.30%"></i><i style="left:83.43%"></i><div class="gt-bar " style="left:12.16%;width:18.23%"><span>23 พ.ย. – 25 ธ.ค.</span></div></div></div><div class="gt-row o-joint"><div class="gt-l">ทดสอบภายใน → ทดลองกับหน้างาน → อบรม</div><div class="gt-o"><em>ร่วมกัน</em></div><div class="gt-t"><i style="left:16.58%"></i><i style="left:33.70%"></i><i style="left:50.83%"></i><i style="left:66.30%"></i><i style="left:83.43%"></i><div class="gt-bar " style="left:35.36%;width:9.39%"><span>4–20 ม.ค.</span></div></div></div><div class="gt-row o-hosp"><div class="gt-l">เตรียมเครื่องอ่านบัตร / เครื่องพิมพ์ 2 จุด</div><div class="gt-o"><em>รพ.</em></div><div class="gt-t"><i style="left:16.58%"></i><i style="left:33.70%"></i><i style="left:50.83%"></i><i style="left:66.30%"></i><i style="left:83.43%"></i><div class="gt-bar " style="left:16.03%;width:22.10%"><span>IT รพ.</span></div></div></div><div class="gt-row o-ayd"><div class="gt-l">ขึ้นระบบจริง</div><div class="gt-o"><em>อโยเดีย</em></div><div class="gt-t"><i style="left:16.58%"></i><i style="left:33.70%"></i><i style="left:50.83%"></i><i style="left:66.30%"></i><i style="left:83.43%"></i><div class="gt-ms" style="left:44.20%"><b></b><span>20 ม.ค. 70</span></div></div></div><div class="gt-row o-hosp"><div class="gt-l">นำร่องอายุรกรรม 2 สัปดาห์</div><div class="gt-o"><em>รพ.</em></div><div class="gt-t"><i style="left:16.58%"></i><i style="left:33.70%"></i><i style="left:50.83%"></i><i style="left:66.30%"></i><i style="left:83.43%"></i><div class="gt-bar " style="left:46.96%;width:6.63%"><span>นำร่อง</span></div></div></div><div class="gt-row o-joint"><div class="gt-l">สรุปผล → ขยายอีก 10 กลุ่มคลินิก (กลุ่มละ 2 สัปดาห์)</div><div class="gt-o"><em>ร่วมกัน</em></div><div class="gt-t"><i style="left:16.58%"></i><i style="left:33.70%"></i><i style="left:50.83%"></i><i style="left:66.30%"></i><i style="left:83.43%"></i><div class="gt-bar " style="left:54.69%;width:2.76%"><span></span></div><div class="gt-bar " style="left:58.56%;width:41.44%"><span>ขยายทีละ 2 กลุ่ม 15 ก.พ. – 30 เม.ย.</span></div></div></div><div class="gt-grp"><div class="gt-l">2 · ทำบัตร + ขอนัดออนไลน์</div><div></div><div></div></div><div class="gt-row o-ayd"><div class="gt-l">พัฒนา → ทดสอบ → ทดลองกับห้องบัตร</div><div class="gt-o"><em>อโยเดีย</em></div><div class="gt-t"><i style="left:16.58%"></i><i style="left:33.70%"></i><i style="left:50.83%"></i><i style="left:66.30%"></i><i style="left:83.43%"></i><div class="gt-bar " style="left:46.96%;width:22.10%"><span>25 ม.ค. – 5 มี.ค.</span></div><div class="gt-bar " style="left:70.17%;width:6.63%"><span>ทดสอบ</span></div></div></div><div class="gt-row o-hosp"><div class="gt-l">DPO ตรวจข้อความความยินยอม</div><div class="gt-o"><em>รพ.</em></div><div class="gt-t"><i style="left:16.58%"></i><i style="left:33.70%"></i><i style="left:50.83%"></i><i style="left:66.30%"></i><i style="left:83.43%"></i><div class="gt-bar " style="left:46.96%;width:14.37%"><span>ถึง 19 ก.พ.</span></div></div></div><div class="gt-row o-ayd"><div class="gt-l">เปิดใช้</div><div class="gt-o"><em>อโยเดีย</em></div><div class="gt-t"><i style="left:16.58%"></i><i style="left:33.70%"></i><i style="left:50.83%"></i><i style="left:66.30%"></i><i style="left:83.43%"></i><div class="gt-ms" style="left:77.90%"><b></b><span>22 มี.ค.</span></div></div></div><div class="gt-grp"><div class="gt-l">3 · เช็กอินออนไลน์ (รอหมอพร้อม)</div><div></div><div></div></div><div class="gt-row o-tbd"><div class="gt-l">IT รพ. เชื่อมหมอพร้อม → พัฒนาต่อ 4 สัปดาห์</div><div class="gt-o"><em>รอ IT</em></div><div class="gt-t"><i style="left:16.58%"></i><i style="left:33.70%"></i><i style="left:50.83%"></i><i style="left:66.30%"></i><i style="left:83.43%"></i><div class="gt-bar open" style="left:19.89%;width:80.11%"><span>ยังไม่มีกำหนด ใส่วันเมื่อ IT ยืนยัน</span></div></div></div></div>
   <div class="gt-legend" style="margin-top:8px"><span class="lg o-ayd"><i></i>อโยเดีย</span><span class="lg o-hosp"><i></i>โรงพยาบาล</span><span class="lg o-joint"><i></i>ทำร่วมกัน</span><span class="lg o-tbd"><i></i>ยังไม่มีกำหนด</span><span class="lg-s">◆ วันสำคัญ · แผนละเอียดอยู่ใน Google Sheet "Timeline New Queue"</span></div>
   <p class="src"><b>สมมติฐาน:</b> ทีมพัฒนา 2 คน · หยุดปีใหม่ 29 ธ.ค.–3 ม.ค. และสงกรานต์ 12–16 เม.ย. · ขยายพร้อมกัน 2 กลุ่ม กลุ่มละ 2 สัปดาห์ · ความเสี่ยงที่ทำให้แผนเลื่อนและวิธีรับมือ อยู่หน้าถัดไป</p></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">8 · ความเสี่ยง</div><h2>ความเสี่ยงและวิธีรับมือ</h2><p class="sub">เรื่องที่ทำให้แผนเลื่อนได้ เรียงจากผลกระทบมากไปน้อย ทุกข้อมีวิธีรับมือและคนดูแลแล้ว</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">9 · ความเสี่ยง</div><h2>ความเสี่ยงและวิธีรับมือ</h2><p class="sub">เรื่องที่ทำให้แผนเลื่อนได้ เรียงจากผลกระทบมากไปน้อย ทุกข้อมีวิธีรับมือและคนดูแลแล้ว</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="card" style="overflow:hidden"><table class="tbl risk">
     <thead><tr><th>ความเสี่ยง</th><th>ถ้าเกิดขึ้น</th><th>วิธีรับมือ</th><th>ใครดูแล</th></tr></thead><tbody>
     <tr><td class="k"><span class="lv h">สูง</span>คำถามสำคัญยังไม่ได้คำตอบภายใน 20 พ.ย.</td><td>งานออกบัตรและเลขคิวเริ่มไม่ได้ วันขึ้นระบบเลื่อนตาม</td><td>ตอบในไฟล์ Gap ภายใน 13 พ.ย. ข้อที่ยังไม่ได้ข้อสรุป ใช้ข้อเสนอของทีมไปก่อน แล้วปรับช่วงนำร่อง</td><td class="o">หัวหน้าพยาบาล OPD · PM</td></tr>
@@ -551,7 +686,7 @@ th,td{text-align:left;vertical-align:top}
   </tbody></table></div></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">9 · ผลที่คาด</div><h2>ผลที่คาดและวิธีวัด</h2><p class="sub">วัดที่อายุรกรรม สัปดาห์ก่อนนำร่องเทียบกับ 2 สัปดาห์นำร่อง ใช้ข้อมูลที่มีในระบบอยู่แล้ว ไม่ต้องจดเพิ่ม</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">10 · ผลที่คาด</div><h2>ผลที่คาดและวิธีวัด</h2><p class="sub">วัดที่อายุรกรรม สัปดาห์ก่อนนำร่องเทียบกับ 2 สัปดาห์นำร่อง ใช้ข้อมูลที่มีในระบบอยู่แล้ว ไม่ต้องจดเพิ่ม</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="kpi">
     <div class="card"><h4>คนไข้รอสั้นลง</h4><p>คนไข้นัดไม่ต้องรอหน้าตู้ และ Walk-in ได้คิวแทรกตามสัดส่วน ไม่ต้องรอจนนัดหมด</p><div class="how">เวลาตั้งแต่เปิด Visit จนเข้าห้องตรวจ จากรายงานระยะเวลารอคอย</div></div>
     <div class="card"><h4>ไม่มีคนไข้ที่รอแล้วไม่ได้ตรวจ</h4><p>คลินิกที่เต็มจะบอกตั้งแต่จุดคัดกรอง คนไข้ได้นัดวันอื่นแทนการรอทั้งวัน</p><div class="how">จำนวน Visit ที่ไม่มีการตรวจของแพทย์ในวันนั้น</div></div>
@@ -560,7 +695,7 @@ th,td{text-align:left;vertical-align:top}
   <p class="src"><b>หมายเหตุ:</b> ตัวเลขตั้งต้นของอายุรกรรมมีอยู่แล้วจากการวิเคราะห์ 60 วันที่ผ่านมา จะนำมาเทียบตอนสรุปผลนำร่อง</p></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">10 · เรื่องที่ควรพิจารณา</div><h2>เรื่องที่ท่านควรพิจารณา</h2><p class="sub">คำถามระดับนโยบายที่หน้างานตัดสินเองไม่ได้ · คำถามระดับปฏิบัติอยู่ในไฟล์ Gap ให้หน้างานตอบภายใน 13 พ.ย.</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">11 · เรื่องที่ควรพิจารณา</div><h2>เรื่องที่ท่านควรพิจารณา</h2><p class="sub">คำถามระดับนโยบายที่หน้างานตัดสินเองไม่ได้ · คำถามระดับปฏิบัติอยู่ในไฟล์ Gap ให้หน้างานตอบภายใน 13 พ.ย.</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="pq">
     <div class="card"><div class="n">1</div><div class="t">คลินิกเต็มแล้ว ให้นัดคนไข้ไปวันอื่นได้แค่ไหน<span class="hint">ระบบจำกัดจำนวน Walk-in ได้ แต่ต้องไม่ขัดหลักไม่ปฏิเสธผู้ป่วย และต้องมีคนรับเรื่องเมื่อคนไข้ไม่พอใจ</span></div></div>
     <div class="card"><div class="n">2</div><div class="t">ใครเป็นคนกำหนดจำนวนรับ Walk-in และจำนวนนัดต่อวัน<span class="hint">ใช้ตามตารางแพทย์ หรือให้หัวหน้าพยาบาลแต่ละคลินิกตั้งเอง ตัวเลขนี้กำหนดว่าคนไข้ได้ตรวจวันนี้หรือไม่</span></div></div>
@@ -571,7 +706,7 @@ th,td{text-align:left;vertical-align:top}
   </div></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">11 · ขออนุมัติ</div><h2>เรื่องที่ขออนุมัติ</h2><p class="sub">4 เรื่อง เพื่อให้เริ่มพัฒนาได้ตามแผน 16 พ.ย.</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">12 · ขออนุมัติ</div><h2>เรื่องที่ขออนุมัติ</h2><p class="sub">4 เรื่อง เพื่อให้เริ่มพัฒนาได้ตามแผน 16 พ.ย.</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="qlist">
     <div class="card qrow"><div class="n">1</div><div class="t">อนุมัติให้นำร่องที่คลินิกอายุรกรรม 25 ม.ค.–5 ก.พ. 70<span class="hint">คลินิกที่ Walk-in มากที่สุด และมีข้อมูลตั้งต้นสำหรับเทียบผลแล้ว</span></div></div>
     <div class="card qrow"><div class="n">2</div><div class="t">มอบหมายพยาบาลประจำจุดคัดกรองเบื้องต้นหน้าเวชระเบียน ช่วงเช้า<span class="hint">จุดนี้เป็นคนตัดสินว่าคนไข้ได้บัตร V / P / N · ต้องเป็นพยาบาล เพราะต้องซักอาการเบื้องต้น</span></div></div>

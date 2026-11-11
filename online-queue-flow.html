@@ -129,6 +129,11 @@ a.top{color:var(--accent)}
 .prop table{min-width:560px;font-size:14px;background:var(--paper)}
 .prop .tw{border-color:var(--it-soft)}
 .newlink{justify-self:start;color:var(--accent);font-weight:600}
+table.duty td{vertical-align:top;font-size:14px}
+table.duty td:first-child{white-space:nowrap}
+table.duty b.nw{color:var(--ink)}
+table.duty .tbc{display:inline-block;font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:4px;padding:0 6px}
+table.duty .when{font-size:12.5px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -167,6 +172,24 @@ a.top{color:var(--accent)}
     <div class="role"><span class="who it">หมอพร้อม (IT โรงพยาบาล)</span><span class="pg">ไลน์หมอพร้อม</span>
       <ul><li>ส่งผลทำบัตร แสดงนัดของคนไข้</li><li>เตือนนัด + ลิงก์เช็กอิน (พักไว้)</li></ul></div>
   </div>
+</section>
+
+<section id="duty">
+  <h2>ใครทำอะไร ตอนไหน</h2>
+  <p class="sub">หน้าที่รายวันของแต่ละจุด ใช้แจกงานและอบรม · ตัวหนาคืองานใหม่หรืองานที่เปลี่ยน · ช่อง "รอยืนยัน" ต้องตกลงกับหน้างาน</p>
+  <div class="tw"><table class="duty">
+    <thead><tr><th>ใคร</th><th>ก่อนเริ่มออกบัตร (เช้า)</th><th>ช่วงรับคนไข้</th><th>ระหว่างวัน</th><th>ท้ายวัน</th></tr></thead>
+    <tbody>
+      <tr><td><span class="who ns">พยาบาลหน้าห้องตรวจ</span></td><td><b class="nw">จับคู่แพทย์ที่ออกตรวจกับห้อง</b> · <b class="nw">ตั้งจำนวน Walk-in ของคลินิก</b></td><td><b class="nw">รับบัตร P / N ตัดสินว่าตรวจวันนี้หรือนัด</b> · รับคนไข้นัดที่มาจากตู้</td><td>ซักประวัติ · <b class="nw">เลือกแพทย์ ออกเลขคิว</b> · แทรก 8 : 2 หรือ 4 : 1 · กดเรียกคิวให้แพทย์ · แก้จำนวน Walk-in เมื่อแพทย์เปลี่ยน</td><td>P / N ที่รอได้ ลงนัดวันอื่น <span class="tbc">รอยืนยัน · ใครลงนัด</span></td></tr>
+      <tr><td><span class="who ns">พยาบาลคัดกรองเบื้องต้น</span></td><td><b class="nw">เปิด Dashboard ดูว่าทุกคลินิกตั้งค่าแล้ว</b></td><td><b class="nw">เรียกตามเลขเครื่องกดบัตร ถามอาการ ออกบัตร V / P / N</b> · คนมีนัดวันนี้ ส่งไปตู้</td><td><b class="nw">คลินิกเต็ม ออกบัตร P / N แทน V</b></td><td><span class="tbc">รอยืนยัน · ปิดจุดคัดกรองกี่โมง</span></td></tr>
+      <tr><td><span class="who mr">ช่องเวชระเบียน</span></td><td>–</td><td>บัตร V: เปิด Visit + <b class="nw">พิมพ์ใบนำทาง</b> · บัตร N: ทำประวัติใหม่ · <b class="nw">ไม่ต้องเปิด Visit ให้คนไข้นัดแล้ว</b></td><td>เหมือนช่วงรับคนไข้</td><td>–</td></tr>
+      <tr><td><span class="who mr">ห้องบัตร / เจ้าหน้าที่นัดหมาย</span></td><td>–</td><td>–</td><td><b class="nw">ตรวจคำขอทำบัตรออนไลน์ · ลงนัด / เลื่อนนัดจากคำขอ</b> <span class='when'>(หลังเปิดออนไลน์ 22 มี.ค.)</span></td><td><span class="tbc">รอยืนยัน · รอบเคลียร์คำขอค้าง</span></td></tr>
+      <tr><td><span class="who dr">แพทย์</span></td><td>–</td><td>–</td><td>ตรวจตามเลขคิวที่พยาบาลเรียก (ระบบรองรับให้กดเรียกเอง)</td><td>–</td></tr>
+      <tr><td><span class="who sys">ระบบ HA.OS</span></td><td>คำนวณที่ว่างจากจำนวน Walk-in ที่ตั้ง</td><td>นับที่ว่างลดลงเมื่อออกบัตร V <span class="tbc">รอยืนยัน · นับตอนไหน 1.2</span></td><td>ขึ้นจอทีวี · เก็บว่าใครแก้จำนวนเมื่อไร</td><td>–</td></tr>
+      <tr><td><span class="who pt">คนไข้</span></td><td>นัด: <b class="nw">เช็กอินผ่านลิงก์หมอพร้อมได้ตั้งแต่ 06.00</b> <span class='when'>(รอ IT)</span></td><td>Walk-in: กดบัตรคิว → ตู้ตรวจสิทธิ → จุดคัดกรอง · นัด: เปิด Visit ที่ตู้ได้ก่อนนัด 1 ชม.</td><td>รอหน้าห้องตามเลขคิวบนจอทีวี</td><td>P / N ที่ไม่ได้ตรวจ ได้นัดวันอื่นกลับไป</td></tr>
+      <tr><td><span class="who it">IT รพ.</span></td><td><b class="nw">เช็กตู้ Kiosk · เครื่องอ่านบัตร · เครื่องพิมพ์ 2 จุด</b></td><td>แก้เมื่ออุปกรณ์ขัดข้อง</td><td>แก้เมื่ออุปกรณ์ขัดข้อง</td><td>–</td></tr>
+    </tbody>
+  </table></div>
 </section>
 
 <section>
