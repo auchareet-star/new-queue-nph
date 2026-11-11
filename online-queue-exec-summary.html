@@ -382,6 +382,36 @@ th,td{text-align:left;vertical-align:top}
 .daily p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.5}
 .daily .card.new{border-color:var(--blue);background:var(--blue-soft)}
 .daily .card.new h4 i{background:var(--blue);color:#fff}
+/* ---------- understanding / risk / policy questions ---------- */
+.agenda.a11{grid-template-rows:repeat(6,auto);gap:8px 18px}
+.agenda.a11 li{padding:7px 16px;grid-template-columns:44px 1fr}
+.agenda.a11 li::before{width:40px;height:40px;font-size:18px}
+.agenda.a11 b{font-size:18.5px}
+.agenda.a11 span{font-size:13.5px}
+.und{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.und .card{padding:14px 20px}
+.und .num{font-size:40px;font-weight:800;color:var(--navy);line-height:1.05}
+.und .num small{font-size:16px;font-weight:600;color:var(--muted);margin-left:6px}
+.und h4{margin:4px 0;font-size:17px}
+.und p{margin:0;font-size:14px;color:var(--ink-2);line-height:1.45}
+.und2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.und2 .card{padding:14px 20px}
+.und2 h4{margin:0 0 8px;font-size:17px;color:var(--navy)}
+.und2 ul{margin:0;padding-left:20px;display:grid;gap:5px}
+.und2 li{font-size:14.5px;line-height:1.45;color:var(--ink-2)}
+.und2 .lim h4{color:var(--amber-ink)}
+.tbl.risk td{font-size:14px;padding:7px 12px;line-height:1.4;vertical-align:top}
+.tbl.risk th{padding:8px 12px}
+.tbl.risk td.k{width:260px;font-size:14.5px}
+.tbl.risk td.o{width:160px;color:var(--muted);font-size:13px}
+.lv{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+.lv.h{background:var(--red-soft);color:#A12626}
+.lv.m{background:var(--amber-soft);color:var(--amber-ink)}
+.pq{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pq .card{display:grid;grid-template-columns:44px 1fr;gap:14px;padding:13px 18px;align-items:start}
+.pq .n{width:40px;height:40px;border-radius:10px;background:var(--navy);color:#fff;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center}
+.pq .t{font-weight:700;font-size:16.5px;line-height:1.4;color:var(--ink)}
+.pq .hint{display:block;font-weight:400;font-size:13.5px;line-height:1.45;color:var(--ink-2);margin-top:4px}
 </style>
 </head>
 <body>
@@ -393,28 +423,51 @@ th,td{text-align:left;vertical-align:top}
   <div class="who"><div><b>นำเสนอ</b>ผู้อำนวยการโรงพยาบาล</div><div><b>จัดทำโดย</b>บริษัท อโยเดีย จำกัด</div><div><b>วันที่</b>พฤศจิกายน 2569</div></div>
 </section>
 <section class="slide">
-  <div class="head"><div><h2>หัวข้อ</h2><p class="sub">ใช้เวลาประมาณ 20 นาที · หน้าสุดท้ายคือเรื่องที่ขอให้ท่านตัดสินใจ</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
-  <div class="body"><ol class="agenda">
-    <li class="card"><b>นโยบายที่ระบบรองรับ</b><span>สลับนัดกับ Walk-in · เช็กอินก่อนตรวจ · จำกัดจำนวน</span><em class="mins">3 นาที</em></li>
-    <li class="card"><b>เส้นทางคนไข้แบบใหม่</b><span>Walk-in และคนไข้นัด มาเจอกันที่หน้าห้องตรวจ</span><em class="mins">4 นาที</em></li>
-    <li class="card"><b>บัตร V / P / N</b><span>คนไข้ Walk-in ได้บัตรแบบไหน แล้วไปไหนต่อ</span><em class="mins">3 นาที</em></li>
-    <li class="card"><b>สิ่งที่หน้างานต้องทำเพิ่ม</b><span>งานใหม่ทุกเช้า และจุดที่ต้องมีคน</span><em class="mins">3 นาที</em></li>
-    <li class="card"><b>อะไรเหมือนเดิม อะไรใหม่</b><span>ส่วนใหญ่ใช้หน้าจอเดิม เปลี่ยนที่จุดรับคนไข้</span><em class="mins">2 นาที</em></li>
-    <li class="card"><b>แผนเวลา</b><span>ขึ้นระบบ 20 ม.ค. · นำร่องอายุรกรรม ม.ค.–ก.พ. · ออนไลน์ มี.ค.</span><em class="mins">3 นาที</em></li>
+  <div class="head"><div><h2>หัวข้อ</h2><p class="sub">ใช้เวลาประมาณ 20 นาที · 2 หน้าสุดท้ายคือเรื่องที่ขอให้ท่านพิจารณาและอนุมัติ</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="body"><ol class="agenda a11">
+    <li class="card"><b>สิ่งที่เราเข้าใจจาก รพ.</b><span>ตัวเลขอายุรกรรม · สิ่งที่หน้างานยืนยัน · ข้อจำกัด</span><em class="mins">2 นาที</em></li>
+    <li class="card"><b>นโยบายที่ระบบรองรับ</b><span>สลับนัดกับ Walk-in · เปิด Visit ก่อนนัด · จำกัดจำนวน</span><em class="mins">2 นาที</em></li>
+    <li class="card"><b>เส้นทางคนไข้แบบใหม่</b><span>Walk-in และคนไข้นัด มาเจอกันที่หน้าห้องตรวจ</span><em class="mins">3 นาที</em></li>
+    <li class="card"><b>บัตร V / P / N</b><span>คนไข้ Walk-in ได้บัตรแบบไหน แล้วไปไหนต่อ</span><em class="mins">2 นาที</em></li>
+    <li class="card"><b>สิ่งที่หน้างานต้องทำเพิ่ม</b><span>งานใหม่ทุกเช้า และจุดที่ต้องมีคน</span><em class="mins">2 นาที</em></li>
+    <li class="card"><b>อะไรเหมือนเดิม อะไรใหม่</b><span>ส่วนใหญ่ใช้หน้าจอเดิม เปลี่ยนที่จุดรับคนไข้</span><em class="mins">1 นาที</em></li>
+    <li class="card"><b>แผนเวลา</b><span>ขึ้นระบบ 20 ม.ค. · นำร่องอายุรกรรม · ออนไลน์ มี.ค.</span><em class="mins">2 นาที</em></li>
+    <li class="card"><b>ความเสี่ยงและวิธีรับมือ</b><span>อะไรทำให้แผนเลื่อน และเตรียมรับมืออย่างไร</span><em class="mins">2 นาที</em></li>
     <li class="card"><b>ผลที่คาดและวิธีวัด</b><span>วัดอะไร ก่อน-หลังนำร่อง</span><em class="mins">1 นาที</em></li>
-    <li class="card"><b>ขอให้ตัดสินใจ</b><span>5 เรื่อง</span><em class="mins">1 นาที</em></li>
+    <li class="card"><b>เรื่องที่ท่านควรพิจารณา</b><span>คำถามระดับนโยบาย 6 ข้อ</span><em class="mins">2 นาที</em></li>
+    <li class="card"><b>ขออนุมัติ</b><span>4 เรื่อง เพื่อเริ่มพัฒนาตามแผน</span><em class="mins">1 นาที</em></li>
   </ol></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">1 · นโยบาย</div><h2>นโยบายคิวที่ระบบใหม่รองรับ</h2><p class="sub">ตามแนวทางที่โรงพยาบาลกำหนดไว้ ระบบทำให้ 2 เรื่องแรกเกิดขึ้นได้จริงที่หน้างาน และเพิ่มเรื่องที่ 3</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">1 · สิ่งที่เราเข้าใจ</div><h2>สิ่งที่เราเห็นจากโรงพยาบาลพระนั่งเกล้า</h2><p class="sub">จากนโยบายของท่าน ข้อมูลในระบบ HA.OS และการคุยกับหน้างานเมื่อ 28 ต.ค. 69</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="body"><div class="und">
+    <div class="card"><div class="num">~127<small>คน / วัน</small></div><h4>Walk-in ของอายุรกรรม</h4><p>คลินิกที่ Walk-in มากที่สุด ถ้าไม่มีตัวเลขรับต่อวัน คนที่มาช่วงสายเสี่ยงรอทั้งวันแล้วไม่ได้ตรวจ จึงเหมาะเป็นคลินิกนำร่อง</p></div>
+    <div class="card"><div class="num">~70<small>นัด / วัน</small></div><h4>นัดอายุรกรรมลงไว้ที่แพทย์กลาง</h4><p>เพราะแพทย์เวียนตรวจ ไม่รู้ล่วงหน้าว่าใครตรวจห้องไหน ระบบใหม่จึงให้พยาบาลเลือกแพทย์ที่ตรวจจริงตอนออกเลขคิวเข้าห้อง</p></div>
+    <div class="card"><div class="num">~5%<small>ใช้ได้จริง</small></div><h4>ตารางออกตรวจในระบบ</h4><p>จำนวนนัดและช่วงเวลาในระบบยังไม่ตรงกับการออกตรวจจริง พยาบาลกำลังกรอกตารางใหม่ถึง 27 พ.ย. เพื่อใช้กำหนดจำนวนรับและเวลาบนบัตร</p></div>
+  </div>
+  <div class="und2">
+    <div class="card"><h4>หน้างานยืนยันแล้ว (28 ต.ค.)</h4><ul>
+      <li>คลินิกเต็มแล้ว <b>พยาบาลเป็นคนตัดสิน</b>ว่าตรวจวันนี้หรือนัด ไม่ใช่เจ้าหน้าที่เวชระเบียน</li>
+      <li>สัดส่วนแทรกนัดกับ Walk-in (4 : 1 หรือ 8 : 2) หน้างานจัดเอง</li>
+      <li>จำนวน Walk-in ตั้งต่อคลินิกหลัก · พยาบาลจับคู่แพทย์กับห้องทุกเช้า</li>
+      <li>เครื่องกดบัตรคิวเดิมใช้ต่อ เป็นเลขลำดับ ไม่เชื่อมกับ HA.OS</li></ul></div>
+    <div class="card lim"><h4>ข้อจำกัดที่วางแผนไว้แล้ว</h4><ul>
+      <li>หมอพร้อมยังไม่มีกำหนดเชื่อม จึงพักเช็กอินออนไลน์ไว้ และทำส่วนหน้าโรงพยาบาลก่อน</li>
+      <li>จุดคัดกรองใหม่ต้องใช้พยาบาลช่วงเช้า ซึ่งมีจำนวนจำกัด</li>
+      <li>บริการออนไลน์ต้องผ่าน DPO และทดสอบความปลอดภัยก่อนเปิด</li>
+      <li>ไม่รื้อระบบเดิม ใช้หน้าจอเวชระเบียนและระบบเรียกคิวเดิมเป็นหลัก</li></ul></div>
+  </div></div>
+</section>
+<section class="slide">
+  <div class="head"><div><div class="sec">2 · นโยบาย</div><h2>นโยบายคิวที่ระบบใหม่รองรับ</h2><p class="sub">ตามแนวทางที่โรงพยาบาลกำหนดไว้ ระบบทำให้ 2 เรื่องแรกเกิดขึ้นได้จริงที่หน้างาน และเพิ่มเรื่องที่ 3</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="pol">
     <div class="card"><div class="q">นโยบาย 1</div><h4>สลับคนไข้นัดกับ Walk-in ตามสัดส่วน เช่น 8 : 2</h4><p>วันนี้ระบบเรียกคนไข้นัดให้หมดก่อน Walk-in จึงรอนาน</p><div class="ans"><b>ระบบใหม่:</b> พยาบาลหน้าห้องตรวจเป็นคนออกเลขคิวเข้าห้อง จึงจัดลำดับแทรกได้ตามสัดส่วนที่คลินิกกำหนด</div></div>
-    <div class="card"><div class="q">นโยบาย 2</div><h4>คนไข้นัดเปิด Visit ได้ก่อนเวลานัด</h4><p>กติกาเดิมเปิดได้ล่วงหน้าไม่เกิน 1 ชั่วโมง</p><div class="ans"><b>ระบบใหม่:</b> เปิด Visit นัดที่ตู้ Kiosk ได้ตั้งแต่ 30 นาทีก่อนเวลานัด แล้วถือบัตรไปหน้าห้องตรวจได้เลย</div></div>
+    <div class="card"><div class="q">นโยบาย 2</div><h4>คนไข้นัดเปิด Visit ได้ก่อนเวลานัด</h4><p>กติกาเดิมเปิดได้ล่วงหน้าไม่เกิน 1 ชั่วโมง</p><div class="ans"><b>ระบบใหม่:</b> เปิด Visit นัดที่ตู้ Kiosk ได้ตั้งแต่ 06.00 ของวันนัด แล้วถือบัตรไปหน้าห้องตรวจได้เลย</div></div>
     <div class="card"><div class="q">เพิ่มใหม่</div><h4>จำกัดจำนวน Walk-in ต่อคลินิกต่อวัน</h4><p>วันนี้ไม่มีตัวเลขว่าคลินิกรับได้อีกกี่คน เปิด Visit ได้ไม่จำกัด บางคนรอจนไม่ได้ตรวจ</p><div class="ans"><b>ระบบใหม่:</b> พยาบาลตั้งจำนวนรับของแต่ละคลินิกทุกเช้า จุดคัดกรองเห็นที่ว่างบนจอ และออกบัตรตามนั้น</div></div>
   </div></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">2 · เส้นทางคนไข้</div><h2>เส้นทางคนไข้แบบใหม่</h2><p class="sub">Walk-in ผ่านจุดคัดกรองก่อนเปิด Visit · คนไข้นัดเปิด Visit ที่ตู้แล้วไปหน้าห้องตรวจได้เลย · ทั้งสองทางมาเจอกันที่พยาบาลหน้าห้องตรวจ</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">3 · เส้นทางคนไข้</div><h2>เส้นทางคนไข้แบบใหม่</h2><p class="sub">Walk-in ผ่านจุดคัดกรองก่อนเปิด Visit · คนไข้นัดเปิด Visit ที่ตู้แล้วไปหน้าห้องตรวจได้เลย · ทั้งสองทางมาเจอกันที่พยาบาลหน้าห้องตรวจ</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="card flowcard diagram"><svg viewBox="0 0 1180 470" role="img" aria-label="เส้นทางคนไข้">
 <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path class="ah" d="M0 0 L9 4.5 L0 9z"/></marker></defs>
 <text class="lbl" x="0" y="18" style="font-weight:700;fill:#1E3A5F;font-size:15px">Walk-in (ไม่มีนัด)</text>
@@ -429,8 +482,8 @@ th,td{text-align:left;vertical-align:top}
 <path class="ln" d="M800 212 L850 212" marker-end="url(#ah)"/><rect class="box" x="850" y="186" width="170" height="52" rx="9"/><text class="t" x="935.0" y="212" text-anchor="middle">เวชระเบียน</text><text class="s" x="935.0" y="233" text-anchor="middle">ทำประวัติใหม่</text>
 <path class="ln" d="M1020 48 H1032 Q1040 48 1040 56 V270" marker-end="url(#ah)"/><path class="ln" d="M800 130 H812 Q824 130 824 142 V298 Q824 310 836 310 H850" marker-end="url(#ah)"/><path class="ln" d="M935 238 V270" marker-end="url(#ah)"/>
 <text class="lbl" x="0" y="318" style="font-weight:700;fill:#1E3A5F;font-size:15px">คนไข้นัด (วันนัด)</text>
-<rect class="box" x="0" y="330" width="150" height="64" rx="9"/><text class="t" x="75.0" y="356" text-anchor="middle">มาถึงวันนัด</text><text class="s" x="75.0" y="377" text-anchor="middle">ก่อนนัด 30 นาที</text><path class="ln" d="M150 362 L180 362" marker-end="url(#ah)"/>
-<rect class="vm" x="180" y="330" width="220" height="64" rx="9"/><text class="t" x="290.0" y="356" text-anchor="middle">ตู้ Kiosk เปิด Visit นัด</text><text class="s" x="290.0" y="377" text-anchor="middle">ก่อนนัด 30 นาที · ได้บัตรคิว</text>
+<rect class="box" x="0" y="330" width="150" height="64" rx="9"/><text class="t" x="75.0" y="356" text-anchor="middle">มาถึงวันนัด</text><text class="s" x="75.0" y="377" text-anchor="middle">ตั้งแต่ 06.00</text><path class="ln" d="M150 362 L180 362" marker-end="url(#ah)"/>
+<rect class="vm" x="180" y="330" width="220" height="64" rx="9"/><text class="t" x="290.0" y="356" text-anchor="middle">ตู้ Kiosk เปิด Visit นัด</text><text class="s" x="290.0" y="377" text-anchor="middle">ตั้งแต่ 06.00 · ได้บัตรคิว</text>
 <path class="ln" d="M400 362 H826 Q838 362 838 350 H850" marker-end="url(#ah)"/>
 <rect class="host" x="850" y="270" width="200" height="110" rx="9"/>
 <text class="t" x="950" y="302" text-anchor="middle">พยาบาล</text><text class="t" x="950" y="324" text-anchor="middle">หน้าห้องตรวจ</text>
@@ -443,7 +496,7 @@ th,td{text-align:left;vertical-align:top}
   <div class="legend"><span><i style="background:#EAF2FC;border-color:#2A78D6"></i>จุดที่มีหน้าจอใหม่</span><span><i style="background:#fff;border-color:#1E3A5F"></i>จุดที่งานเปลี่ยน ใช้หน้าจอเดิม</span><span><i style="background:#fff;border-color:#CBD5E1"></i>เหมือนเดิม</span></div></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">3 · บัตรคิว Walk-in</div><h2>บัตร V / P / N: คนไข้ Walk-in ได้บัตรแบบไหน</h2><p class="sub">พยาบาลคัดกรองเบื้องต้นถามว่ามาเรื่องอะไร เลือกคลินิก แล้วดูที่ว่างบนจอ ระบบเสนอบัตรให้ พยาบาลเปลี่ยนได้ถ้ามีเหตุผล</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">4 · บัตรคิว Walk-in</div><h2>บัตร V / P / N: คนไข้ Walk-in ได้บัตรแบบไหน</h2><p class="sub">พยาบาลคัดกรองเบื้องต้นถามว่ามาเรื่องอะไร เลือกคลินิก แล้วดูที่ว่างบนจอ ระบบเสนอบัตรให้ พยาบาลเปลี่ยนได้ถ้ามีเหตุผล</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="vpn">
     <div class="card o-v"><div class="big">V</div><h4>คลินิกยังรับได้</h4><p>ตรวจวันนี้ ไปเปิด Visit ที่ช่องเวชระเบียน ได้ใบนำทางพร้อมเวลาโดยประมาณ แล้วไปรอหน้าห้องตรวจ</p><div class="go">→ เวชระเบียน → หน้าห้องตรวจ</div></div>
     <div class="card o-p"><div class="big">P</div><h4>คลินิกเต็ม แต่มีประวัติแล้ว</h4><p>ไปหน้าห้องตรวจเลย พยาบาลหน้าห้องตรวจประเมินอาการ ถ้าควรตรวจวันนี้ เปิด Visit ให้เอง ถ้ารอได้ นัดวันอื่น</p><div class="go">→ หน้าห้องตรวจ (พิจารณา)</div></div>
@@ -452,7 +505,7 @@ th,td{text-align:left;vertical-align:top}
   <p class="src"><b>หลักการ:</b> ระบบเตือน ไม่ล็อก · คลินิกที่เต็มแล้วยังรับคนไข้ที่จำเป็นได้ โดยพยาบาลเป็นคนตัดสิน ไม่ใช่เจ้าหน้าที่เวชระเบียน · คนไข้ที่มีนัดวันนี้จะไม่ได้บัตร Walk-in ระบบพาไปเปิด Visit นัดที่ตู้</p></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">4 · หน้างาน</div><h2>สิ่งที่หน้างานต้องทำเพิ่ม</h2><p class="sub">งานใหม่ที่ต้องมีคนทำทุกวัน ระบบจึงจะออกบัตรและเลขคิวได้ถูกต้อง</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">5 · หน้างาน</div><h2>สิ่งที่หน้างานต้องทำเพิ่ม</h2><p class="sub">งานใหม่ที่ต้องมีคนทำทุกวัน ระบบจึงจะออกบัตรและเลขคิวได้ถูกต้อง</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="daily">
     <div class="card new"><h4><i>ทุกเช้า</i>พยาบาลตั้งห้องของแพทย์ที่ออกตรวจวันนี้</h4><p>ทำอยู่แล้วในบางคลินิก ระบบใหม่ใช้ข้อมูลนี้ออกเลขคิวที่มีเลขห้อง ถ้ายังไม่ตั้ง จะออกเลขคิวเข้าห้องไม่ได้</p></div>
     <div class="card new"><h4><i>ทุกเช้า</i>พยาบาลตั้งจำนวน Walk-in ที่คลินิกรับได้</h4><p>ประเมินจากแพทย์ที่ออกตรวจและนัดที่ลงไว้ ใส่ตัวเลขเดียวต่อคลินิกหลัก แก้ระหว่างวันได้</p></div>
@@ -463,12 +516,12 @@ th,td{text-align:left;vertical-align:top}
   </div></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">5 · ขอบเขตการเปลี่ยนแปลง</div><h2>อะไรเหมือนเดิม อะไรใหม่</h2><p class="sub">ไม่ได้รื้อระบบ ส่วนที่เปลี่ยนอยู่ที่จุดรับคนไข้หน้าโรงพยาบาลและช่องทางออนไลน์</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">6 · ขอบเขตการเปลี่ยนแปลง</div><h2>อะไรเหมือนเดิม อะไรใหม่</h2><p class="sub">ไม่ได้รื้อระบบ ส่วนที่เปลี่ยนอยู่ที่จุดรับคนไข้หน้าโรงพยาบาลและช่องทางออนไลน์</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="card" style="overflow:hidden"><table class="tbl cmp">
     <thead><tr><th>เรื่อง</th><th>วันนี้</th><th>หลังปรับ</th><th>เปลี่ยนแค่ไหน</th></tr></thead><tbody>
     <tr><td class="k">Walk-in มาถึง</td><td>เปิด Visit ได้เลยที่ตู้หรือเวชระเบียน ไม่รู้ว่าคลินิกเต็มหรือยัง</td><td>กดบัตร → ตรวจสิทธิที่ตู้ → พยาบาลคัดกรองออกบัตร V / P / N ตามที่ว่าง</td><td><span class="chg new">ใหม่</span></td></tr>
     <tr><td class="k">จำนวนรับ Walk-in</td><td>ไม่มีในระบบ หน้างานประเมินเอง</td><td>พยาบาลตั้งทุกเช้า จุดคัดกรองเห็นที่ว่างบนจอ</td><td><span class="chg new">ใหม่</span></td></tr>
-    <tr><td class="k">คนไข้นัด วันนัด</td><td>เปิด Visit ที่ตู้หรือเคาน์เตอร์ ตู้ไม่ให้เปิดก่อนเวลานัดเกิน 1 ชม.</td><td>เปิดที่ตู้เท่านั้น ได้ตั้งแต่ 30 นาทีก่อนเวลานัด แล้วไปหน้าห้องตรวจเลย</td><td><span class="chg small">ปรับเล็กน้อย</span></td></tr>
+    <tr><td class="k">คนไข้นัด วันนัด</td><td>เปิด Visit ที่ตู้หรือเคาน์เตอร์ ตู้ไม่ให้เปิดก่อนเวลานัดเกิน 1 ชม.</td><td>เปิดที่ตู้เท่านั้น ได้ตั้งแต่ 06.00 ของวันนัด แล้วไปหน้าห้องตรวจเลย</td><td><span class="chg small">ปรับเล็กน้อย</span></td></tr>
     <tr><td class="k">เปิด Visit / ทำประวัติ</td><td>หน้าจอเวชระเบียนเดิม</td><td>หน้าจอเดิม เพิ่มใบนำทาง · บัตร P / N พยาบาลหน้าห้องตรวจเปิดเองได้</td><td><span class="chg small">ปรับเล็กน้อย</span></td></tr>
     <tr><td class="k">เลขคิวเข้าห้องตรวจ</td><td>ออกตอนเปิด Visit</td><td>พยาบาลหน้าห้องตรวจออกหลังซักประวัติ เลขมีห้องของแพทย์ที่ตรวจจริง</td><td><span class="chg small">ปรับเล็กน้อย</span></td></tr>
     <tr><td class="k">ซักประวัติ · เรียกเข้าห้อง · จอทีวี</td><td>ระบบให้แพทย์เรียกเองได้ แต่ปัจจุบันพยาบาลกดเรียกให้</td><td>ใช้ระบบเรียกคิวและจอทีวีเดิม · พยาบาลกดเรียกให้แพทย์ตามแนวทางปัจจุบัน</td><td><span class="chg same">ระบบเดิม</span></td></tr>
@@ -478,13 +531,26 @@ th,td{text-align:left;vertical-align:top}
   </tbody></table></div></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">6 · แผนเวลา</div><h2>แผนเวลา: ขึ้นระบบ 20 ม.ค. 70 · นำร่องอายุรกรรม 25 ม.ค.–5 ก.พ.</h2><p class="sub">ช่วงนี้วิเคราะห์ร่วมกับ รพ. และตกลงให้จบไม่เกิน 14 พ.ย. แล้วทำส่วนหน้าโรงพยาบาลก่อน · ส่วนออนไลน์ทำต่อช่วงนำร่อง</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">7 · แผนเวลา</div><h2>แผนเวลา: ขึ้นระบบ 20 ม.ค. 70 · นำร่องอายุรกรรม 25 ม.ค.–5 ก.พ.</h2><p class="sub">ช่วงนี้วิเคราะห์ร่วมกับ รพ. และตกลงให้จบไม่เกิน 14 พ.ย. แล้วทำส่วนหน้าโรงพยาบาลก่อน · ส่วนออนไลน์ทำต่อช่วงนำร่อง</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="gantt card"><div class="gt-head"><div class="gt-l"></div><div class="gt-o">ผู้ทำ</div><div class="gt-t"><span style="left:0.00%;width:19.87%">พ.ย. 69</span><span style="left:19.87%;width:20.53%">ธ.ค. 69</span><span style="left:40.40%;width:20.53%">ม.ค. 70</span><span style="left:60.93%;width:18.54%">ก.พ. 70</span><span style="left:79.47%;width:20.53%">มี.ค. 70</span></div></div><div class="gt-grp"><div class="gt-l">0 · วิเคราะห์ร่วมกับ รพ. + เตรียมงาน</div><div></div><div></div></div><div class="gt-row o-joint"><div class="gt-l">วิเคราะห์ร่วมกับ รพ. → ตกลงไม่เกิน 14 พ.ย.</div><div class="gt-o"><em>ร่วมกัน</em></div><div class="gt-t"><i style="left:19.87%"></i><i style="left:40.40%"></i><i style="left:60.93%"></i><i style="left:79.47%"></i><div class="gt-bar " style="left:0.66%;width:7.95%"><span>2–13</span></div><div class="gt-ms" style="left:8.61%"><b></b><span>14 พ.ย.</span></div></div></div><div class="gt-row o-joint"><div class="gt-l">สรุป Requirement + ออกแบบ (16–20 พ.ย.)</div><div class="gt-o"><em>ร่วมกัน</em></div><div class="gt-t"><i style="left:19.87%"></i><i style="left:40.40%"></i><i style="left:60.93%"></i><i style="left:79.47%"></i><div class="gt-bar " style="left:9.93%;width:3.31%"><span></span></div></div></div><div class="gt-row o-hosp"><div class="gt-l">พยาบาลกรอกตารางออกตรวจใหม่ (ถึง 27 พ.ย.) → นำเข้าระบบ</div><div class="gt-o"><em>รพ.</em></div><div class="gt-t"><i style="left:19.87%"></i><i style="left:40.40%"></i><i style="left:60.93%"></i><i style="left:79.47%"></i><div class="gt-bar " style="left:9.93%;width:7.95%"><span>กรอก</span></div><div class="gt-bar " style="left:19.21%;width:3.31%"><span></span></div></div></div><div class="gt-grp"><div class="gt-l">1 · Walk-in + คนไข้นัด (หน้าโรงพยาบาล)</div><div></div><div></div></div><div class="gt-row o-ayd"><div class="gt-l">พัฒนาระบบ</div><div class="gt-o"><em>อโยเดีย</em></div><div class="gt-t"><i style="left:19.87%"></i><i style="left:40.40%"></i><i style="left:60.93%"></i><i style="left:79.47%"></i><div class="gt-bar " style="left:14.57%;width:21.85%"><span>23 พ.ย. – 25 ธ.ค.</span></div></div></div><div class="gt-row o-joint"><div class="gt-l">ทดสอบภายใน → ทดลองกับหน้างาน → อบรม</div><div class="gt-o"><em>ร่วมกัน</em></div><div class="gt-t"><i style="left:19.87%"></i><i style="left:40.40%"></i><i style="left:60.93%"></i><i style="left:79.47%"></i><div class="gt-bar " style="left:42.38%;width:11.26%"><span>4–20 ม.ค.</span></div></div></div><div class="gt-row o-hosp"><div class="gt-l">เตรียมเครื่องอ่านบัตร / เครื่องพิมพ์ 2 จุด</div><div class="gt-o"><em>รพ.</em></div><div class="gt-t"><i style="left:19.87%"></i><i style="left:40.40%"></i><i style="left:60.93%"></i><i style="left:79.47%"></i><div class="gt-bar " style="left:19.21%;width:26.49%"><span>IT รพ.</span></div></div></div><div class="gt-row o-ayd"><div class="gt-l">ขึ้นระบบจริง</div><div class="gt-o"><em>อโยเดีย</em></div><div class="gt-t"><i style="left:19.87%"></i><i style="left:40.40%"></i><i style="left:60.93%"></i><i style="left:79.47%"></i><div class="gt-ms" style="left:52.98%"><b></b><span>20 ม.ค. 70</span></div></div></div><div class="gt-row o-hosp"><div class="gt-l">นำร่องอายุรกรรม 2 สัปดาห์</div><div class="gt-o"><em>รพ.</em></div><div class="gt-t"><i style="left:19.87%"></i><i style="left:40.40%"></i><i style="left:60.93%"></i><i style="left:79.47%"></i><div class="gt-bar " style="left:56.29%;width:7.95%"><span>นำร่อง</span></div></div></div><div class="gt-row o-joint"><div class="gt-l">สรุปผล → ขยายคลินิกอื่นทีละกลุ่ม</div><div class="gt-o"><em>ร่วมกัน</em></div><div class="gt-t"><i style="left:19.87%"></i><i style="left:40.40%"></i><i style="left:60.93%"></i><i style="left:79.47%"></i><div class="gt-bar " style="left:65.56%;width:3.31%"><span></span></div><div class="gt-bar " style="left:70.20%;width:21.85%"><span>ขยาย 15 ก.พ. – 19 มี.ค.</span></div></div></div><div class="gt-grp"><div class="gt-l">2 · ทำบัตร + ขอนัดออนไลน์</div><div></div><div></div></div><div class="gt-row o-ayd"><div class="gt-l">พัฒนา → ทดสอบ → ทดลองกับห้องบัตร</div><div class="gt-o"><em>อโยเดีย</em></div><div class="gt-t"><i style="left:19.87%"></i><i style="left:40.40%"></i><i style="left:60.93%"></i><i style="left:79.47%"></i><div class="gt-bar " style="left:56.29%;width:26.49%"><span>25 ม.ค. – 5 มี.ค.</span></div><div class="gt-bar " style="left:84.11%;width:7.95%"><span>ทดสอบ</span></div></div></div><div class="gt-row o-hosp"><div class="gt-l">DPO ตรวจข้อความความยินยอม</div><div class="gt-o"><em>รพ.</em></div><div class="gt-t"><i style="left:19.87%"></i><i style="left:40.40%"></i><i style="left:60.93%"></i><i style="left:79.47%"></i><div class="gt-bar " style="left:56.29%;width:17.22%"><span>ถึง 19 ก.พ.</span></div></div></div><div class="gt-row o-ayd"><div class="gt-l">เปิดใช้</div><div class="gt-o"><em>อโยเดีย</em></div><div class="gt-t"><i style="left:19.87%"></i><i style="left:40.40%"></i><i style="left:60.93%"></i><i style="left:79.47%"></i><div class="gt-ms" style="left:93.38%"><b></b><span>22 มี.ค.</span></div></div></div><div class="gt-grp"><div class="gt-l">3 · เช็กอินออนไลน์ (รอหมอพร้อม)</div><div></div><div></div></div><div class="gt-row o-tbd"><div class="gt-l">IT รพ. เชื่อมหมอพร้อม → พัฒนาต่อ 4 สัปดาห์</div><div class="gt-o"><em>รอ IT</em></div><div class="gt-t"><i style="left:19.87%"></i><i style="left:40.40%"></i><i style="left:60.93%"></i><i style="left:79.47%"></i><div class="gt-bar open" style="left:23.84%;width:76.16%"><span>ยังไม่มีกำหนด ใส่วันเมื่อ IT ยืนยัน</span></div></div></div></div>
   <div class="gt-legend" style="margin-top:8px"><span class="lg o-ayd"><i></i>อโยเดีย</span><span class="lg o-hosp"><i></i>โรงพยาบาล</span><span class="lg o-joint"><i></i>ทำร่วมกัน</span><span class="lg o-tbd"><i></i>ยังไม่มีกำหนด</span><span class="lg-s">◆ วันสำคัญ · แผนละเอียดอยู่ใน Google Sheet "Timeline New Queue"</span></div>
-  <p class="src"><b>สิ่งที่ทำให้แผนเลื่อน:</b> ตกลง Flow ไม่ทัน 14 พ.ย. · ตารางออกตรวจกรอกไม่ครบภายใน 27 พ.ย. · เครื่องอ่านบัตรและเครื่องพิมพ์ไม่พร้อมก่อน 11 ม.ค. · ข้อความความยินยอมยังไม่ผ่าน DPO ก่อน 19 ก.พ. · ทีมพัฒนา 2 คน</p></div>
+  <p class="src"><b>สมมติฐาน:</b> ทีมพัฒนา 2 คน · หยุดช่วงปีใหม่ 29 ธ.ค.–3 ม.ค. · ความเสี่ยงที่ทำให้แผนเลื่อนและวิธีรับมือ อยู่หน้าถัดไป</p></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">7 · ผลที่คาด</div><h2>ผลที่คาดและวิธีวัด</h2><p class="sub">วัดที่อายุรกรรม สัปดาห์ก่อนนำร่องเทียบกับ 2 สัปดาห์นำร่อง ใช้ข้อมูลที่มีในระบบอยู่แล้ว ไม่ต้องจดเพิ่ม</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">8 · ความเสี่ยง</div><h2>ความเสี่ยงและวิธีรับมือ</h2><p class="sub">เรื่องที่ทำให้แผนเลื่อนได้ เรียงจากผลกระทบมากไปน้อย ทุกข้อมีวิธีรับมือและคนดูแลแล้ว</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="body"><div class="card" style="overflow:hidden"><table class="tbl risk">
+    <thead><tr><th>ความเสี่ยง</th><th>ถ้าเกิดขึ้น</th><th>วิธีรับมือ</th><th>ใครดูแล</th></tr></thead><tbody>
+    <tr><td class="k"><span class="lv h">สูง</span>คำถามสำคัญยังไม่ได้คำตอบภายใน 20 พ.ย.</td><td>งานออกบัตรและเลขคิวเริ่มไม่ได้ วันขึ้นระบบเลื่อนตาม</td><td>ตอบในไฟล์ Gap ภายใน 13 พ.ย. ข้อที่ยังไม่ได้ข้อสรุป ใช้ข้อเสนอของทีมไปก่อน แล้วปรับช่วงนำร่อง</td><td class="o">หัวหน้าพยาบาล OPD · PM</td></tr>
+    <tr><td class="k"><span class="lv h">สูง</span>ไม่มีพยาบาลประจำจุดคัดกรองช่วงเช้า</td><td>ออกบัตร V / P / N ไม่ได้ Walk-in ต้องกลับไปเปิด Visit แบบเดิม</td><td>มอบหมายคนก่อนนำร่อง (อยู่ในหน้าขออนุมัติ)</td><td class="o">ผู้บริหาร · หัวหน้าพยาบาล</td></tr>
+    <tr><td class="k"><span class="lv h">สูง</span>เช้าไม่ได้ตั้งห้องแพทย์ หรือจำนวน Walk-in</td><td>ออกเลขคิวเข้าห้องไม่ได้ จุดคัดกรองไม่รู้ที่ว่าง</td><td>อบรมก่อนขึ้นระบบ · ทีมอยู่หน้างานช่วงเช้าตลอด 2 สัปดาห์นำร่อง</td><td class="o">พยาบาล OPD · อโยเดีย</td></tr>
+    <tr><td class="k"><span class="lv m">กลาง</span>ตารางออกตรวจกรอกไม่ครบภายใน 27 พ.ย.</td><td>เวลาบนบัตร V และจำนวนนัดไม่ตรงจริง</td><td>นำร่องอายุรกรรมก่อน ขยายเฉพาะคลินิกที่กรอกตารางครบแล้ว</td><td class="o">พยาบาล OPD</td></tr>
+    <tr><td class="k"><span class="lv m">กลาง</span>คนไข้ไม่คุ้นกับขั้นตอนใหม่</td><td>ช่วงแรกแออัดหน้าตู้และจุดคัดกรอง</td><td>ประชาสัมพันธ์ล่วงหน้า · ป้ายบอกทาง · มีคนยืนแนะนำช่วงนำร่อง</td><td class="o">รพ. · อโยเดีย</td></tr>
+    <tr><td class="k"><span class="lv m">กลาง</span>เครื่องอ่านบัตรและเครื่องพิมพ์ไม่พร้อมก่อน 11 ม.ค.</td><td>ทดลองกับหน้างานไม่ได้ นำร่องเลื่อน</td><td>จัดหาและติดตั้งตั้งแต่ ธ.ค.</td><td class="o">IT รพ.</td></tr>
+    <tr><td class="k"><span class="lv m">กลาง</span>DPO ตรวจไม่ทัน 19 ก.พ. · หมอพร้อมไม่มีกำหนด</td><td>เปิดบริการออนไลน์ 22 มี.ค. ไม่ได้ · เช็กอินออนไลน์ยังเริ่มไม่ได้</td><td>ทำบัตรและขอนัดออนไลน์เปิดได้ก่อน โดยเจ้าหน้าที่โทรแจ้งผล</td><td class="o">DPO · IT รพ.</td></tr>
+  </tbody></table></div></div>
+</section>
+<section class="slide">
+  <div class="head"><div><div class="sec">9 · ผลที่คาด</div><h2>ผลที่คาดและวิธีวัด</h2><p class="sub">วัดที่อายุรกรรม สัปดาห์ก่อนนำร่องเทียบกับ 2 สัปดาห์นำร่อง ใช้ข้อมูลที่มีในระบบอยู่แล้ว ไม่ต้องจดเพิ่ม</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="kpi">
     <div class="card"><h4>คนไข้รอสั้นลง</h4><p>คนไข้นัดไม่ต้องรอหน้าตู้ และ Walk-in ได้คิวแทรกตามสัดส่วน ไม่ต้องรอจนนัดหมด</p><div class="how">เวลาตั้งแต่เปิด Visit จนเข้าห้องตรวจ จากรายงานระยะเวลารอคอย</div></div>
     <div class="card"><h4>ไม่มีคนไข้ที่รอแล้วไม่ได้ตรวจ</h4><p>คลินิกที่เต็มจะบอกตั้งแต่จุดคัดกรอง คนไข้ได้นัดวันอื่นแทนการรอทั้งวัน</p><div class="how">จำนวน Visit ที่ไม่มีการตรวจของแพทย์ในวันนั้น</div></div>
@@ -493,13 +559,23 @@ th,td{text-align:left;vertical-align:top}
   <p class="src"><b>หมายเหตุ:</b> ตัวเลขตั้งต้นของอายุรกรรมมีอยู่แล้วจากการวิเคราะห์ 60 วันที่ผ่านมา จะนำมาเทียบตอนสรุปผลนำร่อง</p></div>
 </section>
 <section class="slide">
-  <div class="head"><div><div class="sec">8 · ขอให้ตัดสินใจ</div><h2>เรื่องที่ขอให้ท่านตัดสินใจ</h2><p class="sub">5 เรื่อง เพื่อให้เริ่มพัฒนาได้ตามแผน 16 พ.ย.</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="head"><div><div class="sec">10 · เรื่องที่ควรพิจารณา</div><h2>เรื่องที่ท่านควรพิจารณา</h2><p class="sub">คำถามระดับนโยบายที่หน้างานตัดสินเองไม่ได้ · คำถามระดับปฏิบัติอยู่ในไฟล์ Gap ให้หน้างานตอบภายใน 13 พ.ย.</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
+  <div class="body"><div class="pq">
+    <div class="card"><div class="n">1</div><div class="t">คลินิกเต็มแล้ว ให้นัดคนไข้ไปวันอื่นได้แค่ไหน<span class="hint">ระบบจำกัดจำนวน Walk-in ได้ แต่ต้องไม่ขัดหลักไม่ปฏิเสธผู้ป่วย และต้องมีคนรับเรื่องเมื่อคนไข้ไม่พอใจ</span></div></div>
+    <div class="card"><div class="n">2</div><div class="t">ใครเป็นคนกำหนดจำนวนรับ Walk-in และจำนวนนัดต่อวัน<span class="hint">ใช้ตามตารางแพทย์ หรือให้หัวหน้าพยาบาลแต่ละคลินิกตั้งเอง ตัวเลขนี้กำหนดว่าคนไข้ได้ตรวจวันนี้หรือไม่</span></div></div>
+    <div class="card"><div class="n">3</div><div class="t">จุดคัดกรองช่วงเช้าและงานตั้งค่าทุกเช้า ใช้คนเดิมหรือเพิ่มคน<span class="hint">งานใหม่ต้องเป็นพยาบาล ถ้าดึงจากหน้าห้องตรวจ งานหน้าห้องจะช้าลง</span></div></div>
+    <div class="card"><div class="n">4</div><div class="t">บริการออนไลน์ ยืนยันตัวตนระดับไหนที่โรงพยาบาลยอมรับได้<span class="hint">ทำบัตรผ่านมือถือต้องสมดุลระหว่างสะดวกกับปลอดภัย และต้องมีคนรับผิดชอบความปลอดภัยของข้อมูล</span></div></div>
+    <div class="card"><div class="n">5</div><div class="t">หมอพร้อม ใครเป็นเจ้าภาพ และเชื่อมได้เมื่อไร<span class="hint">เตือนนัดและเช็กอินออนไลน์ทำได้หลังเชื่อมเท่านั้น ตอนนี้ยังไม่มีกำหนด</span></div></div>
+    <div class="card"><div class="n">6</div><div class="t">ใครเป็นเจ้าของโครงการฝั่งโรงพยาบาล และนำร่องได้ผลแค่ไหนจึงขยาย<span class="hint">ต้องมีคนตัดสินแทนหน้างานเมื่อความเห็นไม่ตรงกัน และมีเกณฑ์ชัดก่อนขยายคลินิกอื่น</span></div></div>
+  </div></div>
+</section>
+<section class="slide">
+  <div class="head"><div><div class="sec">11 · ขออนุมัติ</div><h2>เรื่องที่ขออนุมัติ</h2><p class="sub">4 เรื่อง เพื่อให้เริ่มพัฒนาได้ตามแผน 16 พ.ย.</p></div><span class="logo" role="img" aria-label="Ayodia"></span></div>
   <div class="body"><div class="qlist">
     <div class="card qrow"><div class="n">1</div><div class="t">อนุมัติให้นำร่องที่คลินิกอายุรกรรม 25 ม.ค.–5 ก.พ. 70<span class="hint">คลินิกที่ Walk-in มากที่สุด และมีข้อมูลตั้งต้นสำหรับเทียบผลแล้ว</span></div></div>
     <div class="card qrow"><div class="n">2</div><div class="t">มอบหมายพยาบาลประจำจุดคัดกรองเบื้องต้นหน้าเวชระเบียน ช่วงเช้า<span class="hint">จุดนี้เป็นคนตัดสินว่าคนไข้ได้บัตร V / P / N · ต้องเป็นพยาบาล เพราะต้องซักอาการเบื้องต้น</span></div></div>
     <div class="card qrow"><div class="n">3</div><div class="t">จัดเครื่องอ่านบัตรประชาชนและเครื่องพิมพ์บัตรคิว 2 จุด ให้พร้อมก่อน 11 ม.ค. 70<span class="hint">จุดคัดกรองเบื้องต้น และหน้าห้องตรวจอายุรกรรม</span></div></div>
-    <div class="card qrow"><div class="n">4</div><div class="t">ให้ฝ่าย IT กำหนดวันเชื่อมหมอพร้อม<span class="hint">การเตือนนัดและเช็กอินออนไลน์เริ่มไม่ได้จนกว่าจะเชื่อม · ทำบัตรและขอนัดออนไลน์เริ่มได้ก่อนโดยเจ้าหน้าที่โทรแจ้งผล</span></div></div>
-    <div class="card qrow"><div class="n">5</div><div class="t">ให้ DPO ตรวจข้อความความยินยอมให้เสร็จภายใน 19 ก.พ. 70<span class="hint">จำเป็นสำหรับบริการออนไลน์ที่จะเปิด 22 มี.ค.</span></div></div>
+    <div class="card qrow"><div class="n">4</div><div class="t">ให้ DPO ตรวจข้อความความยินยอมให้เสร็จภายใน 19 ก.พ. 70<span class="hint">จำเป็นสำหรับบริการออนไลน์ที่จะเปิด 22 มี.ค.</span></div></div>
   </div></div>
 </section>
 </div></div>
