@@ -924,7 +924,7 @@ SCR["s-front"] = {kind:"staff", label:"พยาบาลหน้าห้อ�
   if (a === "m"){ p.m = el.dataset.m; p.pick = null; p.last = null; return rerender(); }
   if (a === "norooms"){ db.roomsSet[m] = !db.roomsSet[m]; rerender(); toast(db.roomsSet[m] ? "กำหนดห้องให้แพทย์แล้ว (หน้าใหม่)" : "จำลอง: แพทย์ยังไม่มีห้องวันนี้"); return emit("fr:norooms"); }
   if (a === "open"){ const had = f.opened; f.status = "รอซักประวัติ"; f.opened = true; p.pick = f.id; rerender(); toast(had ? "ให้ตรวจวันนี้ · จะนับรับเกินตอนออกบัตรคิวห้องตรวจ" : `เปิด Visit แล้ว · ระบบผูกกับบัตร ${f.ticket} เอง`); return emit("fr:open"); }
-  if (a === "appt"){ f.status = f.opened ? "นัดวันอื่น · ยกเลิก Visit" : "นัดวันอื่น"; rerender(); toast(f.opened ? "ลงนัดด้วยหน้านัดหมายเดิม และยกเลิก Visit ที่เปิดไว้ · ไม่นับรับเกิน" : "ลงนัดด้วยหน้านัดหมายเดิม · ไม่นับรับเกิน"); return emit("fr:appt"); }
+  if (a === "appt"){ f.status = f.opened ? "นัดวันอื่น · ยกเลิก Visit" : "นัดวันอื่น"; rerender(); toast(f.opened ? "ลงนัดด้วยหน้านัดหมายเดิม · เวชระเบียนยกเลิก Visit และ Authen ที่ สปสช. · ไม่นับรับเกิน" : "ลงนัดด้วยหน้านัดหมายเดิม · ไม่นับรับเกิน"); return emit("fr:appt"); }
   if (a === "pick"){ p.pick = f.id; p.last = null; rerender(); return emit("fr:pick"); }
   if (a !== "issue") return;
   const pick = db.front.find(x => x.id === p.pick), v = val("fr-doc");
@@ -1315,7 +1315,7 @@ SCR["m-msg"] = {kind:"phone", label:"Online · ข้อความเตือ
       <div class="msg ok" style="font-size:12.5px">ใกล้ถึงวันนัดแล้ว กรุณาตรวจสอบวัน เวลา คลินิก</div>
       <div class="kv"><span>HN</span><b>${pt.hn}</b></div><div class="kv"><span>เลขที่นัด</span><b>${a.no}</b></div><div class="kv"><span>ชื่อ</span><span>${pname(pt)}</span></div><div class="kv"><span>วันนัด</span><span>${a.date} · ${a.time} น.</span></div><div class="kv"><span>คลินิก</span><span>${cl(a.clinic).name}</span></div><div class="kv"><span>แพทย์</span><span>${a.doctor}</span></div>
       <div><span class="lab" style="font-size:12.5px">เหตุผลการนัด</span><div class="rchips">${(a.reasons || [a.reason]).map(r => `<span class="rchip">${r}</span>`).join("")}</div></div>
-      <div style="font-size:12.5px;background:#fff8e6;border-radius:8px;padding:6px 9px"><b>ข้อควรปฏิบัติ</b><br>- เช็กอินออนไลน์และกรอกอาการก่อนมา<br>- ยื่นบัตรนัดก่อนเวลานัด 30 นาที</div>
+      <div style="font-size:12.5px;background:#fff8e6;border-radius:8px;padding:6px 9px"><b>ข้อควรปฏิบัติ</b><br>- เช็กอินออนไลน์และกรอกอาการก่อนมา<br>- เปิด Visit ที่ตู้ Kiosk ได้ตั้งแต่ 1 ชั่วโมงก่อนเวลานัด</div>
       <button type="button" class="mbtn" id="msg-btn" data-go="m-checkin" data-p='{"token":"${a.id}"}'>เช็กอินออนไลน์</button>
       <button type="button" class="mbtn ghost" id="msg-resched" data-go="m-resched" data-p='{"token":"${a.id}"}'>แจ้งความประสงค์เลื่อนนัด</button></div></div></div><div class="mfoot">ลิงก์ = URL ของ Mobile คิว + โทเคนต่อนัด</div></div></div>`;
 }};
@@ -1442,11 +1442,10 @@ SCR["doc"] = {kind:"doc", label:"สรุป · ของเดิมที่�
       ["จัดคิวเข้าห้องตรวจ / เลขคิว (QueueService · CounterService)","ย้ายการออกเลขคิวจากตอนเปิด Visit มาตอนจัดคิวเข้าห้องตรวจ · รูปแบบ {ห้อง 2 หลัก}-{Q/U}{ลำดับ 3 หลัก} · คิวด่วน U ติดว่าด่วนและเรียกก่อน · แก้การเรียงเลขคิวที่เรียงแบบตัวอักษร · ตั้งค่าส่งเข้าห้องตรวจอัตโนมัติของบางคลินิกต้องปิดหรือปรับ","แก้"],
       ["เรียกคิวคัดแยก/ซักประวัติ","แก้เล็กน้อย: ป้ายอาการผิดปกติ / แพ้ยาใหม่ จากเช็กอินออนไลน์ · Vital Sign และ CC มาจาก Visit แล้ว","แก้"]]],
     ["WebAPI / ฐานข้อมูล", [
-      ["ตารางใหม่","ชุดคลินิกต่อจุดออกบัตร (ไม่มีตารางบัตรคิว), คำขอทำบัตร, คำขอนัด + ไฟล์แนบ, โทเคนนัด, ข้อมูลเช็กอิน (Vital Sign)","ใหม่"],
+      ["ตารางใหม่","ข้อมูลบัตร V / P / N (ใช้ยกเลิกบัตรและผูกกับ Visit), จำนวน Walk-in ต่อคลินิกต่อวัน (เช้า / บ่าย) + ปลายทางบัตร P / N, ห้องแพทย์รายวัน, ชุดคลินิกต่อจุดออกบัตร, คำขอทำบัตร, คำขอนัด + ไฟล์แนบ, โทเคนนัด, ข้อมูลเช็กอิน (Vital Sign)","ใหม่"],
       ["Controller สาธารณะ","แยกจาก KioskController: AllowAnonymous + ยืนยันเลขบัตร/วันเกิด + จำกัดจำนวนครั้ง","ใหม่"],
-      ["สเปก Limit ห้องตรวจ","Dashboard อ่านยอดระดับคลินิกจาก Limit ชุดเดียวกัน และนับเฉพาะจุดที่มีแพทย์ออกตรวจวันนี้","แก้"],
-      ["เมนูสรุปจุดบริการ (ใหม่ · สเปก Limit)","ตั้ง Limit Walk-in ต่อจุด · Limit นัดอ่านจาก LimitCase ของตารางแพทย์ · ค่ารวมส่งไปที่ Dashboard จุดออกบัตร","ใหม่"],
-      ["AddVisit (Walk-in)","ไม่แก้ · Dashboard ไม่ได้นับจาก Visit แต่นับ Walk-in ที่เรียกเข้าห้องตรวจแล้วจากคิวห้องตรวจ (ยอดชุดเดียวกับสรุปจุดบริการ)","เดิม"],
+      ["Dashboard ที่ว่าง (แทนสเปก Limit ห้องตรวจเดิม)","ที่ว่าง = จำนวน Walk-in ที่ตั้งของรอบ − บัตร V ที่ออกแล้ว · ยกเลิกบัตร V คืนที่ว่าง · รับเกิน = บัตร P / N ที่ได้เลขคิวห้องตรวจ","ใหม่"],
+      ["AddVisit (Walk-in)","หน้าจอไม่แก้ · หลังเปิด Visit ผูกกับบัตร V / P / N เองด้วย HN หรือเลขบัตรประชาชน + วันนี้ + คลินิกหลัก · Visit Walk-in ที่ไม่มีบัตร แสดงว่าไม่ผ่านจุดคัดกรอง","แก้"],
       ["PrivilegeService.AddVisitFormAppointment","เปิด Visit นัดสำเร็จแล้ว ถ้ามีข้อมูลเช็กอินของนัดนั้น บันทึกเข้า TB_VITAL_SIGNS ของ Visit (วิธีเดียวกับ VitalSignsPublicService.AddVitalSigns) · ใช้ทั้งตู้ Kiosk และเคาน์เตอร์ โดยหน้าจอไม่แก้","แก้"],
       ["AppointmentService","สร้างโทเคนต่อนัด · เลื่อน/ยกเลิก = โทเคนใช้ไม่ได้","แก้"],
       ["RegisterService.AddPatient / CheckDuplicateIdcardPatient","ใช้ตามเดิมจากคำขอทำบัตรออนไลน์","เดิม"]]],
