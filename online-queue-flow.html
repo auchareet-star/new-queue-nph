@@ -318,7 +318,7 @@ table.duty .when{font-size:12.5px;color:var(--muted)}
       <div class="do"><span>มาถึงวันนัด ไปที่ตู้ Kiosk</span><span class="scr">เปิด Visit ได้ตั้งแต่ 1 ชั่วโมงก่อนเวลานัด</span></div>
       <div class="data"><div class="flow"><span class="k">ส่ง</span><span><span class="pill">บัตรประชาชน</span> <span class="to">→ ตู้ Kiosk</span></span></div></div></div>
     <div class="step"><span class="n">2</span><div class="who-cell"><span class="who ks">ตู้ Kiosk</span></div>
-      <div class="do"><span>ตรวจสิทธิ เปิด Visit จากนัด พิมพ์บัตรคิว</span><span class="scr">เปิด Visit นัดที่ตู้เท่านั้น · หน้าจอตู้เดิม · เปิดได้ตั้งแต่ 1 ชั่วโมงก่อนเวลานัด</span></div>
+      <div class="do"><span>ตรวจสิทธิ เปิด Visit จากนัด พิมพ์บัตรคิว</span><span class="scr">เปิด Visit นัดที่ตู้เท่านั้น · เปิดได้ตั้งแต่ 1 ชั่วโมงก่อนเวลานัด · แพทย์ในนัดมีห้องวันนี้ บัตรมีเลขคิวห้องตรวจรูปแบบใหม่เลย (ตกลง 19/11) · นัดกับแพทย์แผนก / ยังไม่มีห้อง = บัตรไม่มีเลข</span></div>
       <div class="data"><div class="flow"><span class="k">ได้</span><span><span class="pill">Visit (มาตามนัด)</span><span class="pill">บัตรคิว</span> <span class="to">→ คนไข้</span></span></div></div></div>
     <div class="step"><span class="n">3</span><div class="who-cell"><span class="who pt">คนไข้</span></div>
       <div class="do"><span>ยื่นบัตรคิวที่พยาบาลหน้าห้องตรวจ</span><span class="scr">ไม่ต้องผ่านพยาบาลเบื้องต้นและช่องเวชระเบียน</span></div>
@@ -327,7 +327,7 @@ table.duty .when{font-size:12.5px;color:var(--muted)}
       <div class="do"><span>ต่อแถวร่วมกับ Walk-in (4:1 หรือ 8:2) ซักประวัติละเอียด ลงข้อมูล</span><span class="scr">หน้าเรียกคิวคัดแยก/ซักประวัติ · เคสด่วน: เปลี่ยนเป็นคิวด่วน (Prefix ต่างกัน)</span></div>
       <div class="data"><span class="to">—</span></div></div>
     <div class="step"><span class="n">5</span><div class="who-cell"><span class="who ns">พยาบาลหน้าห้องตรวจ</span></div>
-      <div class="do"><span>ออกบัตรคิวห้องตรวจ</span><span class="scr">แพทย์ในนัดมีห้องวันนี้ = ระบบเลือกให้ · แพทย์กลาง (เช่น อายุรกรรม 10001) = พยาบาลเลือกแพทย์จริง</span></div>
+      <div class="do"><span>มีเลขจากตู้แล้ว ส่งเข้าแถว · ไม่มีเลข ออกบัตรคิวห้องตรวจ</span><span class="scr">มีเลขจากตู้ = ไม่พิมพ์บัตรใหม่ · แพทย์กลาง (เช่น อายุรกรรม 10001) หรือแพทย์ยังไม่มีห้อง = พยาบาลเลือกแพทย์จริง แล้วออกบัตรคิว</span></div>
       <div class="data"><div class="flow"><span class="k">ได้</span><span><span class="pill">เลขคิว {ห้อง}-{ประเภท}{ลำดับ}</span> <span class="to">→ คนไข้</span></span></div></div></div>
     <div class="step"><span class="n">6</span><div class="who-cell"><span class="who dr">แพทย์</span></div>
       <div class="do"><span>พยาบาลกดเรียกคิวให้แพทย์</span><span class="scr">ระบบรองรับให้แพทย์กดเรียกเองจากหน้าจอตรวจได้ · ขึ้นจอ TV คิว</span></div>
@@ -474,7 +474,7 @@ table.duty .when{font-size:12.5px;color:var(--muted)}
       <tr><td>แพทย์ ↔ ห้อง วันนี้</td><td>พยาบาล</td><td>HA.OS ตอนออกบัตรคิวห้องตรวจ</td><td>เช้าทุกวัน</td><td class="keep">HA.OS</td></tr>
       <tr><td>จำนวน Walk-in ของคลินิกหลัก</td><td>พยาบาล (Dashboard)</td><td>Dashboard</td><td>ตั้งหรือแก้เมื่อไรก็ได้</td><td class="keep">HA.OS</td></tr>
       <tr><td>เลขคิวห้องตรวจ</td><td>พยาบาลหน้าห้องตรวจ</td><td>คนไข้ · แพทย์ · จอ TV คิว</td><td>ซักประวัติละเอียดเสร็จ</td><td class="keep">HA.OS (คิว)</td></tr>
-      <tr><td>Visit นัด + บัตรคิว</td><td>ตู้ Kiosk</td><td>คนไข้ → พยาบาลหน้าห้องตรวจ</td><td>ก่อนเวลานัด 1 ชั่วโมง</td><td class="keep">Visit</td></tr>
+      <tr><td>Visit นัด + บัตรคิว (มีเลขคิวห้องตรวจ ถ้าแพทย์ในนัดมีห้อง)</td><td>ตู้ Kiosk</td><td>คนไข้ → พยาบาลหน้าห้องตรวจ</td><td>ก่อนเวลานัด 1 ชั่วโมง</td><td class="keep">Visit</td></tr>
       <tr><td>คำขอทำบัตร</td><td>คนไข้</td><td>ห้องบัตร</td><td>ส่งฟอร์ม</td><td class="keep">ที่พักคำขอ → ทะเบียนผู้ป่วยเมื่อยืนยัน</td></tr>
       <tr><td>ผลทำบัตร</td><td>HA.OS</td><td>หมอพร้อม → คนไข้</td><td>ห้องบัตรกดยืนยัน / ปฏิเสธ</td><td class="keep">สถานะการส่ง</td></tr>
       <tr><td>คำขอนัด / คำขอเลื่อนนัด</td><td>คนไข้</td><td>เจ้าหน้าที่นัดหมาย</td><td>ส่งฟอร์ม</td><td class="keep">ที่พักคำขอ → ตารางนัดเมื่อลงนัด</td></tr>

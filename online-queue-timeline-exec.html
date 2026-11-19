@@ -359,7 +359,7 @@ th,td{text-align:left;vertical-align:top}
 .o-v{--oc:#0D9488;--oc-ink:#0F6B63} .o-p{--oc:#F59E0B;--oc-ink:#92400E} .o-n{--oc:#6366F1;--oc-ink:#3F3CB8}
 .chg{display:inline-block;font-size:12.5px;font-weight:700;padding:3px 9px;border-radius:6px;white-space:nowrap}
 .chg.same{background:var(--teal-soft);color:#0F6B63}.chg.small{background:var(--amber-soft);color:var(--amber-ink)}.chg.new{background:var(--blue-soft);color:var(--navy)}
-.cmp td{font-size:14.5px;padding:7px 12px;line-height:1.4}
+.cmp td{font-size:14.5px;padding:5px 12px;line-height:1.4}
 .cmp td.k{width:190px;font-size:14.5px}
 .cmp td:last-child{width:120px}
 .pol{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -545,7 +545,7 @@ svg.ov .note{font-size:11.5px;fill:var(--amber-ink);font-weight:600}
 <div id="viewport"><div id="stage">
 <section class="slide cover">
   <div class="top"><span class="logo-dark" role="img" aria-label="Ayodia"></span><span class="tag">สถานะ ณ 13 พ.ย. 69</span></div>
-  <div><div class="proj">โรงพยาบาลพระนั่งเกล้า · ระบบ HA.OS · ระบบคิว Walk-in และบริการออนไลน์</div>
+  <div><div class="proj">โรงพยาบาลนครปฐม · ระบบ HA.OS · ระบบคิว Walk-in และบริการออนไลน์</div>
     <h1>แผนเวลาและเงื่อนไข<small>ต้องเสร็จอะไร ติดอะไร เสี่ยงอะไร จึงจะทันตามแผน</small></h1><div class="bar"></div></div>
   <div class="who"><div><b>นำเสนอ</b>ผู้อำนวยการโรงพยาบาล</div><div><b>จัดทำโดย</b>บริษัท อโยเดีย จำกัด</div><div><b>วันที่</b>พฤศจิกายน 2569</div></div>
 </section>
@@ -663,7 +663,7 @@ svg.ov .note{font-size:11.5px;fill:var(--amber-ink);font-weight:600}
   var total = slides.length, i = 0;
   slides.forEach(function(s, k){
     var f = document.createElement('div'); f.className = 'foot';
-    f.innerHTML = '<span>HA.OS · แผนเวลาระบบคิว · รพ.พระนั่งเกล้า</span><span class="pg">' + (k + 1) + ' / ' + total + '</span>';
+    f.innerHTML = '<span>HA.OS · แผนเวลาระบบคิว · รพ.นครปฐม</span><span class="pg">' + (k + 1) + ' / ' + total + '</span>';
     s.appendChild(f);
   });
   function fit(){
