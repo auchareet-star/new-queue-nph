@@ -180,6 +180,7 @@ h1,h2,h3,h4{margin:0;color:var(--ink);line-height:1.3;text-wrap:balance}
 .badge{background:#a6bb98;color:#fff;border-radius:10rem;font-size:12px;padding:1px .8em;font-weight:600}
 .tab.on .badge{background:#419700}
 .tw{overflow-x:auto}
+.pnact{display:flex;flex-direction:column;gap:6px;max-width:150px}.pnact .b{white-space:normal;padding:6px 8px;font-size:13.5px;line-height:1.3}
 table{width:100%;border-collapse:collapse;font-size:14px}
 th{background:var(--head);color:var(--ink);font-weight:600;padding:10px 10px;text-align:left;white-space:nowrap;border-bottom:1px solid #ddd}
 td{padding:10px;border-bottom:1px solid #eee;vertical-align:middle}
@@ -601,7 +602,7 @@ const SC = [
  {id:"C14", ch:"counter", title:"Visit มีแพทย์แล้ว · ระบบเลือกให้ เปลี่ยนได้ · คิวด่วน", who:"1100000000011",
   setup:d => { d.front.push({id:"F3", kind:"V", name:"นาง ตัวอย่าง ห้า", hn:"777/69", clinic:"ME00", doctor:"พญ.ตัวอย่าง หนึ่ง", status:"รอซักประวัติ"}); d.exq.push({q:"01-Q012", room:"ห้องตรวจ 1", doc:"พญ.ตัวอย่าง หนึ่ง", name:"นาย ตัวอย่าง เจ็ด", kind:"V", u:false, m:"ME00"}); d.rq["01"] = 12; }, steps:[
   {scr:"s-front", p:{m:"ME00"}, t:"เวชระเบียนเปิด Visit โดย<b>เลือกแพทย์ไว้แล้ว</b> (พญ.ตัวอย่าง หนึ่ง) เลือก <b>นาง ตัวอย่าง ห้า</b> กด <b>ซักประวัติ</b>", hl:"#fr-pick-F3", on:"fr:pick"},
-  {scr:"s-front", t:"แพทย์ใน Visit ออกตรวจวันนี้และมีห้อง <b>ระบบเลือกให้เลย</b> · พยาบาล<b>เปลี่ยนได้</b>ถ้าจำเป็น เช่น แพทย์คิวยาว ระบบเก็บว่าใครเปลี่ยน · ถ้าแพทย์ไม่ได้ออกตรวจวันนี้ ระบบเตือนให้เลือกแพทย์ที่ตรวจจริง · คนไข้อาการหนัก ติ๊ก <b>คิวด่วน</b> แล้วกด <b>ออกบัตรคิวห้องตรวจ</b>", hl:"#fr-preset", on:"fr:issue", prep:() => { const u = $("#fr-urgent"); if (u) u.checked = true; }},
+  {scr:"s-front", t:"แพทย์ใน Visit ออกตรวจวันนี้และมีห้อง <b>ระบบเลือกให้เลย</b> · พยาบาล<b>เปลี่ยนได้</b>ถ้าจำเป็น เช่น แพทย์คิวยาว ระบบเก็บว่าใครเปลี่ยน · ถ้าแพทย์ไม่ได้ออกตรวจวันนี้ ระบบเตือนให้เลือกแพทย์ที่ตรวจจริง · คนไข้อาการหนัก ติ๊ก <b>คิวด่วน</b> แล้วกด <b>ออกบัตรคิวห้องตรวจ</b>", hl:"#fr-issue", on:"fr:issue", prep:() => { const u = $("#fr-urgent"); if (u) u.checked = true; }},
   {scr:"s-front", t:"ได้เลข <b>01-U013</b> · ในแถวรอเข้าห้องตรวจ <b>คิวด่วนขึ้นก่อน 01-Q012</b> ที่ออกบัตรก่อน และพยาบาลเรียกให้แพทย์ก่อน · คิวด่วนเป็นของใหม่ ระบบเดิมไม่มีการติดว่าด่วนและไม่เรียกก่อน", hl:"#fr-exq"}
  ]},
  {id:"C11", ch:"counter", title:"คนไข้นัด · เปิด Visit ที่ตู้ Kiosk", who:"1100000000011", steps:[
@@ -896,15 +897,14 @@ SCR["s-front"] = {kind:"staff", label:"พยาบาลหน้าห้อ�
   const docs = set ? docsToday(m) : [];
   const preset = pick && docs.find(d => d.doc === pick.doctor);
   const kindTag = k => k === "นัด" ? `<span class="st ok">นัด</span>` : `<span class="tk-mini ${k}">${k}</span>`;
-  const rows = list.map((f, i) => `<tr class="${i === list.length - 1 && p.fresh ? "is-last" : ""} ${f.id === p.pick ? "sel" : ""}"><td>${kindTag(f.kind)} ${f.ticket ? `<span class="muted">${f.ticket}</span>` : ""}</td><td>${f.name}<br><span class="muted">HN ${f.hn} · ${cl(f.clinic).name}</span>${f.kind === "P" || f.kind === "N" ? `<br><span class="st info" style="font-size:12px">มาจากบัตร ${f.kind} · ${f.opened ? "Visit เปิดแล้ว ระบบผูกกับบัตร " + f.ticket + " เอง" : "ยังไม่เปิด Visit"}</span>` : ""}</td><td>${stPill(f.status)}${f.q ? `<br><b>${f.q}</b>` : ""}</td>
-    <td>${f.status === "รอพิจารณา" ? `<button type="button" class="b green" id="fr-open-${f.id}" data-act="open" data-id="${f.id}" style="white-space:nowrap">${f.opened ? "ตรวจวันนี้" : "ตรวจวันนี้ · เปิด Visit"}</button> <button type="button" class="b out" id="fr-appt-${f.id}" data-act="appt" data-id="${f.id}" style="white-space:nowrap">${f.opened ? "นัดวันอื่น · ยกเลิก Visit" : "นัดวันอื่น"}</button>`
-      : f.status === "รอซักประวัติ" ? `<button type="button" class="b black" id="fr-pick-${f.id}" data-act="pick" data-id="${f.id}" style="white-space:nowrap">ซักประวัติ</button>` : ""}</td></tr>`).join("");
+  const rows = list.map((f, i) => `<tr class="${i === list.length - 1 && p.fresh ? "is-last" : ""} ${f.id === p.pick ? "sel" : ""}"><td>${kindTag(f.kind)} ${f.ticket ? `<span class="muted">${f.ticket}</span>` : ""}</td><td>${f.name}<br><span class="muted">HN ${f.hn} · ${cl(f.clinic).name}</span>${f.kind === "P" || f.kind === "N" ? `<br><span class="st info" style="font-size:12px">มาจากบัตร ${f.kind} · ${f.opened ? "Visit เปิดแล้ว ระบบผูกกับบัตร " + f.ticket + " เอง" : "ยังไม่เปิด Visit"}</span>` : ""}</td><td>${stPill(f.status)}${f.q ? `<br><b>${f.q}</b>` : ""}<div style="margin-top:6px">${f.status === "รอพิจารณา" ? `<div class="pnact"><button type="button" class="b green" id="fr-open-${f.id}" data-act="open" data-id="${f.id}">${f.opened ? "ตรวจวันนี้" : "ตรวจวันนี้ · เปิด Visit"}</button> <button type="button" class="b out" id="fr-appt-${f.id}" data-act="appt" data-id="${f.id}">${f.opened ? "นัดวันอื่น · ยกเลิก Visit" : "นัดวันอื่น"}</button></div>`
+      : f.status === "รอซักประวัติ" ? `<button type="button" class="b black" id="fr-pick-${f.id}" data-act="pick" data-id="${f.id}" style="white-space:nowrap">ซักประวัติ</button>` : ""}</div></td></tr>`).join("");
   return shell("s-front", "หน้าห้องตรวจ · ออกบัตรคิว", `งานพยาบาล • ห้องตรวจผู้ป่วยนอก • ${cl(m).name}`, `
     <div class="tool"><span class="seg">${["ME00","SU00"].map(k => `<button type="button" data-act="m" data-m="${k}" class="${k === m ? "on" : ""}">${cl(k).name}</button>`).join("")}</span>
       <span class="muted" style="font-size:12.5px;margin-left:auto">ห้องแพทย์วันนี้: ${set ? `<b>มีห้องแล้ว ${docsToday(m).length} ห้อง</b> (จากตารางออกตรวจ)` : '<b style="color:var(--bad)">ยังไม่มีห้อง</b>'}</span>
       <button type="button" class="gear" id="fr-norooms" data-act="norooms">จำลอง: ${set ? "ยังไม่มีห้องแพทย์" : "มีห้องแพทย์แล้ว"}</button></div>
     <div class="two"><div class="port"><div class="ph2"><h2>รับบัตร / รอซักประวัติ ${T("new")}</h2><span class="muted" style="font-size:13px">บัตร V (ใบนำทาง) · P · N · บัตรคิวนัดจากตู้</span></div>
-      <div class="tw"><table style="min-width:520px"><thead><tr><th>บัตร</th><th>คนไข้</th><th>สถานะ</th><th></th></tr></thead><tbody>${rows || `<tr><td colspan="4" class="empty">ยังไม่มีคนไข้</td></tr>`}</tbody></table></div>
+      <div class="tw"><table><thead><tr><th>บัตร</th><th>คนไข้</th><th>สถานะ</th></tr></thead><tbody>${rows || `<tr><td colspan="3" class="empty">ยังไม่มีคนไข้</td></tr>`}</tbody></table></div>
       <span class="muted" style="font-size:12.5px">P / N: พยาบาลตัดสินว่าตรวจวันนี้หรือนัดวันอื่น · ถ้าเวชระเบียนเปิด Visit มาแล้ว ระบบผูกกับบัตรเอง ถ้ายังไม่เปิด พยาบาลเปิดเองได้ · นับรับเกินตอนออกบัตรคิวห้องตรวจ คนที่นัดวันอื่นไม่นับ · ลำดับแทรก Walk-in กับนัด 4:1 หรือ 8:2 พยาบาลจัดเอง</span></div>
     <div class="port"><h3 style="font-size:16px">ซักประวัติละเอียด · ออกบัตรคิวห้องตรวจ</h3>
       ${!pick ? `<div class="empty">เลือกคนไข้จากรายการ</div>` : `<div class="kv"><span>คนไข้</span><b>${pick.name} · HN ${pick.hn}</b></div>
