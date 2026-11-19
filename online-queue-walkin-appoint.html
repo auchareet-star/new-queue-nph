@@ -96,7 +96,7 @@ footer a{color:var(--accent)}
 <section>
   <h2>ก่อนเริ่ม: ตั้งค่าเช้าทุกวัน</h2>
   <div class="cards">
-    <div class="card"><h3>1. จับคู่แพทย์กับห้อง</h3><p>พยาบาลตั้งว่าแพทย์ที่ออกตรวจวันนี้แต่ละคนอยู่ห้องไหน ต้องทำเองทุกวัน</p><p class="s">ถ้ายังไม่ตั้ง ออกบัตรคิวห้องตรวจไม่ได้ <a class="qq" href="online-queue-flow.html#j6">6.1</a></p></div>
+    <div class="card"><h3>1. กำหนดห้องให้แพทย์ (หน้าใหม่)</h3><p>พยาบาลดูว่าแพทย์ที่ออกตรวจวันนี้อยู่ห้องไหน ห้องจากตารางขึ้นให้เลย กำหนดเฉพาะคนที่ยังไม่มีห้อง · ตอนนี้ระบบไม่มีหน้านี้</p><p class="s">ถ้ายังไม่ตั้ง ออกบัตรคิวห้องตรวจไม่ได้ <a class="qq" href="online-queue-flow.html#j6">6.1</a></p></div>
     <div class="card"><h3>2. ตั้งจำนวน Walk-in</h3><p>พยาบาลตั้งที่ Dashboard ต่อคลินิกหลัก ประเมินจากตารางออกตรวจและนัดที่ลงไว้</p><p class="s">ตั้งได้แค่จำนวน Walk-in <a class="qq" href="online-queue-flow.html#j6">6.2</a></p></div>
     <div class="card"><h3>เลขคิวห้องตรวจ</h3><span class="big">{ห้อง}-{ประเภท}{ลำดับ}</span><p class="s">เลขห้อง 2 หลัก · ตัวอักษรประเภทคิว (ปกติ / ด่วน) · เลขรัน 3 หลัก <a class="qq" href="online-queue-flow.html#j1">1.6</a></p></div>
   </div>
@@ -117,7 +117,7 @@ footer a{color:var(--accent)}
       <div class="lh dr" style="grid-column:6">แพทย์<small>จอ TV คิว</small></div>
 
       <div class="b c-pt" style="grid-column:1;grid-row:2"><span class="t"><span class="no">1</span>มาถึง กดบัตรคิวเอง</span><span class="s">เลขรันตามลำดับกด ไม่เชื่อม HA.OS</span><span class="go">→ ตู้ตรวจสิทธิ</span></div>
-      <div class="b c-ks" style="grid-column:2;grid-row:3"><span class="t"><span class="no">2</span>ตรวจสิทธิ พิมพ์ใบสิทธิ</span><span class="s">ตู้ไม่เปิด Visit ให้ Walk-in <a class="qq" href="online-queue-flow.html#j1">1.1 ลำดับ</a></span><span class="go">→ รอพยาบาลเรียกตามเลข</span></div>
+      <div class="b c-ks" style="grid-column:2;grid-row:3"><span class="t"><span class="no">2</span>ตรวจสิทธิ</span><span class="s">ต้องแก้ตู้ไม่ให้ Walk-in เปิด Visit เอง · ใบผลสิทธิ รอยืนยัน <a class="qq" href="online-queue-flow.html#j1">1.1 ลำดับ</a></span><span class="go">→ รอพยาบาลเรียกตามเลข</span></div>
       <div class="b c-ns" style="grid-column:3;grid-row:4"><span class="t"><span class="no">3</span>ซักประวัติเบื้องต้น</span><span class="s">มาทำอะไร ต้องไปคลินิกไหน · เสียบบัตร / ค้น HN <a class="qq" href="online-queue-flow.html#j1">1.4</a></span></div>
       <div class="b c-ns dec" style="grid-column:3;grid-row:5"><span class="t"><span class="no">4</span>ดู Dashboard คลินิกหลัก</span><span class="s">มีนัดวันนี้ → ไปตู้ เปิด Visit นัด<br>ว่าง → <span class="tk v">V</span> · เต็ม มี HN → <span class="tk p">P</span> · เต็ม ไม่มี HN → <span class="tk n">N</span> <a class="qq" href="online-queue-flow.html#j1">1.2</a></span><span class="go">พิมพ์บัตร ยื่นให้คนไข้</span></div>
 
@@ -166,7 +166,7 @@ footer a{color:var(--accent)}
       <tr><td>เลขคิวห้องตรวจ</td><td colspan="2">พยาบาลหน้าห้องตรวจออกให้ แทรก Walk-in กับนัด 4:1 หรือ 8:2 · ระบบให้แพทย์เรียกเองได้ แต่ปัจจุบันพยาบาลกดเรียกให้ · ขึ้นจอ TV</td></tr>
     </tbody>
   </table></div>
-  <p class="note">เลือกแพทย์ตอนออกบัตรคิวห้องตรวจ เพราะเลขคิวต้องมีเลขห้อง และห้องมาจากการจับคู่แพทย์กับห้องตอนเช้า ถ้าทั้งคลินิกยังไม่ได้ตั้งห้อง ระบบออกบัตรไม่ได้ และพาไปหน้าตั้งค่า</p>
+  <p class="note">เลือกแพทย์ตอนออกบัตรคิวห้องตรวจ เพราะเลขคิวต้องมีเลขห้อง และห้องมาจากการกำหนดห้องให้แพทย์ตอนเช้า ถ้าทั้งคลินิกยังไม่ได้ตั้งห้อง ระบบออกบัตรไม่ได้ และพาไปหน้าตั้งค่า</p>
 </section>
 
 <footer>รายละเอียดทีละขั้นและคำถามทั้งหมด: <a href="online-queue-flow.html">online-queue-flow.html</a> · ระบบเดิม: <a href="online-queue-asis.html">online-queue-asis.html</a></footer>
